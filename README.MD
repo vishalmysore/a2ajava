@@ -52,10 +52,10 @@ This Java implementation provides the foundation for building A2A-compliant agen
 
 The project is organized to clearly separate the server and client components:
 
-* **`com.example.a2a.server`:** The server-side implementation.
-* **`com.example.a2a.client`:** The client-side implementation.
+* **`io.github.vishalmysosre.A2aApplication`:** The server-side implementation.
+* **`io.github.vishalmysosre.client.TaskClient`:** The client-side implementation.
 
-### Server (`com.example.a2a.server`)
+### Server (`io.github.vishalmysosre.A2aApplication`)
 
 * **`TaskController.java`:**
     * Defines the REST endpoints that make the A2A server accessible.
@@ -66,7 +66,7 @@ The project is organized to clearly separate the server and client components:
 * **Server Data Model:**
     * The `com.example.a2a.server` package contains classes that define the structure of A2A data: `Task`, `TaskStatus`, `Message`, `Part`, `TextPart`, `FilePart`, `DataPart`, `FileInfo`, and `Artifact`.  These classes are annotated with Jackson annotations to ensure smooth conversion to and from JSON.
 
-### Client (`com.example.a2a.client`)
+### Client (`io.github.vishalmysosre.client`)
 
 * **`TaskClient.java`:**
     * Provides methods to interact with an A2A server (`sendTask`, `getTask`), simplifying the process of sending requests.
