@@ -1,6 +1,6 @@
 # Java Implementation of Google's A2A Protocol: Connecting the Agentverse
 
-This project provides a Java implementation for both an A2A (Agent-to-Agent) server and client.  **A2A is an open protocol developed by Google** to standardize how AI agents communicate and exchange information, fostering a vibrant ecosystem of interoperable AI.  Imagine a world where diverse AI agents, built with different tools and by different creators, can seamlessly collaborate to solve complex problems - that's the vision A2A is bringing to life. This implementation demonstrates how to set up this communication in Java, using the Spring Framework, with a focus on sending and retrieving tasks, specifically in the context of booking and managing airline tickets.
+This project provides a Java implementation for both an A2A (Agent-to-Agent) server and client.  **A2A is an open protocol developed by Google** to standardize how AI agents communicate and exchange information, fostering a vibrant ecosystem of interoperable AI.  Imagine a world where diverse AI agents, built with different tools and by different creators, can seamlessly collaborate to solve complex problems - that's the vision A2A is bringing to life. This implementation demonstrates how to set up this communication in Java, using the Spring Framework, with a focus on sending and retrieving tasks, ( I have added a simple example agent for booking and managing airline tickets.)  
 
 ## Maven Dependency
 you can include this library in your project by following dependency in your `pom.xml` file:
@@ -154,11 +154,11 @@ The client will be calling the JSONRPC endpoint, which is a single endpoint that
 
 ## Important Disclaimer(s)
 
-** This Java implementation provides a starting point for building A2A-compliant agents.  It's intended as an example and may require adaptation and extension for use in a production environment.  Specifically, the server-side `TaskService` is conceptual and will need to be fleshed out with your specific application's business logic.
-** The client-side implementation is also a basic example and may require enhancements for error handling, security, and other production considerations.  The provided code is not a complete solution but rather a foundation upon which to build your A2A-compliant agents.
-** The A2A protocol is an evolving standard, and this implementation may need to be updated as the protocol matures.  Always refer to the official A2A documentation for the latest specifications and best practices.
-** This implementation is not affiliated with or endorsed by Google.  It is my independent effort to demonstrate the A2A protocol in Java.
-** The A2A protocol is a work in progress, and this implementation may not cover all aspects of the protocol.  Always refer to the official A2A documentation for the latest specifications and best practices.
-** I have just added basic error handling and logging.  In a production environment, you should implement more robust error handling and logging mechanisms to ensure the reliability and maintainability of your A2A agents.
-** The provided code is not a complete solution but rather a foundation upon which to build your A2A-compliant agents.  You may need to adapt and extend the code to fit your specific use case and requirements.
+** This Java implementation provides a starting point for building A2A-compliant agents.  It's intended as an example and may require adaptation and extension for use in a production environment.  Specifically, the server-side `TaskService` is conceptual and will need to be fleshed out with your specific application's business logic.  
+** The client-side implementation is also a basic example and may require enhancements for error handling, security, and other production considerations.  The provided code is not a complete solution but rather a foundation upon which to build your A2A-compliant agents.  
+** The A2A protocol is an evolving standard, and this implementation may need to be updated as the protocol matures.  Always refer to the official A2A documentation for the latest specifications and best practices.  
+** This implementation is not affiliated with or endorsed by Google.  It is my independent effort to demonstrate the A2A protocol in Java.  
+** The A2A protocol is a work in progress, and this implementation may not cover all aspects of the protocol.  Always refer to the official A2A documentation for the latest specifications and best practices.  
+** I have just added basic error handling and logging.  In a production environment, you should implement more robust error handling and logging mechanisms to ensure the reliability and maintainability of your A2A agents.  
+** The provided code is not a complete solution but rather a foundation upon which to build your A2A-compliant agents.  You may need to adapt and extend the code to fit your specific use case and requirements.  
 
