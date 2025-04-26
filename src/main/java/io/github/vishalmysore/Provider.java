@@ -8,4 +8,6 @@ public class Provider {
     private String url;
 
 
+    public Provider(String ticketCorp, String url) {
+    }
 }

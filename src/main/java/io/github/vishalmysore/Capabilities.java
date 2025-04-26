@@ -9,5 +9,7 @@ class Capabilities {
     private boolean stateTransitionHistory;
 
 
+    public Capabilities(boolean b, boolean b1, boolean b2) {
+    }
 }
 

@@ -8,5 +8,8 @@ import lombok.ToString;
 public class Authentication {
     private String[] schemes;
     private String credentials;
+
+    public Authentication(String[] strings) {
+    }
 }
 
