@@ -7,6 +7,7 @@ import io.github.vishalmysore.Message;
 import io.github.vishalmysore.Task;
 import io.github.vishalmysore.TaskSendParams;
 import io.github.vishalmysore.TextPart;
+import lombok.extern.java.Log;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -15,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.Collections;
 import java.util.UUID;
 
+@Log
 public class TaskClient {
 
     private static final String BASE_URL = "http://localhost:8080"; // Replace with your server's URL
@@ -35,11 +37,11 @@ public class TaskClient {
         sendParams.setMessage(message);
 
         Task sentTask = sendTask(sendParams);
-        System.out.println("Sent Task: " + objectMapper.writeValueAsString(sentTask));
+        log.info("Sent Task: " + objectMapper.writeValueAsString(sentTask));
 
         // Get the task
         Task retrievedTask = getTask(taskId, 0);
-        System.out.println("Retrieved Task: " + objectMapper.writeValueAsString(retrievedTask));
+        log.info("Retrieved Task: " + objectMapper.writeValueAsString(retrievedTask));
 
         // Send another task to check the input required
         String taskId2 = UUID.randomUUID().toString();
@@ -54,10 +56,10 @@ public class TaskClient {
         sendParams2.setMessage(message2);
 
         Task sentTask2 = sendTask(sendParams2);
-        System.out.println("Sent Task: " + objectMapper.writeValueAsString(sentTask2));
+        log.info("Sent Task: " + objectMapper.writeValueAsString(sentTask2));
 
         Task retrievedTask2 = getTask(taskId2, 0);
-        System.out.println("Retrieved Task: " + objectMapper.writeValueAsString(retrievedTask2));
+        log.info("Retrieved Task: " + objectMapper.writeValueAsString(retrievedTask2));
 
         //send the new date
         Message newMessage = new Message();
@@ -69,11 +71,11 @@ public class TaskClient {
         updateParams.setId(taskId2);
         updateParams.setMessage(newMessage);
         Task updatedTask = sendTask(updateParams);
-        System.out.println("Updated task " + objectMapper.writeValueAsString(updatedTask));
+        log.info("Updated task " + objectMapper.writeValueAsString(updatedTask));
 
         //get the task
         Task getUpdatedTask = getTask(taskId2, 0);
-        System.out.println("Get updated Task: " + objectMapper.writeValueAsString(getUpdatedTask));
+        log.info("Get updated Task: " + objectMapper.writeValueAsString(getUpdatedTask));
 
     }
 
@@ -87,7 +89,7 @@ public class TaskClient {
             ResponseEntity<Task> responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, Task.class);
             return responseEntity.getBody();
         } catch (HttpClientErrorException e) {
-            System.err.println("Error sending task: " + e.getResponseBodyAsString());
+            log.severe("Error sending task: " + e.getResponseBodyAsString());
             throw e; // Re-throw the exception to be handled by the caller
         }
     }
@@ -106,7 +108,7 @@ public class TaskClient {
             );
             return responseEntity.getBody();
         } catch (HttpClientErrorException e) {
-            System.err.println("Error getting task: " + e.getResponseBodyAsString());
+            log.severe("Error getting task: " + e.getResponseBodyAsString());
             throw e; // Re-throw the exception to be handled by the caller
         }
     }
