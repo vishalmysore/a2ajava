@@ -133,16 +133,16 @@ Here's a closer look at the key implementation aspects:
 * **JSON Processing:** The `ObjectMapper` plays a key role in the client, converting Java objects to JSON before sending them to the server, and converting the JSON responses from the server back into Java objects.
 * **Error Handling:** The client includes basic error checking, printing error messages to the console.  In a production environment, you would implement more sophisticated error handling, potentially including retry mechanisms and custom exception types.
 
-## Important Considerations
+## Important Considerations For Agent Development
 
-As you embark on your A2A journey, keep these points in mind:
 
-* **Data Model Harmony:** The data model classes (`Task`, `Message`, `Part`, etc.) must be defined consistently on both the server and the client.  Consider creating a shared library or module to house these classes, ensuring perfect alignment.
-* **Server Configuration is Key:** The server's Jackson configuration, particularly the `@JsonTypeInfo` and `@JsonSubTypes` annotations, is critical for the correct serialization and deserialization of the `Part` interface and its implementations.
-* **Error Handling is Essential:** Implement robust error handling on both the server and the client.  This will help you gracefully handle network issues, invalid data, and server-side errors, leading to more reliable and resilient agents.
-* **Security First:** In a real-world application, security is paramount.  Implement authentication and authorization to protect your A2A server from unauthorized access.  Spring Security is a powerful tool for securing Spring Boot applications.
-* **A2A Protocol Adherence:** Strive for strict compliance with the A2A protocol specification.  This will ensure interoperability with other A2A-compliant agents and future-proof your implementation.
 
-## Disclaimer
+* **Data Model Harmony:** The data model classes (`Task`, `Message`, `Part`, etc.) must be defined consistently on both the server and the client. 
+
+* **Error Handling is Essential:** Implement robust error handling on both the server and the client.  This will help us gracefully handle network issues, invalid data, and server-side errors, leading to more reliable and resilient agents.
+* **Security First:** (This is just a POC) In a real-world application, security is paramount.  We should Implement authentication and authorization to protect your A2A server from unauthorized access.  Spring Security is a powerful tool for securing Spring Boot applications.
+* **A2A Protocol Adherence:** We should Strive for strict compliance with the A2A protocol specification as its continuousely evoloving.  This will ensure interoperability with other A2A-compliant agents and future-proof your implementation.
+
+## Important Disclaimer
 
 This Java implementation provides a starting point for building A2A-compliant agents.  It's intended as an example and may require adaptation and extension for use in a production environment.  Specifically, the server-side `TaskService` is conceptual and will need to be fleshed out with your specific application's business logic.
