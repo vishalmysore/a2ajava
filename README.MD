@@ -15,7 +15,7 @@ you can include this library in your project by following dependency in your `po
 
 ## A2A Protocol: A Universal Agent Language
 
-The **A2A protocol**, spearheaded by Google, is designed to be the universal language for AI agents.  It moves us away from a fragmented landscape of proprietary agent communication methods and towards a future where agents can:
+The **A2A protocol**, spearheaded by Google, is designed to be the universal language for AI agents.  It moves us away from a closed way of  agent communication methods and towards a future where agents can:
 
 * **Discover** each other's capabilities.
 * **Securely** exchange information.
@@ -42,6 +42,8 @@ The **Agent Card** is a JSON-formatted file that an agent publishes to advertise
 
 With Agent Cards, agents can dynamically discover each other and understand how to communicate, enabling flexible and extensible multi-agent systems.
 
+In our case we have exposed it as a rest end point
+
 ## Features
 
 This Java implementation provides the foundation for building A2A-compliant agents:
@@ -50,12 +52,13 @@ This Java implementation provides the foundation for building A2A-compliant agen
     * Receives and processes tasks from client agents, acting as a hub for agent collaboration.
     * Manages the lifecycle of tasks, tracking their state and history.
     * Serializes task data into JSON for standardized communication.
-    * Exposes A2A endpoints using the Spring MVC framework.
+    * Exposes A2A endpoints using the Spring MVC framework. As rest calls as well as one endpoint for JSONRPC communicaiton 
+    * 
 * **A2A Client:**
     * Sends tasks to A2A servers, initiating agent interactions.
     * Retrieves task information, allowing agents to monitor progress and obtain results.
-    * Communicates with A2A servers using Spring's `RestTemplate`.
-* **JSON Handling:** Uses Jackson, a powerful Java library, for seamless JSON serialization/deserialization.
+    * Communicates with A2A servers using Spring's `RestTemplate`. With JSONRPC protocol, there is only one endpoint to send and receive messages.
+* **JSON Handling:** Uses Jackson, a  Java library, for seamless JSON serialization/deserialization.
 * **Task Management:** Supports the core A2A task operations: sending tasks and retrieving their information, including historical data.
 * **Message Parts:** Handles `TextPart`, `FilePart`, and `DataPart`, providing flexibility in message content to support various data formats.
 
@@ -63,8 +66,8 @@ This Java implementation provides the foundation for building A2A-compliant agen
 
 The project is organized to clearly separate the server and client components:
 
-* **`io.github.vishalmysosre.A2aApplication`:** The server-side implementation.
-* **`io.github.vishalmysosre.client.TaskClient`:** The client-side implementation.
+* **`io.github.vishalmysosre.A2aApplication`:** The server-side implementation. ( I will be refactoring this in future )
+* **`io.github.vishalmysosre.client.TaskClient`:** The client-side implementation. ( I might build a full client in angular or react in future)
 
 ### Server (`io.github.vishalmysosre.A2aApplication`)
 
@@ -124,8 +127,14 @@ Here's a closer look at the key implementation aspects:
 * **REST Endpoints:**
     * `POST /tasks/send`:  This endpoint receives a task from a client agent.  The request body should contain a JSON representation of the `TaskSendParams` object.
     * `GET /tasks/get`:  This endpoint retrieves a task by its ID.  The `id` and `historyLength` parameters are passed as query parameters in the URL.
-* **JSON Processing:** Jackson is the workhorse for handling JSON on the server.  The data model classes in `com.example.a2a.server` are annotated with Jackson annotations to automate the conversion between Java objects and JSON.  Pay special attention to `@JsonTypeInfo` and `@JsonSubTypes`, which are crucial for correctly handling the `Part` interface and its various implementations.
-* **Error Handling:** A robust server implementation includes comprehensive error handling.  Spring Boot provides powerful mechanisms for handling exceptions and generating appropriate HTTP status codes and error responses, ensuring a smooth and informative experience for client agents.
+    * `POST /tasks/sendSubscribe`:  This endpoint is used for streaming tasks.  It allows the client to subscribe to task updates via Server-Sent Events (SSE).
+    * `POST /tasks/pushNotification/set`:  This endpoint sets up push notifications for a task.  The request body should contain a JSON representation of the `TaskPushNotificationConfig` object.
+    * `GET /tasks/pushNotification/get`:  This endpoint retrieves the current push notification configuration for a task.  
+Its important to note that the server is designed to handle both JSON-RPC and RESTful requests.  The `TaskController` class is responsible for routing incoming requests to the appropriate methods based on the request type.    
+The client will be calling the JSONRPC endpoint, which is a single endpoint that handles all the requests.  The server will be able to handle both JSON-RPC and RESTful requests.  
+    * 
+* **JSON Processing:**  The data model classes in `com.example.a2a.server` are annotated with Jackson annotations to automate the conversion between Java objects and JSON.  Pay special attention to `@JsonTypeInfo` and `@JsonSubTypes`, which are crucial for correctly handling the `Part` interface and its various implementations.
+* **Error Handling:**  I have tried to add basic error handling which will be enhanced further.  Spring Boot provides powerful mechanisms for handling exceptions and generating appropriate HTTP status codes and error responses, ensuring a smooth and informative experience for client agents.
 
 ### Client Implementation
 
@@ -143,6 +152,13 @@ Here's a closer look at the key implementation aspects:
 * **Security First:** (This is just a POC) In a real-world application, security is paramount.  We should Implement authentication and authorization to protect your A2A server from unauthorized access.  Spring Security is a powerful tool for securing Spring Boot applications.
 * **A2A Protocol Adherence:** We should Strive for strict compliance with the A2A protocol specification as its continuousely evoloving.  This will ensure interoperability with other A2A-compliant agents and future-proof your implementation.
 
-## Important Disclaimer
+## Important Disclaimer(s)
 
-This Java implementation provides a starting point for building A2A-compliant agents.  It's intended as an example and may require adaptation and extension for use in a production environment.  Specifically, the server-side `TaskService` is conceptual and will need to be fleshed out with your specific application's business logic.
+** This Java implementation provides a starting point for building A2A-compliant agents.  It's intended as an example and may require adaptation and extension for use in a production environment.  Specifically, the server-side `TaskService` is conceptual and will need to be fleshed out with your specific application's business logic.
+** The client-side implementation is also a basic example and may require enhancements for error handling, security, and other production considerations.  The provided code is not a complete solution but rather a foundation upon which to build your A2A-compliant agents.
+** The A2A protocol is an evolving standard, and this implementation may need to be updated as the protocol matures.  Always refer to the official A2A documentation for the latest specifications and best practices.
+** This implementation is not affiliated with or endorsed by Google.  It is my independent effort to demonstrate the A2A protocol in Java.
+** The A2A protocol is a work in progress, and this implementation may not cover all aspects of the protocol.  Always refer to the official A2A documentation for the latest specifications and best practices.
+** I have just added basic error handling and logging.  In a production environment, you should implement more robust error handling and logging mechanisms to ensure the reliability and maintainability of your A2A agents.
+** The provided code is not a complete solution but rather a foundation upon which to build your A2A-compliant agents.  You may need to adapt and extend the code to fit your specific use case and requirements.
+
