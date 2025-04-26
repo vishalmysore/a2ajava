@@ -12,5 +12,5 @@ public class JsonRpcRequest {
     private String method;
     private Object params;
     private Object id;
-    // getters and setters
+
 }

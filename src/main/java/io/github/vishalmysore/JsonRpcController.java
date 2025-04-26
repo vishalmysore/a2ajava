@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * JsonRpcController handles JSON-RPC requests and routes them to the appropriate methods in the TaskController.
+ * This is the main entry point for the JSON-RPC API for Google A2A clients
+ */
 @RestController
 @RequestMapping("/")
 @Log

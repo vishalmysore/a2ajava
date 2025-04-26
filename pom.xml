@@ -11,7 +11,7 @@
     </parent>
     <groupId>io.github.vishalmysore</groupId>
     <artifactId>a2ajava</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>A2A Protocol Implementation for Java</name>
     <description>
         A2A Java demonstration project for the A2A protocol. This project is a demonstration of the A2A protocol using Java and Spring Boot.

@@ -1,7 +1,10 @@
 package io.github.vishalmysore;
 
+import lombok.Data;
+
 import java.util.Date;
 
+@Data
 class TaskStatus {
     private String state;
     private Message message;
@@ -15,27 +18,5 @@ class TaskStatus {
         this.timestamp = new Date().toString();
     }
 
-    public String getState() {
-        return state;
-    }
 
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public Message getMessage() {
-        return message;
-    }
-
-    public void setMessage(Message message) {
-        this.message = message;
-    }
-
-    public String getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
 }

@@ -3,7 +3,7 @@ package io.github.vishalmysore;
 import java.util.HashMap;
 import java.util.Map;
 
-class DataPart implements Part {
+public class DataPart implements Part {
     private String type = "data";
     private Map<String, Object> data;
     private Map<String, Object> metadata = new HashMap<>();
