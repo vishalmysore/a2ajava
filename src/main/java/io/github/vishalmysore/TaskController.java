@@ -343,7 +343,7 @@ class TaskController {
                 emitter.complete();
                 emitters.remove(id);
             } catch (IOException e) {
-                log.severe("Error sending task несуществует message" + e.getMessage());
+                log.severe("Error sending task  message" + e.getMessage());
             }
 
         }
