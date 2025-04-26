@@ -14,17 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/rpc")
+@RequestMapping("/")
 @Log
 class JsonRpcController {
 
     @Autowired
     private TaskController taskController;
+
     @PostMapping
     public ResponseEntity<Object> handleRpc(@RequestBody JsonRpcRequest request) {
         String method = request.getMethod();
         Object params = request.getParams();
         log.info(request.toString());
+
         switch (method) {
             case "tasks/send":
                 TaskSendParams sendParams = new ObjectMapper().convertValue(params, TaskSendParams.class);
@@ -32,9 +34,23 @@ class JsonRpcController {
             case "tasks/get":
                 TaskQueryParams queryParams = new ObjectMapper().convertValue(params, TaskQueryParams.class);
                 return ResponseEntity.ok(taskController.getTask(queryParams.getId(), queryParams.getHistoryLength()));
-            // similarly for other methods...
+            case "tasks/sendSubscribe":
+                TaskSendSubscribeParams sendSubscribeParams = new ObjectMapper().convertValue(params, TaskSendSubscribeParams.class);
+                return ResponseEntity.ok(taskController.sendSubscribeTask(sendSubscribeParams));
+            case "tasks/cancel":
+                TaskCancelParams cancelParams = new ObjectMapper().convertValue(params, TaskCancelParams.class);
+                return ResponseEntity.ok(taskController.cancelTask(cancelParams.getId()));
+            case "tasks/setPushNotification":
+                TaskSetPushNotificationParams setPushParams = new ObjectMapper().convertValue(params, TaskSetPushNotificationParams.class);
+                return ResponseEntity.ok(taskController.setTaskPushNotification(setPushParams));
+            case "tasks/getPushNotification":
+                TaskGetPushNotificationParams getPushParams = new ObjectMapper().convertValue(params, TaskGetPushNotificationParams.class);
+                return ResponseEntity.ok(taskController.getTaskPushNotification(getPushParams));
+            case "tasks/resubscribe":
+                TaskResubscriptionParams resubParams = new ObjectMapper().convertValue(params, TaskResubscriptionParams.class);
+                return ResponseEntity.ok(taskController.resubscribeToTask(resubParams));
             default:
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Method not found");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Method not found: " + method);
         }
     }
 }

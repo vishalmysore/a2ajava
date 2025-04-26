@@ -12,10 +12,10 @@ public class AgentCardController {
     @GetMapping(value = "/agent.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AgentCard> getAgentCard() {
         AgentCard agentCard = new AgentCard();
-        agentCard.setName("ChotuRobo : Control Robots using A2A");
-        agentCard.setDescription("Control your robots using A2A");
+        agentCard.setName("TicketQueen : Ticket Booking Agent");
+        agentCard.setDescription("book your airlines ticket, hotel ticket, and train ticket");
         agentCard.setUrl("http://localhost:8080"); //  Replace with actual URL
-        agentCard.setProvider(new Provider("Chotu Corp", "https://github.com/vishalmysore/choturobo")); // Replace
+        agentCard.setProvider(new Provider("Ticket Corp", "https://github.com/vishalmysore/choturobo")); // Replace
         agentCard.setVersion("1.0.0");
         agentCard.setDocumentationUrl("https://github.com/vishalmysore/Tools4AI");  // Replace
         agentCard.setCapabilities(new Capabilities(true, false, false)); // Corrected

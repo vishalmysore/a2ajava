@@ -1,5 +1,6 @@
 package io.github.vishalmysore;
 
+import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -8,16 +9,14 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @RestController
 @RequestMapping("/tasks")
+@Log
 class TaskController {
 
     private final Map<String, Task> tasks = new ConcurrentHashMap<>();
@@ -34,9 +33,11 @@ class TaskController {
                 // Handle client disconnection or error
                 emitters.remove(taskId);
                 emitter.completeWithError(e);
-                System.err.println("Error sending SSE event: " + e.getMessage()); // Log
+                log.severe("Error sending SSE event: " + e.getMessage()); // Log
             }        }
     }
+
+
 
     @PostMapping("/send")
     public ResponseEntity<Task> sendTask(@RequestBody TaskSendParams taskSendParams) {
@@ -202,6 +203,62 @@ class TaskController {
         return ResponseEntity.ok(task);
     }
 
+    public String setTaskPushNotification(TaskSetPushNotificationParams params) {
+        // Retrieve the task from the map
+        Task task = tasks.get(params.getTaskId());
+
+        if (task == null) {
+            throw new IllegalArgumentException("Task not found");
+        }
+
+        // Set the push notification URL
+        task.setPushNotificationUrl(params.getPushNotificationUrl());
+
+        return "Push notification URL set successfully!";
+    }
+
+    public String resubscribeToTask(TaskResubscriptionParams params) {
+        // Retrieve the task from the map
+        Task task = tasks.get(params.getTaskId());
+
+        if (task == null) {
+            throw new IllegalArgumentException("Task not found");
+        }
+
+        // Resubscribe logic (e.g., resetting the task's subscription status)
+        task.setSubscribed(true);
+        task.setSubscriptionDateNow(new Date()); //
+
+        return "Task resubscribed successfully!";
+    }
+
+    public String cancelTask(String taskId) {
+        // Retrieve the task from the map
+        Task task = tasks.get(taskId);
+
+        if (task == null) {
+            throw new IllegalArgumentException("Task not found");
+        }
+
+        // Mark the task as cancelled
+        task.setCancelled(true);
+
+        // Optionally, remove the task from the map if needed
+        // tasks.remove(taskId);
+
+        return "Task cancelled successfully!";
+    }
+    public String getTaskPushNotification(TaskGetPushNotificationParams params) {
+        // Retrieve the task from the map
+        Task task = tasks.get(params.getTaskId());
+
+        if (task == null) {
+            throw new IllegalArgumentException("Task not found");
+        }
+
+        // Return the push notification URL
+        return task.getPushNotificationUrl();
+    }
     @PostMapping("/pushNotification/set")
     public ResponseEntity<TaskPushNotificationConfig> setTaskPushNotificationConfig(
             @RequestBody TaskPushNotificationConfigRequest request) {
@@ -231,6 +288,10 @@ class TaskController {
         return ResponseEntity.ok(config);
     }
 
+    public SseEmitter sendSubscribeTask(TaskSendSubscribeParams params) {
+        String id = params.getId(); // assuming your params object has an id field
+        return sendSubscribe(id);   // Call your existing method
+    }
     @GetMapping(value = "/sendSubscribe/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter sendSubscribe(@PathVariable String id) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE); //timeout
@@ -239,16 +300,16 @@ class TaskController {
         //handle client disconnects
         emitter.onCompletion(() -> {
             emitters.remove(id);
-            System.out.println("Client disconnected for task: " + id);
+            log.info("Client disconnected for task: " + id);
         });
         emitter.onError((throwable) -> {
             emitters.remove(id);
-            System.err.println("Error occurred for task " + id + ": " + throwable.getMessage());
+            log.info("Error occurred for task " + id + ": " + throwable.getMessage());
         });
         emitter.onTimeout(() -> {
             emitters.remove(id);
             emitter.complete();
-            System.out.println("Timeout occurred for task: " + id);
+            log.info("Timeout occurred for task: " + id);
         });
         return emitter;
     }
@@ -273,7 +334,7 @@ class TaskController {
             } catch (IOException e) {
                 emitters.remove(id);
                 emitter.completeWithError(e);
-                System.err.println("Error re-subscribing" + e.getMessage());
+                log.severe("Error re-subscribing" + e.getMessage());
             }
         }
         else {
@@ -282,23 +343,23 @@ class TaskController {
                 emitter.complete();
                 emitters.remove(id);
             } catch (IOException e) {
-                System.err.println("Error sending task несуществует message" + e.getMessage());
+                log.severe("Error sending task несуществует message" + e.getMessage());
             }
 
         }
 
         emitter.onCompletion(() -> {
             emitters.remove(id);
-            System.out.println("Client disconnected on resubscribe: " + id);
+            log.severe("Client disconnected on resubscribe: " + id);
         });
         emitter.onError((throwable) -> {
             emitters.remove(id);
-            System.err.println("Error on resubscribe for task " + id + ": " + throwable.getMessage());
+            log.severe("Error on resubscribe for task " + id + ": " + throwable.getMessage());
         });
         emitter.onTimeout(() -> {
             emitters.remove(id);
             emitter.complete();
-            System.out.println("Timeout on resubscribe for task: " + id);
+            log.severe("Timeout on resubscribe for task: " + id);
         });
         return emitter;
     }
