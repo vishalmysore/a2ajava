@@ -311,8 +311,11 @@ class TaskController {
 
                 TaskStatus processingStatus = new TaskStatus("working");
                 processingStatus.setMessage(message);
+                SendTaskStreamingResponse response = new SendTaskStreamingResponse();
+                response.setId(id);
+                response.setResult((new TaskStatusUpdateEvent(id, processingStatus, false)));
 
-                sendSseEvent(id, new TaskStatusUpdateEvent(id, processingStatus, false));
+                sendSseEvent(id, response);
             } catch (Exception e) {
                 emitter.completeWithError(e);
             }
