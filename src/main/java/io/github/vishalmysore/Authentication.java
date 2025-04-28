@@ -9,7 +9,11 @@ public class Authentication {
     private String[] schemes;
     private String credentials;
 
-    public Authentication(String[] strings) {
+    public Authentication() {
+    }
+
+    public Authentication(String[] schemes) {
+        this.schemes = schemes;
     }
 }
 

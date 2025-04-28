@@ -1,6 +1,7 @@
 package io.github.vishalmysore;
 
 import lombok.extern.java.Log;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -91,7 +92,7 @@ class TaskController {
                     sendSseEvent(taskId, new TaskStatusUpdateEvent(taskId, inputRequiredStatus, false));
                 }
                 else {
-                    TaskStatus workingStatus = new TaskStatus("working");
+                    TaskStatus workingStatus = new TaskStatus("working on it");
                     Message agentWorkingMessage = new Message();
                     agentWorkingMessage.setRole("agent");
                     TextPart workingTextPart = new TextPart();
@@ -297,6 +298,25 @@ class TaskController {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE); //timeout
         emitters.put(id, emitter);
 
+
+        nonBlockingService.execute(() -> {
+            try {
+                TextPart textPart = new TextPart();
+                textPart.setType("text");
+                textPart.setText("Processing your ticket booking request...");
+
+                Message message = new Message();
+                message.setRole("agent");
+                message.setParts(List.of(textPart));
+
+                TaskStatus processingStatus = new TaskStatus("working");
+                processingStatus.setMessage(message);
+
+                sendSseEvent(id, new TaskStatusUpdateEvent(id, processingStatus, false));
+            } catch (Exception e) {
+                emitter.completeWithError(e);
+            }
+        });
         //handle client disconnects
         emitter.onCompletion(() -> {
             emitters.remove(id);

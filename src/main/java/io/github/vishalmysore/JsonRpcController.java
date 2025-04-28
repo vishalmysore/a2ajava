@@ -5,7 +5,9 @@ package io.github.vishalmysore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +28,7 @@ class JsonRpcController {
     private TaskController taskController;
 
     @PostMapping
-    public ResponseEntity<Object> handleRpc(@RequestBody JsonRpcRequest request) {
+    public Object handleRpc(@RequestBody JsonRpcRequest request) {
         String method = request.getMethod();
         Object params = request.getParams();
         log.info(request.toString());
@@ -40,7 +42,8 @@ class JsonRpcController {
                 return ResponseEntity.ok(taskController.getTask(queryParams.getId(), queryParams.getHistoryLength()));
             case "tasks/sendSubscribe":
                 TaskSendSubscribeParams sendSubscribeParams = new ObjectMapper().convertValue(params, TaskSendSubscribeParams.class);
-                return ResponseEntity.ok(taskController.sendSubscribeTask(sendSubscribeParams));
+
+                return taskController.sendSubscribeTask(sendSubscribeParams);
             case "tasks/cancel":
                 TaskCancelParams cancelParams = new ObjectMapper().convertValue(params, TaskCancelParams.class);
                 return ResponseEntity.ok(taskController.cancelTask(cancelParams.getId()));

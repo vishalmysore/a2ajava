@@ -1,15 +1,18 @@
 package io.github.vishalmysore;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 class Capabilities {
     private boolean streaming;
     private boolean pushNotifications;
     private boolean stateTransitionHistory;
 
 
-    public Capabilities(boolean b, boolean b1, boolean b2) {
-    }
+
 }
 
