@@ -3,10 +3,10 @@ package io.github.vishalmysore.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.vishalmysore.Message;
-import io.github.vishalmysore.Task;
-import io.github.vishalmysore.TaskSendParams;
-import io.github.vishalmysore.TextPart;
+import io.github.vishalmysore.domain.Message;
+import io.github.vishalmysore.domain.Task;
+import io.github.vishalmysore.domain.TaskSendParams;
+import io.github.vishalmysore.domain.TextPart;
 import lombok.extern.java.Log;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
