@@ -13,20 +13,32 @@ import org.springframework.stereotype.Component;
 @Agent(groupName = "food preference", groupDescription = "actions related to food preference")
 public class SimpleAction  {
 
+    /**
+     * This will be used for streaming the status of the action
+     * it will be populated if its part of the streaming request else not
+     */
     private ActionCallback actionCallback;
 
     @Action( description = "what is the food preference of this person")
     public String whatFoodDoesThisPersonLike(String name) {
-        actionCallback.sendtStatus("success", ActionState.WORKING);
+        if(actionCallback!= null) {
+            actionCallback.sendtStatus("success", ActionState.WORKING);
+        }
         if("vishal".equalsIgnoreCase(name)) {
-            actionCallback.sendtStatus("Paneer butter masala", ActionState.WORKING);
+            if(actionCallback!= null) {
+                actionCallback.sendtStatus("Paneer butter masala", ActionState.WORKING);
+            }
             return "Paneer Butter Masala";
         }
         else if ("vinod".equalsIgnoreCase(name)) {
-            actionCallback.sendtStatus("aloo kofta", ActionState.WORKING);
+            if(actionCallback!= null) {
+                actionCallback.sendtStatus("aloo kofta", ActionState.WORKING);
+            }
             return "aloo kofta";
         }else {
-            actionCallback.sendtStatus("Raw Onions", ActionState.WORKING);
+            if(actionCallback!= null) {
+                actionCallback.sendtStatus("Raw Onions", ActionState.WORKING);
+            }
             return "something yummy";
         }
     }

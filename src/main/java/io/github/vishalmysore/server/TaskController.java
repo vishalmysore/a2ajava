@@ -41,7 +41,7 @@ public class TaskController implements A2ATaskController {
 
 
     @PostMapping("/send")
-    public ResponseEntity<Task> sendTask(@RequestBody TaskSendParams taskSendParams) {
+    public SendTaskResponse sendTask(@RequestBody TaskSendParams taskSendParams) {
         String taskId = taskSendParams.getId();
         Task task;
         if (tasks.containsKey(taskId)) {
@@ -66,7 +66,19 @@ public class TaskController implements A2ATaskController {
                 sessionId = UUID.randomUUID().toString();
             }
             task.setSessionId(sessionId);
-            task.setStatus(new TaskStatus("submitted")); // Initial status
+            TaskStatus taskStatus = new TaskStatus();
+            Message taskMessage = new Message();
+            taskMessage.setRole("agent");
+            TextPart textPart = new TextPart();
+            textPart.setType("text");
+            textPart.setText("Your task has been submitted " + taskId);
+          //  taskMessage.setParts(List.of(textPart));
+            List<Part> parts = new ArrayList<>(); // Create mutable list
+            parts.add(textPart);
+            taskMessage.setParts(parts);
+            taskStatus.setMessage(taskMessage);
+            taskStatus.setState(TaskState.SUBMITTED);
+            task.setStatus(taskStatus); // Initial status
             task.setHistory(List.of(taskSendParams.getMessage())); //adds the first message
             tasks.put(taskId, task);
         }
@@ -160,8 +172,10 @@ public class TaskController implements A2ATaskController {
                 }
             }
         });
-
-        return ResponseEntity.ok(task);
+        SendTaskResponse response = new SendTaskResponse();
+        response.setId(taskId);
+        response.setResult(task);
+        return response;
     }
 
     @GetMapping("/get")

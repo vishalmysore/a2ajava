@@ -14,12 +14,12 @@ public class AgentCardController {
     public ResponseEntity<AgentCard> getAgentCard() {
         AgentCard agentCard = new AgentCard();
         agentCard.setName("TicketQueen : Ticket Booking Agent");
-        agentCard.setDescription("book your airlines ticket, hotel ticket, and train ticket , also find out the preference of food of a person");
+        agentCard.setDescription("book your airlines ticket, hotel ticket, and train ticket , also find out the preference of food of a person, it will also provide details on your existing booking or help in cancelling it or provideing realt time update ");
         agentCard.setUrl("http://localhost:8080"); //  Replace with actual URL
         agentCard.setProvider(new Provider("Ticket Corp", "https://github.com/vishalmysore/choturobo"));
         agentCard.setVersion("1.0.0");
         agentCard.setDocumentationUrl("https://github.com/vishalmysore/Tools4AI");  // Replace
-        agentCard.setCapabilities(new Capabilities(true, false, false));
+        agentCard.setCapabilities(new Capabilities(false, false, false));
         agentCard.setAuthentication(new Authentication(new String[]{"Bearer"}));
         agentCard.setDefaultInputModes(new String[]{"text/plain"});
         agentCard.setDefaultOutputModes(new String[]{"application/json"});

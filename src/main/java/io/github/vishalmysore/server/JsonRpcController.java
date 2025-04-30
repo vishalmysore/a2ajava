@@ -39,26 +39,26 @@ class JsonRpcController {
         switch (method) {
             case "tasks/send":
                 TaskSendParams sendParams = new ObjectMapper().convertValue(params, TaskSendParams.class);
-                return ResponseEntity.ok(taskController.sendTask(sendParams));
+                return dynamicTaskController.sendTask(sendParams);
             case "tasks/get":
                 TaskQueryParams queryParams = new ObjectMapper().convertValue(params, TaskQueryParams.class);
-                return ResponseEntity.ok(taskController.getTask(queryParams.getId(), queryParams.getHistoryLength()));
+                return taskController.getTask(queryParams.getId(), queryParams.getHistoryLength());
             case "tasks/sendSubscribe":
                 TaskSendSubscribeParams sendSubscribeParams = new ObjectMapper().convertValue(params, TaskSendSubscribeParams.class);
 
                 return dynamicTaskController.sendSubscribeTask(sendSubscribeParams);
             case "tasks/cancel":
                 TaskCancelParams cancelParams = new ObjectMapper().convertValue(params, TaskCancelParams.class);
-                return ResponseEntity.ok(taskController.cancelTask(cancelParams.getId()));
+                return taskController.cancelTask(cancelParams.getId());
             case "tasks/setPushNotification":
                 TaskSetPushNotificationParams setPushParams = new ObjectMapper().convertValue(params, TaskSetPushNotificationParams.class);
-                return ResponseEntity.ok(taskController.setTaskPushNotification(setPushParams));
+                return taskController.setTaskPushNotification(setPushParams);
             case "tasks/getPushNotification":
                 TaskGetPushNotificationParams getPushParams = new ObjectMapper().convertValue(params, TaskGetPushNotificationParams.class);
-                return ResponseEntity.ok(taskController.getTaskPushNotification(getPushParams));
+                return taskController.getTaskPushNotification(getPushParams);
             case "tasks/resubscribe":
                 TaskResubscriptionParams resubParams = new ObjectMapper().convertValue(params, TaskResubscriptionParams.class);
-                return ResponseEntity.ok(taskController.resubscribeToTask(resubParams));
+                return taskController.resubscribeToTask(resubParams);
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Method not found: " + method);
         }

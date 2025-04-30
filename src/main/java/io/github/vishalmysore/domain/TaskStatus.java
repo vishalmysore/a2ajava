@@ -12,6 +12,7 @@ public class TaskStatus {
     private String timestamp;
 
     public TaskStatus() {
+        setCurrentTimestamp();
     }
 
     public TaskStatus(TaskState state) {

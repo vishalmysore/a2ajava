@@ -21,7 +21,9 @@ public class TicketBookingAction {
 
      @Action(description = "cancel a ticket")
      public String cancelTicket(String name, String ticketId) {
-         actionCallback.sendtStatus("cancelling your ticket", ActionState.WORKING);
+         if(actionCallback!= null) {
+             actionCallback.sendtStatus("cancelling your ticket", ActionState.WORKING);
+         }
          return "Ticket with ID " + ticketId + " cancelled for " + name;
      }
 }
