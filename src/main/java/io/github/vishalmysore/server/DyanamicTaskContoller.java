@@ -16,6 +16,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * This will be used to process dynamic tasks , the tasks are not hard coded but decided by AI
+ * based on the input prompt
+ */
 @Log
 @RestController
 @RequestMapping("/dynamictasks")

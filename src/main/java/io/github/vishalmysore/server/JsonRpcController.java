@@ -8,7 +8,6 @@ import io.github.vishalmysore.domain.*;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +23,16 @@ import org.springframework.web.server.ResponseStatusException;
 @Log
 class JsonRpcController {
 
+    /**
+     * The TaskController is responsible for handling ticket-related operations.
+     */
     @Autowired
-    private TaskController taskController;
+    private TicketTaskController taskController;
 
+    /**
+     * The DynamicTaskController is responsible for handling dynamic task-related operations.
+     * IT can handle any task wheter ticket or food prefernce etc
+     */
     @Autowired
     private DyanamicTaskContoller dynamicTaskController;
 

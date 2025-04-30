@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/.well-known")
-public class AgentCardController {
+public class AgentCardController implements A2AAgentCardController {
     @GetMapping(value = "/agent.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AgentCard> getAgentCard() {
         AgentCard agentCard = new AgentCard();

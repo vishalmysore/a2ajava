@@ -15,10 +15,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * This class handles ticket booking tasks and provides endpoints for sending,
+ * retrieving, and canceling tasks. It also supports Server-Sent Events (SSE) for
+ * real-time updates. As you can see from name it is a ticket booking task handler only
+ * But if you get a prompt for other tasks it wont be able to handle such tasks need to be
+ * handled by DyanamicTaskController which will dyanamilly call the action/task based on nlp
+ */
 @RestController
 @RequestMapping("/tasks")
 @Log
-public class TaskController implements A2ATaskController {
+public class TicketTaskController implements A2ATaskController {
 
     private final Map<String, Task> tasks = new ConcurrentHashMap<>();
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
