@@ -1,6 +1,7 @@
 package regression;
 
 import com.t4a.detect.ActionCallback;
+import com.t4a.detect.ActionState;
 import com.t4a.processor.AIProcessingException;
 import com.t4a.processor.GeminiV2ActionProcessor;
 import io.github.vishalmysore.example.SimpleAction;
@@ -25,9 +26,11 @@ public class A2AStandalone {
             }
 
             @Override
-            public void setStatus(String status) {
-              log.info(status);
+            public void sendtStatus(String status, ActionState state) {
+
             }
+
+
         };
         SimpleAction action = new SimpleAction();
         processor.processSingleAction("what does vishal like to eat",callback);
