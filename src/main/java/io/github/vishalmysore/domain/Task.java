@@ -36,4 +36,18 @@ public class Task implements A2ATask {
     Date subscriptionDateNow;
     boolean cancelled;
 
+    public void setDetailedAndMessage(TaskState state, String messageStr) {
+        TextPart textPart = new TextPart();
+        textPart.setType("text");
+        textPart.setText("messageStr");
+
+        Message message = new Message();
+        message.setRole("agent");
+        message.setParts(List.of(textPart));
+
+        TaskStatus processingStatus = new TaskStatus(state);
+        processingStatus.setMessage(message);
+        this.setStatus(processingStatus);
+    }
+
 }

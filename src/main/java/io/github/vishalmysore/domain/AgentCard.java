@@ -1,6 +1,9 @@
 package io.github.vishalmysore.domain;
 
+import com.t4a.annotations.ListType;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class AgentCard {
@@ -14,7 +17,9 @@ public class AgentCard {
     private Authentication authentication;
     private String[] defaultInputModes;
     private String[] defaultOutputModes;
-    private Skill[] skills;
+    //private Skill[] skills;
+    @ListType(Skill.class)
+    private List<Skill> skills;
 
     // Getters and setters
 

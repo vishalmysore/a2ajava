@@ -1,5 +1,6 @@
 package io.github.vishalmysore.server;
 
+import com.t4a.detect.ActionCallback;
 import io.github.vishalmysore.domain.*;
 import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,7 @@ public class TicketTaskController implements A2ATaskController {
 
 
     @PostMapping("/send")
-    public SendTaskResponse sendTask(@RequestBody TaskSendParams taskSendParams) {
+    public SendTaskResponse sendTask(@RequestBody TaskSendParams taskSendParams, ActionCallback callback) {
         String taskId = taskSendParams.getId();
         Task task;
         if (tasks.containsKey(taskId)) {

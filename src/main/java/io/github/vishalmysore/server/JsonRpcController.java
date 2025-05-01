@@ -17,11 +17,12 @@ import org.springframework.web.server.ResponseStatusException;
 /**
  * JsonRpcController handles JSON-RPC requests and routes them to the appropriate methods in the TaskController.
  * This is the main entry point for the JSON-RPC API for Google A2A clients
+ * You need to look at the sample to see how it works
  */
 @RestController
-@RequestMapping("/")
+@RequestMapping("/rpc")
 @Log
-class JsonRpcController {
+public class JsonRpcController {
 
     /**
      * The TaskController is responsible for handling ticket-related operations.
@@ -36,6 +37,10 @@ class JsonRpcController {
     @Autowired
     private DyanamicTaskContoller dynamicTaskController;
 
+    protected A2ATaskController getTaskController() {
+        return dynamicTaskController;
+    }
+
     @PostMapping
     public Object handleRpc(@RequestBody JsonRpcRequest request) {
         String method = request.getMethod();
@@ -45,26 +50,26 @@ class JsonRpcController {
         switch (method) {
             case "tasks/send":
                 TaskSendParams sendParams = new ObjectMapper().convertValue(params, TaskSendParams.class);
-                return dynamicTaskController.sendTask(sendParams);
+                return getTaskController().sendTask(sendParams);
             case "tasks/get":
                 TaskQueryParams queryParams = new ObjectMapper().convertValue(params, TaskQueryParams.class);
-                return taskController.getTask(queryParams.getId(), queryParams.getHistoryLength());
+                return getTaskController().getTask(queryParams.getId(), queryParams.getHistoryLength());
             case "tasks/sendSubscribe":
                 TaskSendSubscribeParams sendSubscribeParams = new ObjectMapper().convertValue(params, TaskSendSubscribeParams.class);
 
-                return dynamicTaskController.sendSubscribeTask(sendSubscribeParams);
+                return getTaskController().sendSubscribeTask(sendSubscribeParams);
             case "tasks/cancel":
                 TaskCancelParams cancelParams = new ObjectMapper().convertValue(params, TaskCancelParams.class);
-                return taskController.cancelTask(cancelParams.getId());
+                return getTaskController().cancelTask(cancelParams.getId());
             case "tasks/setPushNotification":
                 TaskSetPushNotificationParams setPushParams = new ObjectMapper().convertValue(params, TaskSetPushNotificationParams.class);
-                return taskController.setTaskPushNotification(setPushParams);
+                return getTaskController().setTaskPushNotification(setPushParams);
             case "tasks/getPushNotification":
                 TaskGetPushNotificationParams getPushParams = new ObjectMapper().convertValue(params, TaskGetPushNotificationParams.class);
-                return taskController.getTaskPushNotification(getPushParams);
+                return getTaskController().getTaskPushNotification(getPushParams);
             case "tasks/resubscribe":
                 TaskResubscriptionParams resubParams = new ObjectMapper().convertValue(params, TaskResubscriptionParams.class);
-                return taskController.resubscribeToTask(resubParams);
+                return getTaskController().resubscribeToTask(resubParams);
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Method not found: " + method);
         }

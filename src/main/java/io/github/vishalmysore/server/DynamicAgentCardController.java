@@ -1,8 +1,12 @@
 package io.github.vishalmysore.server;
 
+import com.t4a.annotations.Agent;
 import com.t4a.api.AIAction;
 import com.t4a.api.GroupInfo;
 import com.t4a.predict.PredictionLoader;
+import com.t4a.processor.AIProcessingException;
+import com.t4a.transform.GeminiV2PromptTransformer;
+import com.t4a.transform.PromptTransformer;
 import io.github.vishalmysore.domain.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +29,9 @@ import java.util.Map;
 public class DynamicAgentCardController implements A2AAgentCardController {
     @GetMapping(value = "/dynaagent.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AgentCard> getAgentCard() {
+
+
+
         AgentCard agentCard = new AgentCard();
         agentCard.setName("TicketQueen : Ticket Booking Agent");
         Map<String, AIAction> actions = PredictionLoader.getInstance().getPredictions();
@@ -77,7 +84,7 @@ public class DynamicAgentCardController implements A2AAgentCardController {
             skills.add(skill);
         }
 
-        agentCard.setSkills(skills.toArray(new Skill[0]));
+        agentCard.setSkills(List.of(skills.toArray(new Skill[0])));
 
 
 

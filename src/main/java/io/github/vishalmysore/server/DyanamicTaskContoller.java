@@ -1,17 +1,18 @@
 package io.github.vishalmysore.server;
 
+import com.t4a.detect.ActionCallback;
 import com.t4a.processor.GeminiV2ActionProcessor;
 import io.github.vishalmysore.domain.*;
 import lombok.extern.java.Log;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,9 +28,15 @@ public class DyanamicTaskContoller implements A2ATaskController {
     private final Map<String, Task> tasks = new ConcurrentHashMap<>();
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
+    protected GeminiV2ActionProcessor baseProcessor = new GeminiV2ActionProcessor();
 
-    @Override
-    public SendTaskResponse sendTask(TaskSendParams taskSendParams) {
+    public GeminiV2ActionProcessor getBaseProcessor() {
+        return baseProcessor;
+    }
+
+
+
+    public SendTaskResponse sendTask(TaskSendParams taskSendParams, ActionCallback actionCallback) {
         String taskId = taskSendParams.getId();
         Task task;
 
@@ -63,9 +70,16 @@ public class DyanamicTaskContoller implements A2ATaskController {
                     Part part = parts.get(0);
                     if (part instanceof TextPart textPart && "text".equals(textPart.getType())) {
                         String text = textPart.getText();
-                        GeminiV2ActionProcessor processor = new GeminiV2ActionProcessor();
 
-                        processor.processSingleAction(text);
+                        if(actionCallback!= null) {
+                            // Use the provided action callback
+                            getBaseProcessor().processSingleAction(text, actionCallback);
+                        } else {
+                            // Default processing
+                            getBaseProcessor().processSingleAction(text);
+                        }
+
+
                     }
                 }
             } catch (Exception e) {
@@ -89,6 +103,146 @@ public class DyanamicTaskContoller implements A2ATaskController {
     }
 
 
+
+    @Override
+    public ResponseEntity<Task> getTask(@RequestParam String id, @RequestParam(defaultValue = "0") int historyLength) {
+        Task task = tasks.get(id);
+        if (task == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
+        }
+        //basic get
+        if (historyLength == 0) {
+            return ResponseEntity.ok(task);
+        }
+        else {
+            //return history
+            Task taskWithHistory = new Task();
+            taskWithHistory.setId(task.getId());
+            taskWithHistory.setSessionId(task.getSessionId());
+            taskWithHistory.setStatus(task.getStatus());
+            //get artifacts
+            taskWithHistory.setArtifacts(task.getArtifacts());
+            //get history
+            List<Message> history = task.getHistory();
+            if (history != null) {
+                int start = Math.max(0, history.size() - historyLength);
+                taskWithHistory.setHistory(history.subList(start, history.size()));
+            }
+            return ResponseEntity.ok(taskWithHistory);
+        }
+    }
+
+
+    public ResponseEntity<Task> cancelTask(@RequestBody Map<String, String> body) {
+        String id = body.get("id");
+        Task task = tasks.get(id);
+        if (task == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
+        }
+        task.setStatus(new TaskStatus("canceled"));
+        tasks.put(id, task); //update
+        return ResponseEntity.ok(task);
+    }
+
+    public String setTaskPushNotification(TaskSetPushNotificationParams params) {
+        // Retrieve the task from the map
+        Task task = tasks.get(params.getTaskId());
+
+        if (task == null) {
+            throw new IllegalArgumentException("Task not found");
+        }
+
+        // Set the push notification URL
+        task.setPushNotificationUrl(params.getPushNotificationUrl());
+
+        return "Push notification URL set successfully!";
+    }
+
+    public String resubscribeToTask(TaskResubscriptionParams params) {
+        // Retrieve the task from the map
+        Task task = tasks.get(params.getTaskId());
+
+        if (task == null) {
+            throw new IllegalArgumentException("Task not found");
+        }
+
+        // Resubscribe logic (e.g., resetting the task's subscription status)
+        task.setSubscribed(true);
+        task.setSubscriptionDateNow(new Date()); //
+
+        return "Task resubscribed successfully!";
+    }
+
+    public String cancelTask(String taskId) {
+        // Retrieve the task from the map
+        Task task = tasks.get(taskId);
+
+        if (task == null) {
+            throw new IllegalArgumentException("Task not found");
+        }
+
+        // Mark the task as cancelled
+        task.setCancelled(true);
+
+        // Optionally, remove the task from the map if needed
+        // tasks.remove(taskId);
+
+        return "Task cancelled successfully!";
+    }
+    public String getTaskPushNotification(TaskGetPushNotificationParams params) {
+        // Retrieve the task from the map
+        Task task = tasks.get(params.getTaskId());
+
+        if (task == null) {
+            throw new IllegalArgumentException("Task not found");
+        }
+
+        // Return the push notification URL
+        return task.getPushNotificationUrl();
+    }
+
+    public ResponseEntity<TaskPushNotificationConfig> setTaskPushNotificationConfig(
+            @RequestBody TaskPushNotificationConfigRequest request) {
+        String id = request.getId();
+        Task task = tasks.get(id);
+        if (task == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
+        }
+        // In a real application, you would store this configuration
+        // and use it when sending push notifications.  For this
+        // example, we just store it in the Task object.
+        task.setPushNotificationConfig(request.getPushNotificationConfig());
+        tasks.put(id, task);
+        return ResponseEntity.ok(request.getPushNotificationConfig());
+    }
+
+
+    public ResponseEntity<TaskPushNotificationConfig> getTaskPushNotificationConfig(@RequestParam String id) {
+        Task task = tasks.get(id);
+        if (task == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
+        }
+        TaskPushNotificationConfig config = task.getPushNotificationConfig();
+        if (config == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(config);
+    }
+    private void sendSseEvent(String taskId, Object event) {
+        SseEmitter emitter = emitters.get(taskId);
+        if (emitter != null) {
+            try {
+                emitter.send(SseEmitter.event().name("message").data(event));
+            } catch (IOException e) {
+                // Handle client disconnection or error
+                emitters.remove(taskId);
+                emitter.completeWithError(e);
+                log.severe("Error sending SSE event: " + e.getMessage()); // Log
+            }        }
+    }
+
+
+
     @Override
     public SseEmitter sendSubscribeTask(TaskSendSubscribeParams params) {
         String id = params.getId(); // assuming your params object has an id field
@@ -104,9 +258,9 @@ public class DyanamicTaskContoller implements A2ATaskController {
                         // Process text part
                         String text = textPart.getText();
                         // Use text for GeminiV2ActionProcessor
-                        GeminiV2ActionProcessor processor = new GeminiV2ActionProcessor();
+
                         SSEEmitterCallback sseEmitterCallback = new SSEEmitterCallback(id,emitter);
-                        processor.processSingleAction(text, sseEmitterCallback);
+                        getBaseProcessor().processSingleAction(text, sseEmitterCallback);
                     }
                 }
 
@@ -130,5 +284,54 @@ public class DyanamicTaskContoller implements A2ATaskController {
         });
         return emitter;
 
+    }
+  //  @GetMapping(value = "/resubscribe/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter resubscribe(@PathVariable String id) {
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+        emitters.put(id, emitter);
+
+        Task task = tasks.get(id);
+        if (task != null) {
+            //send current status
+            try {
+                emitter.send(SseEmitter.event().name("message").data(new TaskStatusUpdateEvent(id, task.getStatus(), false)));
+                //send all artifacts
+                if (task.getArtifacts() != null) {
+                    for (Artifact artifact : task.getArtifacts()) {
+                        emitter.send(SseEmitter.event().name("message").data(new TaskArtifactUpdateEvent(id, artifact)));
+                    }
+                }
+
+            } catch (IOException e) {
+                emitters.remove(id);
+                emitter.completeWithError(e);
+                log.severe("Error re-subscribing" + e.getMessage());
+            }
+        }
+        else {
+            try {
+                emitter.send(SseEmitter.event().name("message").data("Task does not exist"));
+                emitter.complete();
+                emitters.remove(id);
+            } catch (IOException e) {
+                log.severe("Error sending task  message" + e.getMessage());
+            }
+
+        }
+
+        emitter.onCompletion(() -> {
+            emitters.remove(id);
+            log.severe("Client disconnected on resubscribe: " + id);
+        });
+        emitter.onError((throwable) -> {
+            emitters.remove(id);
+            log.severe("Error on resubscribe for task " + id + ": " + throwable.getMessage());
+        });
+        emitter.onTimeout(() -> {
+            emitters.remove(id);
+            emitter.complete();
+            log.severe("Timeout on resubscribe for task: " + id);
+        });
+        return emitter;
     }
 }

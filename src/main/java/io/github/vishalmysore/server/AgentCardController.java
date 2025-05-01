@@ -7,10 +7,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
+/**
+ * This will be used to provide the agent card for the agent
+ * The agent card is a JSON object that describes the capabilities of the agent
+ * and how to interact with it.
+ * RENAME THE /ticketagent.json to your agent.json before you runt the applicaiton
+ */
 @RestController
 @RequestMapping("/.well-known")
 public class AgentCardController implements A2AAgentCardController {
-    @GetMapping(value = "/agent.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/ticketagent.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AgentCard> getAgentCard() {
         AgentCard agentCard = new AgentCard();
         agentCard.setName("TicketQueen : Ticket Booking Agent");
@@ -46,7 +54,7 @@ public class AgentCardController implements A2AAgentCardController {
         sk[0] = foodPreferenceSkill;
         sk[1] = bookTicketSkill;
 
-        agentCard.setSkills(sk);
+        agentCard.setSkills(List.of(sk));
 
         return ResponseEntity.ok(agentCard);
     }

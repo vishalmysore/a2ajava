@@ -1,16 +1,10 @@
-package io.github.vishalmysore.example;
+package regression.action;
 
-import com.t4a.annotations.Action;
-import com.t4a.annotations.Agent;
 import com.t4a.detect.ActionCallback;
 import com.t4a.detect.ActionState;
-import com.t4a.detect.HumanInLoop;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.stereotype.Component;
 
-@Component
-@Agent(groupName = "food preference", groupDescription = "actions related to food preference")
+
+//@Agent(groupName = "food preference", groupDescription = "actions related to food preference")
 public class SimpleAction  {
 
     /**
@@ -19,7 +13,7 @@ public class SimpleAction  {
      */
     private ActionCallback actionCallback;
 
-    @Action( description = "what is the food preference of this person")
+  //  @Action( description = "what is the food preference of this person")
     public String whatFoodDoesThisPersonLike(String name) {
         if(actionCallback!= null) {
             actionCallback.sendtStatus("success", ActionState.WORKING);
