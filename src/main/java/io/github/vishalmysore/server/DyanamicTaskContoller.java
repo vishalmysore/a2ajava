@@ -57,7 +57,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
                 sessionId = UUID.randomUUID().toString();
             }
             task.setSessionId(sessionId);
-            task.setStatus(new TaskStatus(TaskState.SUBMITTED));
+            task.setDetailedAndMessage(TaskState.SUBMITTED," Your Task with id " + taskId + " is submitted");
             task.setHistory(List.of(taskSendParams.getMessage()));
             SendTaskResponse sendTaskResponse = new SendTaskResponse();
             tasks.put(taskId, task);
@@ -72,6 +72,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
                         String text = textPart.getText();
 
                         if(actionCallback!= null) {
+                            actionCallback.setContext(task);
                             // Use the provided action callback
                             getBaseProcessor().processSingleAction(text, actionCallback);
                         } else {
@@ -248,6 +249,31 @@ public class DyanamicTaskContoller implements A2ATaskController {
         String id = params.getId(); // assuming your params object has an id field
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE); //timeout
         emitters.put(id, emitter);
+        String taskId = params.getId();
+        Task task;
+
+        if (tasks.containsKey(taskId)) {
+            task = tasks.get(taskId);
+            List<Message> history = task.getHistory();
+            if (history == null) {
+                history = new ArrayList<>();
+            }
+            List<Message> mutableHistory = new ArrayList<>(history);
+            mutableHistory.add(params.getMessage());
+            task.setHistory(mutableHistory);
+        } else {
+            task = new Task();
+            task.setId(taskId);
+            String sessionId = params.getSessionId();
+            if (sessionId == null || sessionId.isEmpty()) {
+                sessionId = UUID.randomUUID().toString();
+            }
+            task.setSessionId(sessionId);
+            task.setStatus(new TaskStatus(TaskState.SUBMITTED));
+            task.setHistory(List.of(params.getMessage()));
+            SendTaskResponse sendTaskResponse = new SendTaskResponse();
+            tasks.put(taskId, task);
+        }
         nonBlockingService.execute(() -> {
             try {
                 List<Part> parts = params.getMessage().getParts();
@@ -260,6 +286,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
                         // Use text for GeminiV2ActionProcessor
 
                         SSEEmitterCallback sseEmitterCallback = new SSEEmitterCallback(id,emitter);
+                        sseEmitterCallback.setContext(task);
                         getBaseProcessor().processSingleAction(text, sseEmitterCallback);
                     }
                 }
