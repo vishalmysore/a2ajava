@@ -2,12 +2,14 @@
 
 This project provides a Java implementation for both an A2A (Agent-to-Agent) server and client.  **A2A is an open protocol developed by Google** to standardize how AI agents communicate and exchange information, fostering a vibrant ecosystem of interoperable AI.  Imagine a world where diverse AI agents, built with different tools and by different creators, can seamlessly collaborate to solve complex problems - that's the vision A2A is bringing to life. This implementation demonstrates how to set up this communication in Java, using the Spring Framework, with a focus on sending and retrieving tasks, ( I have added a simple example agent for booking and managing airline tickets.)  
 
-## Maven Dependency
-you can include this library in your project by following dependency in your `pom.xml` file:
+
 
 ## Quick Start  
 Use these example to quickly build agents using this library  
-[Database Agent](https://github.com/vishalmysore/SqlAIAgent)
+* [Database Agent](https://github.com/vishalmysore/SqlAIAgent)
+
+## Maven Dependency
+you can include this library in your project by following dependency in your `pom.xml` file:
 
 ```
 <dependency>
