@@ -1,0 +1,24 @@
+package io.github.vishalmysore.mcp.domain;
+
+import lombok.Data;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * The server's response to a tool call.
+ * <p>
+ * Any errors that originate from the tool SHOULD be reported inside the result
+ * object, with `isError` set to true, _not_ as an MCP protocol-level error
+ * response. Otherwise, the LLM would not be able to see that an error occurred
+ * and self-correct.
+ * <p>
+ * However, any errors in _finding_ the tool, an error indicating that the
+ * server does not support tool calls, or any other exceptional conditions,
+ * should be reported as an MCP error response.
+ */
+@Data
+public class CallToolResult {
+    private Object result;
+    private Map<String, String> error;
+}
