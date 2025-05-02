@@ -1,6 +1,7 @@
 # Java Implementation of Google's A2A Protocol: Connecting the Agentverse
 
-This project provides a Java implementation for both an A2A (Agent-to-Agent) server and client.  **A2A is an open protocol developed by Google** to standardize how AI agents communicate and exchange information, fostering a vibrant ecosystem of interoperable AI.  Imagine a world where diverse AI agents, built with different tools and by different creators, can seamlessly collaborate to solve complex problems - that's the vision A2A is bringing to life. This implementation demonstrates how to set up this communication in Java, using the Spring Framework, with a focus on sending and retrieving tasks, ( I have added a simple example agent for booking and managing airline tickets.)  
+This project provides a Java implementation for both an A2A (Agent-to-Agent) server and client. 
+**A2A is an open protocol developed by Google** to standardize how AI agents communicate and exchange information, fostering a vibrant ecosystem of interoperable AI. This api also supports building MCP Servers in Java with use of simple annotations. Imagine a world where diverse AI agents, built with different tools and by different creators, can seamlessly collaborate to solve complex problems - that's the vision A2A is bringing to life. This implementation demonstrates how to set up this communication in Java, using the Spring Framework, with a focus on sending and retrieving tasks, ( I have added a simple example agent for booking and managing airline tickets.)  
 
 
 
