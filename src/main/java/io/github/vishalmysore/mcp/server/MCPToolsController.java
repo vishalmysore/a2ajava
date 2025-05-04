@@ -191,6 +191,7 @@ public class MCPToolsController  {
             textContent.setText(result.toString());
             content.add(textContent);
             callToolResult.setContent(content);
+            textContent.setType("text");
             callback.setContext(callToolResult);
             return callToolResult;
         } catch (AIProcessingException e) {
