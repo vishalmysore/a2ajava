@@ -21,7 +21,7 @@ import java.util.Map;
  */
 @Data
 @ToString
-public class CallToolResult {
+public class CallToolResult extends Result{
     @NotNull
     private List<Content> content;
     private Boolean isError;
