@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
 
 @Service
 public class DyanamicTaskContoller implements A2ATaskController {
-    private final Map<String, Task> tasks = new ConcurrentHashMap<>();
+    protected final Map<String, Task> tasks = new ConcurrentHashMap<>();
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
     protected AIProcessor baseProcessor = new GeminiV2ActionProcessor();
