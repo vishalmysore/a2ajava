@@ -27,9 +27,20 @@ public class A2AStandalone {
             }
 
             @Override
+            public String getType() {
+                return "";
+            }
+
+            @Override
+            public String setType(String type) {
+                return "";
+            }
+
+            @Override
             public void sendtStatus(String status, ActionState state) {
 
             }
+
 
 
         };

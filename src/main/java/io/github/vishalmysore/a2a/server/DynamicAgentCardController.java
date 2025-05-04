@@ -3,6 +3,8 @@ package io.github.vishalmysore.a2a.server;
 import com.t4a.api.AIAction;
 import com.t4a.api.GroupInfo;
 import com.t4a.predict.PredictionLoader;
+import com.t4a.transform.GeminiV2PromptTransformer;
+import com.t4a.transform.PromptTransformer;
 import io.github.vishalmysore.a2a.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,13 @@ import java.util.Map;
  */
 @Service
 public class DynamicAgentCardController implements A2AAgentCardController {
+
+    private PromptTransformer promptTransformer = new GeminiV2PromptTransformer();
+
+    @Override
+    public PromptTransformer getPromptTransformer() {
+        return promptTransformer;
+    }
 
     public ResponseEntity<AgentCard> getAgentCard() {
         AgentCard agentCard = new AgentCard();

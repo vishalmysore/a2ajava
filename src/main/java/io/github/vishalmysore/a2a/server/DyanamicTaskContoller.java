@@ -1,7 +1,9 @@
 package io.github.vishalmysore.a2a.server;
 
 import com.t4a.detect.ActionCallback;
+import com.t4a.processor.AIProcessor;
 import com.t4a.processor.GeminiV2ActionProcessor;
+import com.t4a.processor.OpenAiActionProcessor;
 import io.github.vishalmysore.a2a.domain.*;
 import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
@@ -11,7 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -28,10 +32,31 @@ public class DyanamicTaskContoller implements A2ATaskController {
     private final Map<String, Task> tasks = new ConcurrentHashMap<>();
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
-    protected GeminiV2ActionProcessor baseProcessor = new GeminiV2ActionProcessor();
+    protected AIProcessor baseProcessor = new GeminiV2ActionProcessor();
 
+    @PostConstruct
+    public void init() {
+        Properties properties = new Properties();
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("tools4ai.properties")) {
+            if (input == null) {
+                throw new RuntimeException("Unable to find tools4ai.properties");
+            }
+            properties.load(input);
+
+            String provider = properties.getProperty("agent.provider");
+            if ("openai".equals(provider)) {
+                baseProcessor = new OpenAiActionProcessor();
+            } else if ("gemini".equals(provider)) {
+                baseProcessor = new GeminiV2ActionProcessor();
+            } else {
+                throw new RuntimeException("Unsupported provider: " + provider);
+            }
+        } catch (IOException e) {
+            log.info("Provider not found defaulting to Gemini");
+        }
+    }
     @Override
-    public GeminiV2ActionProcessor getBaseProcessor() {
+    public AIProcessor getBaseProcessor() {
         return baseProcessor;
     }
 

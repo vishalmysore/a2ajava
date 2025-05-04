@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
@@ -26,12 +28,12 @@ import java.util.*;
 //@RequestMapping("/mcp")
 @Log
 @Service
-public class MCPToolsController {
+public class MCPToolsController  {
 
     @Getter
     private ListToolsResult toolsResult;
 
-    private GeminiV2ActionProcessor baseProcessor = new GeminiV2ActionProcessor();
+    private AIProcessor baseProcessor = new GeminiV2ActionProcessor();
 
     private JsonUtils utils = new JsonUtils();
     public AIProcessor getBaseProcessor() {
@@ -40,6 +42,25 @@ public class MCPToolsController {
 
     @PostConstruct
     public void init() {
+
+        Properties properties = new Properties();
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("tools4ai.properties")) {
+            if (input == null) {
+                throw new RuntimeException("Unable to find tools4ai.properties");
+            }
+            properties.load(input);
+
+            String provider = properties.getProperty("agent.provider");
+            if ("openai".equals(provider)) {
+                baseProcessor = new OpenAiActionProcessor();
+            } else if ("gemini".equals(provider)) {
+                baseProcessor = new GeminiV2ActionProcessor();
+            } else {
+                log.info("Provider not found defaulting to Gemini");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading properties file", e);
+        }
         Map<GroupInfo, String> groupActions = PredictionLoader.getInstance().getActionGroupList().getGroupActions();
         List<Tool> tools = convertGroupActionsToTools(groupActions);
 
@@ -157,19 +178,21 @@ public class MCPToolsController {
     }
 
 
-    public ResponseEntity<CallToolResult> callTool(@RequestBody ToolCallRequest request, ActionCallback callback) {
+    public CallToolResult callTool(@RequestBody ToolCallRequest request, ActionCallback callback) {
         Map<String, AIAction> predictions = PredictionLoader.getInstance().getPredictions();
         AIAction action = predictions.get(request.getName());
         AIProcessor processor = getBaseProcessor();
         try {
             Object result = processor.processSingleAction(request.toString(),action,new LoggingHumanDecision(),new LogginggExplainDecision(),callback);
+
             CallToolResult callToolResult = new CallToolResult();
             List<Content> content = new ArrayList<>();
             TextContent textContent = new TextContent();
             textContent.setText(result.toString());
             content.add(textContent);
             callToolResult.setContent(content);
-            return ResponseEntity.ok(callToolResult);
+            callback.setContext(callToolResult);
+            return callToolResult;
         } catch (AIProcessingException e) {
             log.severe(e.getMessage());
         }

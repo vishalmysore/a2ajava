@@ -1,21 +1,24 @@
 package io.github.vishalmysore.a2a.server;
 
-import com.t4a.detect.ActionCallback;
 import com.t4a.detect.ActionState;
 import io.github.vishalmysore.a2a.domain.*;
+import io.github.vishalmysore.common.A2AActionCallBack;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.List;
 
 
-public class SSEEmitterCallback implements ActionCallback {
+public class SSEEmitterCallback implements A2AActionCallBack {
 
     private SseEmitter sseEmitter;
     private Object context ;
     private String status;
     private String taskId;
-    public SSEEmitterCallback(String taskId,SseEmitter sseEmitter) {
+
+
+
+    public SSEEmitterCallback(String taskId, SseEmitter sseEmitter) {
         this.sseEmitter = sseEmitter;
         this.taskId = taskId;
 

@@ -1,5 +1,7 @@
 package regression.server;
 
+import com.t4a.transform.GeminiV2PromptTransformer;
+import com.t4a.transform.PromptTransformer;
 import io.github.vishalmysore.a2a.domain.*;
 import io.github.vishalmysore.a2a.server.A2AAgentCardController;
 import lombok.extern.java.Log;
@@ -20,6 +22,13 @@ import java.util.List;
 @Log
 public class TicketAgentCardController implements A2AAgentCardController {
     //@GetMapping(value = "/ticketagent.json", produces = MediaType.APPLICATION_JSON_VALUE)
+
+    private GeminiV2PromptTransformer geminiV2PromptTransformer = new GeminiV2PromptTransformer();
+
+    public PromptTransformer getPromptTransformer() {
+        return geminiV2PromptTransformer;
+    }
+
     public ResponseEntity<AgentCard> getAgentCard() {
         AgentCard agentCard = new AgentCard();
         agentCard.setName("TicketQueen : Ticket Booking Agent");
