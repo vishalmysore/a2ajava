@@ -34,7 +34,7 @@ public class JsonRpcController {
         return dynamicTaskController;
     }
 
-    @PostMapping
+
     public Object handleRpc(@RequestBody JsonRpcRequest request) {
         String method = request.getMethod();
         Object params = request.getParams();

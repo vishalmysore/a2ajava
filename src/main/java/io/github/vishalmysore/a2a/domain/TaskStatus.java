@@ -12,6 +12,7 @@ public class TaskStatus {
     private String timestamp;
 
     public TaskStatus() {
+        this.state = TaskState.SUBMITTED; // Default state set to COMPLETED
         setCurrentTimestamp();
     }
 

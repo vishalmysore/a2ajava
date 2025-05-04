@@ -28,7 +28,7 @@ public enum TaskState {
     @JsonCreator
     public static TaskState forValue(String value) {
         for (TaskState state : values()) {
-            if (state.value.equals(value)) {
+            if (state.value.equalsIgnoreCase(value)) { // Case-insensitive comparison
                 return state;
             }
         }
