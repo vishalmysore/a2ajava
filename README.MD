@@ -9,6 +9,12 @@ This project provides a Java implementation for both an A2A (Agent-to-Agent) ser
 Use these example to quickly build agents using this library  
 * [Database Agent](https://github.com/vishalmysore/SqlAIAgent)
 
+## Whats so special about A2AJava library?
+
+You can simple annotate your classes with @Agent and @Action and build a server.  The library will take care of the rest.  You can also use this library to build a client to send and receive messages from the server.  The library is built on top of Spring Boot and uses Jackson for JSON serialization/deserialization.  The library is designed to be easy to use and extend, so you can build your own agents quickly and easily.
+ALl methods annotated with @Action are exposed as A2A tasks and also MCP tools you dont need to do anything . 
+Infuse AI in any running application  
+
 ## Maven Dependency
 you can include this library in your project by following dependency in your `pom.xml` file:
 
