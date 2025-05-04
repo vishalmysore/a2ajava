@@ -1,7 +1,9 @@
 package io.github.vishalmysore.mcp.domain;
 
 import lombok.Data;
+import lombok.ToString;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +20,10 @@ import java.util.Map;
  * should be reported as an MCP error response.
  */
 @Data
+@ToString
 public class CallToolResult {
-    private Object result;
-    private Map<String, String> error;
+    @NotNull
+    private List<Content> content;
+    private Boolean isError;
+    private Map<String, Object> _meta;
 }

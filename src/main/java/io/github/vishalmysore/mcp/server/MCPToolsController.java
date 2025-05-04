@@ -2,10 +2,13 @@ package io.github.vishalmysore.mcp.server;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.t4a.JsonUtils;
 import com.t4a.api.AIAction;
 import com.t4a.api.GenericJavaMethodAction;
 import com.t4a.api.GroupInfo;
+import com.t4a.detect.ActionCallback;
 import com.t4a.predict.PredictionLoader;
+import com.t4a.processor.*;
 import io.github.vishalmysore.mcp.domain.*;
 import lombok.Getter;
 import lombok.extern.java.Log;
@@ -27,6 +30,13 @@ public class MCPToolsController {
 
     @Getter
     private ListToolsResult toolsResult;
+
+    private GeminiV2ActionProcessor baseProcessor = new GeminiV2ActionProcessor();
+
+    private JsonUtils utils = new JsonUtils();
+    public AIProcessor getBaseProcessor() {
+        return baseProcessor;
+    }
 
     @PostConstruct
     public void init() {
@@ -59,39 +69,71 @@ public class MCPToolsController {
                     Map<String, ToolPropertySchema> schemaProperties = new HashMap<>();
                     List<String> requiredFields = new ArrayList<>();
 
-                    Method method = methodAction.getActionMethod();
-                    Parameter[] methodParams = method.getParameters();
+                    String jsonStr = methodAction.getActionParameters();
+                    AIProcessor processor = getBaseProcessor();
+                    String aiResponse = null;
+                    try {
+                        aiResponse = processor.query("I am giving you a json string check the parameters section and return the required fields including subfields as simple json, do not include any other commentary or special characters "+jsonStr);
+                        aiResponse =utils.extractJson(aiResponse);
+                        log.info(aiResponse);
+                    } catch (AIProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                //    Method method = methodAction.getActionMethod();
+                 //   Parameter[] methodParams = method.getParameters();
 
-                    for (Parameter param : methodParams) {
-                        String paramName = param.getName();
+                    //for (Parameter param : methodParams) {
+                      //  String paramName = param.getName();
 
                         // ToolParameters (for Claude/LLM)
-                        ToolParameter toolParam = new ToolParameter();
-                        toolParam.setType(getJsonType(param.getType()));
-                        toolParam.setDescription("Parameter: " + paramName);
-                        parameters.getProperties().put(paramName, toolParam);
+                       // ToolParameter toolParam = new ToolParameter();
+                       // toolParam.setType(getJsonType(param.getType()));
+                       // toolParam.setDescription("Parameter: " + paramName);
+                       // parameters.getProperties().put(paramName, toolParam);
 
                         // InputSchema (for MCP)
-                        ToolPropertySchema schema = new ToolPropertySchema();
-                        schema.setType(getJsonType(param.getType()));
-                        schema.setDescription("Parameter: " + paramName);
-                        schemaProperties.put(paramName, schema);
+                        //ToolPropertySchema schema = new ToolPropertySchema();
+                        //schema.setType(getJsonType(param.getType()));
+                        //schema.setDescription("Parameter: " + paramName);
+                        //schemaProperties.put(paramName, schema);
 
-                        if (!param.isAnnotationPresent(Nullable.class)) {
-                            parameters.getRequired().add(paramName);
-                            requiredFields.add(paramName);
-                        }
-                    }
+                        //if (!param.isAnnotationPresent(Nullable.class)) {
+                          //  parameters.getRequired().add(paramName);
+                            //requiredFields.add(paramName);
+                        //}
+                    //}
 
                     tool.setParameters(parameters);
 
+
+
+                    String customParam = "provideAllValuesInPlainEnglish";
+
+                    // ToolParameters (for Claude/LLM)
+                    ToolParameter toolParam = new ToolParameter();
+                    toolParam.setType("string");
+                    toolParam.setDescription(aiResponse );
+                    parameters.getProperties().put(customParam, toolParam);
+
+                    // InputSchema (for MCP)
+                    ToolPropertySchema schema = new ToolPropertySchema();
+                    schema.setType("string");
+                    schema.setDescription(aiResponse);
+                    schemaProperties.put(customParam, schema);
+
+
+                        parameters.getRequired().add(customParam);
+                        requiredFields.add(customParam);
                     ToolInputSchema inputSchema = new ToolInputSchema();
                     inputSchema.setProperties(schemaProperties);
                     inputSchema.setRequired(requiredFields);
                     tool.setInputSchema(inputSchema);
 
+
                     tools.add(tool);
                 }
+
+
             }
         }
         return tools;
@@ -107,48 +149,32 @@ public class MCPToolsController {
         return "object";
     }
 
-    @GetMapping("/list-tools")
+
     public ResponseEntity<Map<String, List<Tool>>> listTools() {
         Map<String, List<Tool>> response = new HashMap<>();
         response.put("tools", toolsResult.getTools());
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/call-tool")
-    public ResponseEntity<CallToolResult> callTool(@RequestBody ToolCallRequest request) {
+
+    public ResponseEntity<CallToolResult> callTool(@RequestBody ToolCallRequest request, ActionCallback callback) {
         Map<String, AIAction> predictions = PredictionLoader.getInstance().getPredictions();
         AIAction action = predictions.get(request.getName());
-
-        if (action == null) {
-            Map<String, String> errorMap = new HashMap<>();
-            errorMap.put("error", "Tool not found: " + request.getName());
-            CallToolResult errorResult = new CallToolResult();
-            errorResult.setError(errorMap);
-            return ResponseEntity.badRequest().body(errorResult);
-        }
-
+        AIProcessor processor = getBaseProcessor();
         try {
-            if (action instanceof GenericJavaMethodAction) {
-                GenericJavaMethodAction methodAction = (GenericJavaMethodAction) action;
-                Method method = methodAction.getActionMethod();
-                Object[] args = buildMethodArguments(method, methodAction.getActionParameters());
-                Object result = method.invoke(methodAction.getActionInstance(), args);
-                CallToolResult toolResult = new CallToolResult();
-                toolResult.setResult(result);
-                return ResponseEntity.ok(toolResult);
-            }
-            CallToolResult errorResult = new CallToolResult();
-            Map<String, String> errorMap = new HashMap<>();
-            errorMap.put("error", "Unsupported action type");
-            errorResult.setError(errorMap);
-            return ResponseEntity.badRequest().body(errorResult);
-        } catch (Exception e) {
-            CallToolResult errorResult = new CallToolResult();
-            Map<String, String> errorMap = new HashMap<>();
-            errorMap.put("error", "Unsupported action type");
-            errorResult.setError(errorMap);
-            return ResponseEntity.internalServerError().body(errorResult);
+            Object result = processor.processSingleAction(request.toString(),action,new LoggingHumanDecision(),new LogginggExplainDecision(),callback);
+            CallToolResult callToolResult = new CallToolResult();
+            List<Content> content = new ArrayList<>();
+            TextContent textContent = new TextContent();
+            textContent.setText(result.toString());
+            content.add(textContent);
+            callToolResult.setContent(content);
+            return ResponseEntity.ok(callToolResult);
+        } catch (AIProcessingException e) {
+            log.severe(e.getMessage());
         }
+
+        return null;
     }
     private Object[] buildMethodArguments(Method method, String jsonStr) throws Exception {
         Parameter[] parameters = method.getParameters();

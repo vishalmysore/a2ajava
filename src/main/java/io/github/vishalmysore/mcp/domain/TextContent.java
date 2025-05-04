@@ -1,5 +1,10 @@
 package io.github.vishalmysore.mcp.domain;
 
+import lombok.Data;
+import lombok.ToString;
+
+@Data
+@ToString
 public class TextContent implements Content {
     /**
      * Optional annotations for the client.
