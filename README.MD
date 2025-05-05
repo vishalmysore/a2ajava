@@ -186,8 +186,8 @@ The client will be calling the JSONRPC endpoint, which is a single endpoint that
 
 ## Important Disclaimer(s)
 
-* This Java implementation provides a starting point for building A2A-compliant agents.  It's intended as an example and may require adaptation and extension for use in a production environment.  Specifically, the server-side `TaskService` is conceptual and will need to be fleshed out with your specific application's business logic.  
-* The client-side implementation is also a basic example and may require enhancements for error handling, security, and other production considerations.  The provided code is not a complete solution but rather a foundation upon which to build your A2A-compliant agents.  
+* This Java implementation provides a starting point for building A2A-compliant and MCP-Compliant agents and is being actively developed as and when i get time.   
+* The client-side implementation is currently a basic example and may require enhancements for error handling, security, and other production considerations.  The provided code is not a complete solution but rather a foundation upon which to build your A2A-compliant agents.  
 * The A2A protocol is an evolving standard, and this implementation may need to be updated as the protocol matures.  Always refer to the official A2A documentation for the latest specifications and best practices.  
 * This implementation is not affiliated with or endorsed by Google.  It is my independent effort to demonstrate the A2A protocol in Java.  
 * The A2A protocol is a work in progress, and this implementation may not cover all aspects of the protocol.  Always refer to the official A2A documentation for the latest specifications and best practices.  
