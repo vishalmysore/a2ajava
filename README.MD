@@ -8,6 +8,7 @@ This project provides a Java implementation for both an A2A (Agent-to-Agent) ser
 ## Quick Start  
 Use these example to quickly build agents using this library  
 * [Database Agent](https://github.com/vishalmysore/SqlAIAgent)
+* [Spring A2A Agent](https://github.com/vishalmysore/SpringActions)
 
 ## Tutorials
 * [Introduction](tutorial/1_introduction.md)

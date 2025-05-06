@@ -51,7 +51,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
             } else if ("gemini".equals(provider)) {
                 baseProcessor = new GeminiV2ActionProcessor();
             } else {
-                throw new RuntimeException("Unsupported provider: " + provider);
+                log.info("Unsupported provider: agent.provider in tools4ai.properties " + provider+" using Gemini as default");
             }
         } catch (IOException e) {
             log.info("Provider not found defaulting to Gemini");

@@ -12,7 +12,7 @@ To create an A2A agent, follow these steps:
 </dependency>
 ```
 
-2. Create a properties file `tools4ai.properties`:
+2. Create a properties file `tools4ai.properties`: This step is optional by default the provider is set to `gemini` but you can change it to `openai` if needed.
 ```properties
 agent.provider=gemini  # or openai
 ```
@@ -101,6 +101,8 @@ Available processors include:
 - `SpringGeminiProcessor`: Spring-integrated Gemini processor
 - `SpringOpenAIProcessor`: Spring-integrated OpenAI processor
 - `SeleniumProcessor`: For UI automation integration
+- `AnthropicActionProcessor` : Claude 
+- `LocalAiActionProcessor` : Local AI integration
 
 ## How do I add risk types to agents?
 Use the `riskLevel` parameter in the `@Action` annotation:
