@@ -6,6 +6,7 @@ import com.t4a.processor.GeminiV2ActionProcessor;
 import com.t4a.processor.OpenAiActionProcessor;
 import io.github.vishalmysore.a2a.domain.*;
 import lombok.extern.java.Log;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import java.util.concurrent.Executors;
 @Log
 
 @Service
+@Qualifier(TaskControllerQualifiers.DYNAMIC_TASK_CONTROLLER)
 public class DyanamicTaskContoller implements A2ATaskController {
     protected final Map<String, Task> tasks = new ConcurrentHashMap<>();
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();

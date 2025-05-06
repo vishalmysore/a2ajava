@@ -6,6 +6,8 @@ import io.github.vishalmysore.a2a.domain.TaskSendParams;
 import io.github.vishalmysore.a2a.repository.TaskRepository;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import com.t4a.detect.ActionCallback;
@@ -23,6 +25,8 @@ import java.util.List;
 import java.util.Optional;
 @Log
 @Service
+@Qualifier(TaskControllerQualifiers.DBBASED_TASK_CONTROLLER)
+@ConditionalOnProperty(name = "a2a.persistence", havingValue = "database")
 public class DatabaseTaskController extends DyanamicTaskContoller {
 
     @Autowired

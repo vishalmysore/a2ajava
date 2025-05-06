@@ -6,6 +6,7 @@ import com.t4a.detect.ActionCallback;
 
 import io.github.vishalmysore.a2a.domain.Task;
 import lombok.extern.java.Log;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 @Log
 @Service
+@Qualifier(TaskControllerQualifiers.FILEBASED_TASK_CONTROLLER)
 public class FileBasedTaskController extends DyanamicTaskContoller {
 
     private static final String TASKS_FILE = "tasks.json";

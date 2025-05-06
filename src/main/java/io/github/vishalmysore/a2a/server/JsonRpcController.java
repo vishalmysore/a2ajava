@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.vishalmysore.a2a.domain.*;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +29,7 @@ public class JsonRpcController {
      * IT can handle any task wheter ticket or food prefernce etc
      */
     @Autowired
+    @Qualifier(TaskControllerQualifiers.DYNAMIC_TASK_CONTROLLER)
     private DyanamicTaskContoller dynamicTaskController;
 
     protected A2ATaskController getTaskController() {

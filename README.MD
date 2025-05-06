@@ -34,10 +34,10 @@ you can include this library in your project by following dependency in your `po
 <dependency>
     <groupId>io.github.vishalmysore</groupId>
     <artifactId>a2ajava</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.6.1</version>
 </dependency>
 ```
-Get the latest version from [here](https://repo1.maven.org/maven2/io/github/vishalmysore/a2ajava) 
+At this time the latest stable version is 0.0.6.1 , in future you can get the latest version from [here](https://repo1.maven.org/maven2/io/github/vishalmysore/a2ajava) 
 
 ## Articles
 * [A2A Protocol and Java](https://medium.com/p/54deb16302c0)  
