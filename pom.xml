@@ -11,7 +11,7 @@
     </parent>
     <groupId>io.github.vishalmysore</groupId>
     <artifactId>a2ajava</artifactId>
-    <version>0.0.7.1</version>
+    <version>0.0.7.2</version>
     <name>A2A Protocol Implementation for Java</name>
     <description>
         Java implementation of the A2A protocol, which allows for the exchange of data between different AI systems.
