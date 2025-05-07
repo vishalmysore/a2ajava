@@ -52,7 +52,7 @@ public class TicketTaskController implements A2ATaskController {
 
 
     @PostMapping("/send")
-    public SendTaskResponse sendTask(@RequestBody TaskSendParams taskSendParams, ActionCallback callback) {
+    public SendTaskResponse sendTask(@RequestBody TaskSendParams taskSendParams, ActionCallback callback, boolean isAsync) {
         String taskId = taskSendParams.getId();
         Task task;
         if (tasks.containsKey(taskId)) {

@@ -2,7 +2,7 @@ package io.github.vishalmysore.common;
 
 import com.t4a.detect.ActionState;
 
-public class MCPResultsCallBack implements MCPActionCallback{
+public class MCPResultsCallBack extends MCPActionCallback{
     private String status;
     private Object context;
 

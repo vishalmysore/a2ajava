@@ -2,12 +2,14 @@ package io.github.vishalmysore.a2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Entity
 @DiscriminatorValue("text")
+@ToString
 public class TextPart extends Part {
 
     @Id

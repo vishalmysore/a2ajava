@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 
-public class SSEEmitterCallback implements A2AActionCallBack {
+public class SSEEmitterCallback extends A2AActionCallBack {
 
     private SseEmitter sseEmitter;
     private Object context ;

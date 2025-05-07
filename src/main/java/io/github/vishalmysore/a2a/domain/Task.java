@@ -55,7 +55,7 @@ public class Task implements A2ATask {
     public void setDetailedAndMessage(TaskState state, String messageStr) {
         TextPart textPart = new TextPart();
         textPart.setType("text");
-        textPart.setText("messageStr");
+        textPart.setText(messageStr);
 
         Message message = new Message();
         message.setRole("agent");

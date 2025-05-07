@@ -22,7 +22,11 @@ public interface A2ATaskController {
 
     Object resubscribeToTask(TaskResubscriptionParams resubParams);
 
-    public SendTaskResponse sendTask(TaskSendParams taskSendParams, ActionCallback callback);
+    default SendTaskResponse sendTask(TaskSendParams taskSendParams, ActionCallback callback) {
+        return sendTask(taskSendParams, callback, true);
+    };
+
+    public SendTaskResponse sendTask(TaskSendParams taskSendParams, ActionCallback callback,boolean isAsync);
 
     public default SendTaskResponse sendTask(TaskSendParams taskSendParams) {
         return sendTask(taskSendParams, null);

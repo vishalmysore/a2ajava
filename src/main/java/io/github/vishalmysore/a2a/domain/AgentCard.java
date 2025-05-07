@@ -3,7 +3,9 @@ package io.github.vishalmysore.a2a.domain;
 import com.t4a.annotations.ListType;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class AgentCard {
@@ -22,5 +24,30 @@ public class AgentCard {
     private List<Skill> skills;
 
     // Getters and setters
+    public void addSkill(String name, String description) {
+        if (skills == null) {
+            skills = new ArrayList<>();
+        }
 
+        Skill skill = new Skill();
+        skill.setId(UUID.randomUUID().toString());
+        skill.setName(name);
+        skill.setDescription(description);
+
+        skills.add(skill);
+    }
+
+    public void addSkill(String name, String description, String... tags) {
+        if (skills == null) {
+            skills = new ArrayList<>();
+        }
+
+        Skill skill = new Skill();
+        skill.setId(UUID.randomUUID().toString());
+        skill.setName(name);
+        skill.setDescription(description);
+        skill.setTags(tags);
+
+        skills.add(skill);
+    }
 }

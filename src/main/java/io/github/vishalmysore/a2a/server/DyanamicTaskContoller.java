@@ -64,7 +64,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
 
 
 
-    public SendTaskResponse sendTask(TaskSendParams taskSendParams, ActionCallback actionCallback) {
+    public SendTaskResponse sendTask(TaskSendParams taskSendParams, ActionCallback actionCallback,boolean isAsync) {
         String taskId = taskSendParams.getId();
         Task task;
 
@@ -91,39 +91,11 @@ public class DyanamicTaskContoller implements A2ATaskController {
             tasks.put(taskId, task);
         }
 
-        nonBlockingService.execute(() -> {
-            try {
-                List<Part> parts = taskSendParams.getMessage().getParts();
-                if (parts != null && !parts.isEmpty()) {
-                    Part part = parts.get(0);
-                    if (part instanceof TextPart textPart && "text".equals(textPart.getType())) {
-                        String text = textPart.getText();
-
-                        if(actionCallback!= null) {
-                            actionCallback.setContext(task);
-                            // Use the provided action callback
-                            getBaseProcessor().processSingleAction(text, actionCallback);
-                        } else {
-                            // Default processing
-                            getBaseProcessor().processSingleAction(text);
-                        }
-
-
-                    }
-                }
-            } catch (Exception e) {
-                TaskStatus failedStatus = new TaskStatus(TaskState.FAILED);
-                Message errorMessage = new Message();
-                errorMessage.setRole("agent");
-                TextPart errorPart = new TextPart();
-                errorPart.setType("text");
-                errorPart.setText("Processing failed: " + e.getMessage());
-                errorMessage.setParts(List.of(errorPart));
-                failedStatus.setMessage(errorMessage);
-                task.setStatus(failedStatus);
-                tasks.put(taskId, task);
-            }
-        });
+        if (isAsync) {
+            nonBlockingService.execute(() -> processTaskLogic(taskSendParams, task, taskId, actionCallback));
+        } else {
+            processTaskLogic(taskSendParams, task, taskId, actionCallback);
+        }
 
         SendTaskResponse response = new SendTaskResponse();
         response.setId(taskId);
@@ -132,6 +104,35 @@ public class DyanamicTaskContoller implements A2ATaskController {
     }
 
 
+    protected void processTaskLogic(TaskSendParams taskSendParams, Task task, String taskId, ActionCallback actionCallback) {
+        try {
+            List<Part> parts = taskSendParams.getMessage().getParts();
+            if (parts != null && !parts.isEmpty()) {
+                Part part = parts.get(0);
+                if (part instanceof TextPart textPart && "text".equals(textPart.getType())) {
+                    String text = textPart.getText();
+
+                    if(actionCallback!= null) {
+                        actionCallback.setContext(task);
+                        getBaseProcessor().processSingleAction(text, actionCallback);
+                    } else {
+                        getBaseProcessor().processSingleAction(text);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            TaskStatus failedStatus = new TaskStatus(TaskState.FAILED);
+            Message errorMessage = new Message();
+            errorMessage.setRole("agent");
+            TextPart errorPart = new TextPart();
+            errorPart.setType("text");
+            errorPart.setText("Processing failed: " + e.getMessage());
+            errorMessage.setParts(List.of(errorPart));
+            failedStatus.setMessage(errorMessage);
+            task.setStatus(failedStatus);
+            tasks.put(taskId, task);
+        }
+    }
 
     @Override
     public ResponseEntity<Task> getTask(@RequestParam String id, @RequestParam(defaultValue = "0") int historyLength) {
