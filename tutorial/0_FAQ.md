@@ -170,3 +170,13 @@ public PromptTransformer getPromptTransformer() {
 ```
 
 The framework automatically handles JSON serialization/deserialization of complex types.
+
+## How Can i persist the Task?
+
+By Default the tasks are persisted in memory and not persisted to any database. You can use the property 
+
+```
+a2a.persistence=database
+```
+to save the data in db
+

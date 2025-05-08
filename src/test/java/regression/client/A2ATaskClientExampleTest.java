@@ -3,7 +3,7 @@ package regression.client;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TaskClientExampleTest {
+public class A2ATaskClientExampleTest {
 
     @Test
     public void testSendTask() {

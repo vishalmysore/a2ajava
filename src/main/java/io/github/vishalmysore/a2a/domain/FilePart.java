@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Entity
@@ -16,7 +15,7 @@ public class FilePart extends Part {
     private String id;
     private String type = "file";
     @OneToOne
-    private FileInfo file;
+    private FileContent file;
     @ElementCollection
     @CollectionTable(name = "file_part_metadata",
             joinColumns = @JoinColumn(name = "part_id"))
@@ -28,14 +27,14 @@ public class FilePart extends Part {
         return type;
     }
 
-    public FileInfo getFile() {
+    public FileContent getFile() {
         return file;
     }
 
     public void setType(String type) {
         this.type = type;
     }
-    public void setFile(FileInfo file) {
+    public void setFile(FileContent file) {
         this.file = file;
     }
 

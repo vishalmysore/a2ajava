@@ -38,7 +38,7 @@ you can include this library in your project by following dependency in your `po
     <version>0.0.6.1</version>
 </dependency>
 ```
-At this time the latest stable version is 0.0.6.1 , in future you can get the latest version from [here](https://repo1.maven.org/maven2/io/github/vishalmysore/a2ajava) 
+Get the latest version from [here](https://repo1.maven.org/maven2/io/github/vishalmysore/a2ajava) 
 
 ## Articles
 * [A2A Protocol and Java](https://medium.com/p/54deb16302c0)  
@@ -188,10 +188,10 @@ The client will be calling the JSONRPC endpoint, which is a single endpoint that
 ## Important Disclaimer(s)
 
 * This Java implementation provides a starting point for building A2A-compliant and MCP-Compliant agents and is being actively developed as and when i get time.   
-* The client-side implementation is currently a basic example and may require enhancements for error handling, security, and other production considerations.  The provided code is not a complete solution but rather a foundation upon which to build your A2A-compliant agents.  
+* The client-side implementation  may require enhancements for error handling, security, and other production considerations.  The provided code is not a complete solution but rather a foundation upon which to build your A2A-compliant agents.  
 * The A2A protocol is an evolving standard, and this implementation may need to be updated as the protocol matures.  Always refer to the official A2A documentation for the latest specifications and best practices.  
 * This implementation is not affiliated with or endorsed by Google.  It is my independent effort to demonstrate the A2A protocol in Java.  
-* The A2A protocol is a work in progress, and this implementation may not cover all aspects of the protocol.  Always refer to the official A2A documentation for the latest specifications and best practices.  
-* I have just added basic error handling and logging.  In a production environment, you should implement more robust error handling and logging mechanisms to ensure the reliability and maintainability of your A2A agents.  
-* The provided code is not a complete solution but rather a foundation upon which to build your A2A-compliant agents.  You may need to adapt and extend the code to fit your specific use case and requirements.  
+  
+  
+  
 

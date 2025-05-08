@@ -1,5 +1,6 @@
 package io.github.vishalmysore.a2a.server;
 
+import com.t4a.JsonUtils;
 import com.t4a.detect.ActionCallback;
 import com.t4a.processor.AIProcessor;
 import com.t4a.processor.GeminiV2ActionProcessor;
@@ -116,7 +117,17 @@ public class DyanamicTaskContoller implements A2ATaskController {
                         actionCallback.setContext(task);
                         getBaseProcessor().processSingleAction(text, actionCallback);
                     } else {
-                        getBaseProcessor().processSingleAction(text);
+                        Object obj = getBaseProcessor().processSingleAction(text);
+                        List<Part> partsList  = task.getStatus().getMessage().getParts();
+                        TextPart resultPart = new TextPart();
+                        partsList.add(resultPart);
+                        task.getStatus().setState(TaskState.COMPLETED);
+                        resultPart.setType("text");
+                        if(obj!=null) {
+                            resultPart.setText(JsonUtils.convertObjectToJson(obj));
+                        } else {
+                            resultPart.setText("No result");
+                        }
                     }
                 }
             }

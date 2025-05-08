@@ -88,13 +88,16 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
 
         try {
             this.cachedAgentCard = (AgentCard) promptTransformer.transformIntoPojo(
-                    "use this description and also populate skills in detail" + finalDescription,
+                    "use this description and also populate skills in detail " + finalDescription,
                     AgentCard.class
             );
         } catch (AIProcessingException e) {
-            throw new RuntimeException(e);
+            log.severe("The skills are not populate in the agent card as actions are more in number \n you can either try with different processor \n" +
+                    " or you can populate skills individually and add to agent card ");
         }
     }
+
+
 
 
     public ResponseEntity<AgentCard> getAgentCard() {

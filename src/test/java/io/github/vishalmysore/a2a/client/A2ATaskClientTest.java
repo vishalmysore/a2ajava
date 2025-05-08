@@ -1,24 +1,21 @@
 package io.github.vishalmysore.a2a.client;
 
-import io.github.vishalmysore.a2a.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestTemplate;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class TaskClientTest {
+public class A2ATaskClientTest {
 
-    private TaskClient client;
+    private A2ATaskClient client;
     private RestTemplate mockRestTemplate;
     private static final String CUSTOM_BASE_URL = "http://custom.api.com/rpc";
 
     @BeforeEach
     public void setUp() {
         mockRestTemplate = mock(RestTemplate.class);
-        client = new TaskClient(CUSTOM_BASE_URL);
+        client = new A2ATaskClient(CUSTOM_BASE_URL);
     }
 
     @Test

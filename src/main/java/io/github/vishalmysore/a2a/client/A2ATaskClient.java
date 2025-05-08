@@ -20,7 +20,7 @@ import java.util.UUID;
  * For normal client server application you can use client built in angular or react or any other web framework
  */
 @Log
-public class TaskClient {
+public class A2ATaskClient {
     private static final String DEFAULT_BASE_URL = "http://localhost:8080/rpc";
     private final String baseUrl;
     private final RestTemplate restTemplate;
@@ -28,11 +28,11 @@ public class TaskClient {
     private final List<Task> pendingTasks;
     private final List<Task> completedTasks;
 
-    public TaskClient() {
+    public A2ATaskClient() {
         this(DEFAULT_BASE_URL);
     }
 
-    public TaskClient(String baseUrl) {
+    public A2ATaskClient(String baseUrl) {
         this.baseUrl = baseUrl;
         this.restTemplate = new RestTemplate();
         this.objectMapper = new ObjectMapper();
