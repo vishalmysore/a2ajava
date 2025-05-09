@@ -6,10 +6,13 @@ This project provides a Java implementation for both an A2A (Agent-to-Agent) ser
 
 
 ## Quick Start  
+
 Use these example to quickly build agents using this library  
 * [Database Agent](https://github.com/vishalmysore/SqlAIAgent) - Use A2A to build a database agent using Derby DB  
 * [Spring A2A Agent](https://github.com/vishalmysore/SpringActions) - Use A2A to build a spring agent using A2A and MCP  
 * [Standalone Java](https://github.com/vishalmysore/a2a-examples) - Several Examples on how to Use A2A to build a standalone java agent using A2A and MCP    
+* [Log Monitoring Agent](https://github.com/vishalmysore/agenticlog) - Use A2A to build a log monitoring agent which triggers a2a task based on the log messages.
+* [A2A Kafka Agent](https://github.com/vishalmysore/a2akafkaagent) - Use A2A to build a kafka agent which can trigger a2a task based on the kafka messages.
 
 ## Tutorials
 * [FAQ](tutorial/0_FAQ.md)
