@@ -191,10 +191,12 @@ The client will be calling the JSONRPC endpoint, which is a single endpoint that
 * **Security First:** (This is just a POC) In a real-world application, security is paramount.  We should Implement authentication and authorization to protect your A2A server from unauthorized access.  Spring Security is a powerful tool for securing Spring Boot applications.
 * **A2A Protocol Adherence:** We should Strive for strict compliance with the A2A protocol specification as its continuousely evoloving.  This will ensure interoperability with other A2A-compliant agents and future-proof your implementation.
 
+## Contributing
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change
+
 ## Important Disclaimer(s)
 
-* This Java implementation provides a starting point for building A2A-compliant and MCP-Compliant agents and is being actively developed as and when i get time.   
-* The client-side implementation  may require enhancements for error handling, security, and other production considerations.  The provided code is not a complete solution but rather a foundation upon which to build your A2A-compliant agents.  
+* This Java implementation provides a starting point for building A2A-compliant and MCP-Compliant agents and is being actively developed as and when I get time.  
 * The A2A protocol is an evolving standard, and this implementation may need to be updated as the protocol matures.  Always refer to the official A2A documentation for the latest specifications and best practices.  
 * This implementation is not affiliated with or endorsed by Google.  It is my independent effort to demonstrate the A2A protocol in Java.  
   
