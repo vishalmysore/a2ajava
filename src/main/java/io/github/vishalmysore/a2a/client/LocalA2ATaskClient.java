@@ -2,6 +2,7 @@ package io.github.vishalmysore.a2a.client;
 
 import io.github.vishalmysore.a2a.domain.*;
 import io.github.vishalmysore.a2a.server.JsonRpcController;
+import lombok.Setter;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.util.*;
 @Service
 public class LocalA2ATaskClient {
 
+    @Setter
     @Autowired
     private JsonRpcController jrc ;
 
@@ -98,8 +100,7 @@ public class LocalA2ATaskClient {
     public Task sendFileTask(FilePart filePart) {
         try {
             Message message = new Message();
-            FileContent content = new FileContent();
-            filePart.setFile(content);
+
             message.setParts(Collections.singletonList(filePart));
 
             TaskSendParams params = new TaskSendParams();
@@ -119,8 +120,7 @@ public class LocalA2ATaskClient {
     public Task sendFileTask(TextPart textPart,FilePart filePart) {
         try {
             Message message = new Message();
-            FileContent content = new FileContent();
-            filePart.setFile(content);
+
             List<Part> partList = new ArrayList<>();
             partList.add(textPart);
             partList.add(filePart);

@@ -7,6 +7,7 @@ import io.github.vishalmysore.a2a.domain.*;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
  * This is the main entry point for the JSON-RPC API for Google A2A clients
  * You need to look at the sample to see how it works
  */
+@Primary
 @Service
 @Log
 public class JsonRpcController {
@@ -28,6 +30,7 @@ public class JsonRpcController {
      * The DynamicTaskController is responsible for handling dynamic task-related operations.
      * IT can handle any task wheter ticket or food prefernce etc
      */
+
     @Autowired
     @Qualifier(TaskControllerQualifiers.DYNAMIC_TASK_CONTROLLER)
     private DyanamicTaskContoller dynamicTaskController;

@@ -9,14 +9,18 @@ import com.t4a.transform.GeminiV2PromptTransformer;
 import com.t4a.transform.OpenAIPromptTransformer;
 import com.t4a.transform.PromptTransformer;
 import io.github.vishalmysore.a2a.domain.AgentCard;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.java.Log;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Properties;
 
@@ -34,11 +38,13 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
     private PromptTransformer promptTransformer = new GeminiV2PromptTransformer();
 
 
-
+    public static final String WELL_KNOWN_PATH = "/.well-known/";
+    public static final String AGENT_PATH ="/agent.json";
 
     @Getter
     private AgentCard cachedAgentCard;
-
+    @Value("${server.port:8080}")
+    private String serverPort;
 
 
 
@@ -91,9 +97,13 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
                     "use this description and also populate skills in detail " + finalDescription,
                     AgentCard.class
             );
+            String hostName = InetAddress.getLocalHost().getHostName();
+            this.cachedAgentCard.setUrl("http://" + hostName + ":" + serverPort);
         } catch (AIProcessingException e) {
             log.severe("The skills are not populate in the agent card as actions are more in number \n you can either try with different processor \n" +
                     " or you can populate skills individually and add to agent card ");
+        } catch (UnknownHostException e) {
+            log.warning("host not knwon set the url manually card.setUrl");
         }
     }
 

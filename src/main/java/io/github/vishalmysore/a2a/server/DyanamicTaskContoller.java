@@ -1,12 +1,23 @@
 package io.github.vishalmysore.a2a.server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.t4a.JsonUtils;
 import com.t4a.detect.ActionCallback;
+import com.t4a.processor.AIProcessingException;
 import com.t4a.processor.AIProcessor;
 import com.t4a.processor.GeminiV2ActionProcessor;
 import com.t4a.processor.OpenAiActionProcessor;
+import com.t4a.processor.scripts.ScriptProcessor;
+import com.t4a.processor.scripts.ScriptResult;
+import com.t4a.processor.scripts.SeleniumScriptProcessor;
+import com.t4a.processor.selenium.SeleniumGeminiProcessor;
+import com.t4a.processor.selenium.SeleniumProcessor;
+import com.t4a.transform.GeminiV2PromptTransformer;
+import com.t4a.transform.PromptTransformer;
 import io.github.vishalmysore.a2a.domain.*;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.java.Log;
+import org.apache.tomcat.jni.FileInfo;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +26,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import javax.annotation.PostConstruct;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -36,6 +51,23 @@ public class DyanamicTaskContoller implements A2ATaskController {
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
     private final ExecutorService nonBlockingService = Executors.newCachedThreadPool();
     protected AIProcessor baseProcessor = new GeminiV2ActionProcessor();
+
+    protected PromptTransformer promptTransformer = new GeminiV2PromptTransformer();
+
+    protected SeleniumProcessor seleniumProcessor = new SeleniumGeminiProcessor();
+
+    protected ScriptProcessor scriptProcessor = new ScriptProcessor();
+
+    protected SeleniumScriptProcessor seleniumScriptProcessor = new SeleniumScriptProcessor();
+
+
+    protected PromptTransformer getPromptTransformer() {
+        return promptTransformer;
+    }
+
+    private JsonUtils utils = new JsonUtils();
+
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @PostConstruct
     public void init() {
@@ -129,6 +161,8 @@ public class DyanamicTaskContoller implements A2ATaskController {
                             resultPart.setText("No result");
                         }
                     }
+                }  if (part instanceof FilePart filePart && "file".equals(filePart.getType())) {
+                    processFileTaskLogic( taskSendParams,  task,  taskId,  actionCallback);
                 }
             }
         } catch (Exception e) {
@@ -141,9 +175,48 @@ public class DyanamicTaskContoller implements A2ATaskController {
             errorMessage.setParts(List.of(errorPart));
             failedStatus.setMessage(errorMessage);
             task.setStatus(failedStatus);
+            log.warning("Error processing task: " + e.getMessage());
             tasks.put(taskId, task);
         }
     }
+    protected void processFileTaskLogic(TaskSendParams taskSendParams, Task task, String taskId, ActionCallback actionCallback) {
+        try {
+            List<Part> parts = taskSendParams.getMessage().getParts();
+            FilePart filePart = (FilePart) parts.get(0);
+            FileContent fileInfo = filePart.getFile();
+            String base64EcbodedString = fileInfo.getBytes();
+            // Create an artifact for the file
+
+
+            String originalString = new String(Base64.getDecoder().decode(base64EcbodedString));
+            tasks.put(taskId, task);
+
+            //    actionCallback.setContext(task);
+                FileProcessingInfo info = (FileProcessingInfo) getPromptTransformer().transformIntoPojo(originalString,FileProcessingInfo.class);
+                log.info("taskId " + taskId + " file info " + info);
+                Path tempFile = Files.createTempFile("web_steps_", ".txt");
+                String fileName = tempFile.getFileName().toString();
+                log.info("Created temp file: " + fileName);
+
+                // Write steps to file
+                Files.write(tempFile, originalString.getBytes());
+                ScriptResult result  = seleniumScriptProcessor.process(tempFile.toAbsolutePath().toString());
+                String resultString = objectMapper.writeValueAsString(result);
+                log.info(resultString);
+                task.setDetailedAndMessage(TaskState.COMPLETED,resultString);
+                Path archiveDir = Paths.get("archive");
+                Files.createDirectories(archiveDir);
+                Files.move(tempFile, archiveDir.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                log.info("Moved file to archive: " + fileName);
+               // getBaseProcessor().processSingleAction(base64EcbodedString, actionCallback);
+
+        } catch (AIProcessingException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Override
     public ResponseEntity<Task> getTask(@RequestParam String id, @RequestParam(defaultValue = "0") int historyLength) {
