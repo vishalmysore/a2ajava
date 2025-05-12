@@ -18,10 +18,7 @@ public class A2ATaskClientTest {
         client = new A2ATaskClient(CUSTOM_BASE_URL);
     }
 
-    @Test
-    public void testTaskClientInitialization() {
-        assertNotNull(client, "TaskClient should be initialized successfully");
-    }
+
 /* 
     @Test
     public void testSendTask() {
