@@ -4,6 +4,16 @@ This project provides a Java implementation for both an A2A (Agent-to-Agent) ser
 **A2A is an open protocol developed by Google** to standardize how AI agents communicate and exchange information, fostering a vibrant ecosystem of interoperable AI. This api also supports building MCP Servers in Java with use of simple annotations. Imagine a world where diverse AI agents, built with different tools and by different creators, can seamlessly collaborate to solve complex problems - that's the vision A2A is bringing to life. This implementation demonstrates how to set up this communication in Java, using the Spring Framework, with a focus on sending and retrieving tasks, ( I have added a simple example agent for booking and managing airline tickets.)  
 
 [![Need More Info? Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/vishalmysore/a2ajava) [![codecov](https://codecov.io/gh/vishalmysore/a2ajava/graph/badge.svg?token=HieisRv0xC)](https://codecov.io/gh/vishalmysore/a2ajava)
+<a target="_blank" href="https://sonarcloud.io/summary/new_code?id=vishalmysore_a2ajava"><img src="https://sonarcloud.io/api/project_badges/measure?project=vishalmysore_a2ajava&metric=alert_status"/></a>
+<a target="_blank" href="https://sonarcloud.io/summary/new_code?id=vishalmysore_a2ajava"><img src="https://sonarcloud.io/api/project_badges/measure?project=vishalmysore_a2ajava&metric=bugs"/></a>
+<a target="_blank" href="https://sonarcloud.io/summary/new_code?id=vishalmysore_a2ajava"><img src="https://sonarcloud.io/api/project_badges/measure?project=vishalmysore_a2ajava&metric=vulnerabilities"/></a>
+<a target="_blank" href="https://sonarcloud.io/summary/new_code?id=vishalmysore_a2ajava"><img src="https://sonarcloud.io/api/project_badges/measure?project=vishalmysore_a2ajava&metric=sqale_rating"/></a>
+<a target="_blank" href="https://sonarcloud.io/summary/new_code?id=vishalmysore_a2ajava"><img src="https://sonarcloud.io/api/project_badges/measure?project=vishalmysore_a2ajava&metric=security_rating"/></a>
+<a target="_blank" href="https://sonarcloud.io/summary/new_code?id=vishalmysore_a2ajava"><img src="https://sonarcloud.io/api/project_badges/measure?project=vishalmysore_a2ajava&metric=reliability_rating"/></a>
+<a target="_blank" href="https://github.com/vishalmysore/a2ajava/actions/workflows/maven.yml"><img src="https://github.com/vishalmysore/a2ajava/actions/workflows/maven.yml/badge.svg"/></a>   
+<a target="_blank" href="https://github.com/vishalmysore/a2ajava/actions/workflows/codecov.yml"> <img src="https://github.com/vishalmysore/a2ajava/actions/workflows/codecov.yml/badge.svg"/></a>
+
+
 
 ## Quick Start  
 
