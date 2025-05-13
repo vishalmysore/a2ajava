@@ -10,10 +10,12 @@ This project provides a Java implementation for both an A2A (Agent-to-Agent) ser
 <a target="_blank" href="https://sonarcloud.io/summary/new_code?id=vishalmysore_a2ajava"><img src="https://sonarcloud.io/api/project_badges/measure?project=vishalmysore_a2ajava&metric=sqale_rating"/></a>
 <a target="_blank" href="https://sonarcloud.io/summary/new_code?id=vishalmysore_a2ajava"><img src="https://sonarcloud.io/api/project_badges/measure?project=vishalmysore_a2ajava&metric=security_rating"/></a>
 <a target="_blank" href="https://sonarcloud.io/summary/new_code?id=vishalmysore_a2ajava"><img src="https://sonarcloud.io/api/project_badges/measure?project=vishalmysore_a2ajava&metric=reliability_rating"/></a>
-<a target="_blank" href="https://github.com/vishalmysore/a2ajava/actions/workflows/maven.yml"><img src="https://github.com/vishalmysore/a2ajava/actions/workflows/maven.yml/badge.svg"/></a>   
+<a target="_blank" href="https://github.com/vishalmysore/a2ajava/actions/workflows/maven.yml"><img src="https://github.com/vishalmysore/a2ajava/actions/workflows/maven.yml/badge.svg"/></a>
 <a target="_blank" href="https://github.com/vishalmysore/a2ajava/actions/workflows/codecov.yml"> <img src="https://github.com/vishalmysore/a2ajava/actions/workflows/codecov.yml/badge.svg"/></a>
 <img alt="Test Number" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/vishalmysore/6c825c69028a4f8fac9d7c1707628733/raw/test.json"/>
-
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![Java Version](https://img.shields.io/badge/Java-23-orange.svg)](https://www.oracle.com/java/technologies/javase/jdk23-archive-downloads.html)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.4-brightgreen.svg)](https://spring.io/projects/spring-boot)
 
 ## Quick Start  
 
