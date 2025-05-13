@@ -22,11 +22,17 @@ import java.util.*;
 @Service
 public class LocalA2ATaskClient {
 
+    public static final String TASKS_SEND = "tasks/send";
+    public static final String TASKS_GET = "tasks/get";
+    public static final String ERROR_SENDING_FILE_TASK = "Error sending file task: ";
     @Setter
     @Autowired
     private JsonRpcController jrc ;
 
 
+    /**
+     * need for spring autowiring
+     */
     public LocalA2ATaskClient() {
 
     }
@@ -47,7 +53,7 @@ public class LocalA2ATaskClient {
             params.setId(String.valueOf(UUID.randomUUID()));
             params.setMessage(message);
 
-            JsonRpcRequest request = createRequest("tasks/send", params);
+            JsonRpcRequest request = createRequest(TASKS_SEND, params);
             Task task = ((SendTaskResponse)jrc.handleRpc(request)).getResult();
 
             return task;
@@ -63,7 +69,7 @@ public class LocalA2ATaskClient {
             params.setId(taskId);
             params.setHistoryLength(historyLength);
 
-            JsonRpcRequest request = createRequest("tasks/get", params);
+            JsonRpcRequest request = createRequest(TASKS_GET, params);
             ResponseEntity<Task> response = (ResponseEntity<Task>)jrc.handleRpc(request);
 
             Task task = response.getBody();
@@ -92,7 +98,8 @@ public class LocalA2ATaskClient {
 
             return task;
         } catch (HttpClientErrorException e) {
-            log.severe("Error sending file task: " + e.getMessage());
+            log.severe(ERROR_SENDING_FILE_TASK
+                    + e.getMessage());
             throw e;
         }
     }

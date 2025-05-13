@@ -7,6 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.mail.MethodNotSupportedException;
+import java.util.List;
+
 public interface A2ATaskController {
 
 
@@ -33,4 +36,10 @@ public interface A2ATaskController {
     }
 
     public AIProcessor getBaseProcessor ();
+
+    default List<Task> getTasks() {
+        throw new UnsupportedOperationException();
+    }
+
+
 }

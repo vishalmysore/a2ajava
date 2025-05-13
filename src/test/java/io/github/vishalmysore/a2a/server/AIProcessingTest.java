@@ -75,7 +75,20 @@ public class AIProcessingTest {
     @Test
     public void testAIProviderSwitch() {
         // Test Gemini processor
-        controller = new DyanamicTaskContoller();
+        //will move tihs to mock later
+        controller = new DyanamicTaskContoller(){
+            @Override
+            public SendTaskResponse sendTask(TaskSendParams taskSendParams,  ActionCallback callback) {
+                Task t = new   Task();
+                SendTaskResponse response = new SendTaskResponse();
+                response.setResult(t);
+                TaskStatus ts = new TaskStatus();
+                ts.setState(TaskState.SUBMITTED);
+                t.setStatus(ts);
+                response.setId(taskSendParams.getId());
+                return response;
+            }
+        };
         AIProcessor processor = controller.getBaseProcessor();
         assertNotNull(processor);
         assertTrue(processor.getClass().getSimpleName().contains("Gemini"));

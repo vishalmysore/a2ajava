@@ -194,7 +194,9 @@ public class DyanamicTaskContoller implements A2ATaskController {
             //    actionCallback.setContext(task);
                 FileProcessingInfo info = (FileProcessingInfo) getPromptTransformer().transformIntoPojo(originalString,FileProcessingInfo.class);
                 log.info("taskId " + taskId + " file info " + info);
-                Path tempFile = Files.createTempFile("web_steps_", ".txt");
+                Path tempFile = Files.createTempFile(task.getId()+System.currentTimeMillis()+"web_steps_", ".txt");
+
+
                 String fileName = tempFile.getFileName().toString();
                 log.info("Created temp file: " + fileName);
 
@@ -210,9 +212,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
                 log.info("Moved file to archive: " + fileName);
                // getBaseProcessor().processSingleAction(base64EcbodedString, actionCallback);
 
-        } catch (AIProcessingException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (AIProcessingException | IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -473,5 +473,13 @@ public class DyanamicTaskContoller implements A2ATaskController {
             log.severe("Timeout on resubscribe for task: " + id);
         });
         return emitter;
+    }
+
+    public JsonUtils getUtils() {
+        return utils;
+    }
+
+    public void setUtils(JsonUtils utils) {
+        this.utils = utils;
     }
 }
