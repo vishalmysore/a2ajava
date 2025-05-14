@@ -27,7 +27,7 @@ Use these example to quickly build agents using this library
 * [A2A Kafka Agent](https://github.com/vishalmysore/a2akafkaagent) - Use A2A to build a kafka agent which can trigger a2a task based on the kafka messages.
 * [A2A Selenium Web Agent](https://github.com/vishalmysore/a2awebagent) - Use A2A to build a selenium agent which can trigger a2a task based for browsing , validation of web pages.
 * [A2A Grafana Agent](https://github.com/vishalmysore/a2a-grafana) - Build observable Agents using A2A and Grafana
-* [A2A MongoDB RAG Agent](https://github.com/vishalmysore/a2a-mongo-rag-search) – Perform semantic search and reasoning across agent tasks using RAG with MongoDB.
+* [A2A MongoDB RAG Agent](https://github.com/vishalmysore/a2a-mongo-rag-search) – Perform semantic search and reasoning across agent tasks using RAG with MongoDB Agent. 
 
 ### Coming Soon
 * **A2A Sensor Agent** – Use A2A to stream data from physical sensors and trigger real-time actions. ( [Please look at ChotuRobo Series](https://www.linkedin.com/posts/vishalrow_github-modelcontextprotocolservers-model-activity-7318222463857766400-YuFV/))
