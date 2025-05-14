@@ -4,10 +4,13 @@ package io.github.vishalmysore.a2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import lombok.ToString;
+
 import java.util.Map;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@ToString
 public class JSONRPCError {
     private int code;
     private String message;

@@ -2,6 +2,7 @@ package io.github.vishalmysore.a2a.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * Represents the content of a file, either as base64 encoded bytes or a URI.\n\n
@@ -10,6 +11,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "file_info")
+@ToString
 public class FileContent {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

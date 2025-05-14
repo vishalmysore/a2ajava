@@ -1,8 +1,10 @@
 package io.github.vishalmysore.a2a.domain;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@ToString
 public class Skill {
     private String id;
     private String name;

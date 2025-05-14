@@ -2,12 +2,14 @@ package io.github.vishalmysore.a2a.domain;
 
 import com.t4a.annotations.ListType;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Data
+@ToString
 public class AgentCard {
     private String name;
     private String description;

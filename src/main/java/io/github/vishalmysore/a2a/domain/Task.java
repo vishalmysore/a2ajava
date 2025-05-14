@@ -4,6 +4,7 @@ package io.github.vishalmysore.a2a.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.Date;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.Map;
  */
 @Data
 @Entity
+@ToString
 public class Task implements A2ATask {
     @Id
     private String id;

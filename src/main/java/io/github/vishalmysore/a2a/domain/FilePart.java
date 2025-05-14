@@ -2,12 +2,14 @@ package io.github.vishalmysore.a2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.ToString;
 
 
 import java.util.Map;
 
 @Entity
 @DiscriminatorValue("file")
+@ToString
 public class FilePart extends Part {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

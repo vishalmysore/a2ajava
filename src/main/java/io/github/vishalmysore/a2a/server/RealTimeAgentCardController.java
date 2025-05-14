@@ -93,10 +93,17 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
         String finalDescription = realTimeDescription.toString();
 
         try {
-            this.cachedAgentCard = (AgentCard) promptTransformer.transformIntoPojo(
-                    "use this description and also populate skills in detail " + finalDescription,
-                    AgentCard.class
-            );
+            if(groupActions.isEmpty()) {
+                log.warning("No actions found for the agent card");
+                this.cachedAgentCard = new AgentCard();
+
+            } else {
+                this.cachedAgentCard = (AgentCard) promptTransformer.transformIntoPojo(
+                        "use this description and also populate skills in detail " + finalDescription,
+                        AgentCard.class
+
+                );
+            }
             String hostName = InetAddress.getLocalHost().getHostName();
             this.cachedAgentCard.setUrl("http://" + hostName + ":" + serverPort);
         } catch (AIProcessingException e) {

@@ -3,6 +3,7 @@ package io.github.vishalmysore.a2a.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 @Data
 @Entity
+@ToString
 public class Artifact {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

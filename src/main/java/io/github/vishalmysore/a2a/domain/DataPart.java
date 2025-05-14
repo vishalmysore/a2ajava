@@ -2,11 +2,13 @@ package io.github.vishalmysore.a2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
 @Entity
 @DiscriminatorValue("data")
+@ToString
 public class DataPart extends Part {
 
     @Id
