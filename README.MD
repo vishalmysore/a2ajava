@@ -27,11 +27,11 @@ Use these example to quickly build agents using this library
 * [A2A Kafka Agent](https://github.com/vishalmysore/a2akafkaagent) - Use A2A to build a kafka agent which can trigger a2a task based on the kafka messages.
 * [A2A Selenium Web Agent](https://github.com/vishalmysore/a2awebagent) - Use A2A to build a selenium agent which can trigger a2a task based for browsing , validation of web pages.
 * [A2A Grafana Agent](https://github.com/vishalmysore/a2a-grafana) - Build observable Agents using A2A and Grafana
+* [A2A MongoDB RAG Agent](https://github.com/vishalmysore/a2a-mongo-rag-search) – Perform semantic search and reasoning across agent tasks using RAG with MongoDB.
 
 ### Coming Soon
 * **A2A Sensor Agent** – Use A2A to stream data from physical sensors and trigger real-time actions. ( [Please look at ChotuRobo Series](https://www.linkedin.com/posts/vishalrow_github-modelcontextprotocolservers-model-activity-7318222463857766400-YuFV/))
 * **A2A Home Automation Agent** – Use A2A to control smart home devices via MQTT or Home Assistant integrations. ( [Please look at ChotuRobo Series](https://www.linkedin.com/posts/vishalrow_and-here-is-a-demo-of-%F0%9D%90%82%F0%9D%90%A1%F0%9D%90%A8%F0%9D%90%AD%F0%9D%90%AE%F0%9D%90%91%F0%9D%90%A8%F0%9D%90%9B%F0%9D%90%A8-activity-7319065900031098880-SV4p/))
-* **A2A MongoDB RAG Agent** – Perform semantic search and reasoning across agent tasks using RAG with MongoDB.
 * **A2A MyScale Agent** – Use A2A to run scalable, SQL-based vector searches on tasks and documents with MyScale.
 
 ## Tutorials
