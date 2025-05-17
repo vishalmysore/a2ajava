@@ -23,7 +23,7 @@ import java.util.Map;
  * 7. EXPIRED: The task has expired.
  *
  * Implementation of TaskStatus enum is not provided in the original code.
- * All implmentation of Task can be done in applications extending this library
+ * All implementation of Task can be done in applications extending this library
  */
 @Data
 
