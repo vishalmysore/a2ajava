@@ -2,7 +2,7 @@ package io.github.vishalmysore.a2a.domain;
 
 
 
-import jakarta.persistence.*;
+
 import lombok.Data;
 import lombok.ToString;
 
@@ -25,32 +25,26 @@ import java.util.Map;
  * All implmentation of Task can be done in applications extending this library
  */
 @Data
-@Entity
+
 @ToString
 public class Task implements A2ATask {
-    @Id
+
     private String id;
     private String sessionId;
-    @OneToOne(cascade = CascadeType.ALL)
+
     private TaskStatus status;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "task_id")
+
     private List<Message> history;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "task_id")
+
     private List<Artifact> artifacts;
 
-    @ElementCollection
-    @CollectionTable(name = "task_metadata",
-            joinColumns = @JoinColumn(name = "task_id"))
-    @MapKeyColumn(name = "metadata_key")
-    @Column(name = "metadata_value", columnDefinition = "TEXT")
+
     private Map<String, String> metadata;
-    @OneToOne(cascade = CascadeType.ALL)
+
     private TaskPushNotificationConfig pushNotificationConfig; // Added
     private String pushNotificationUrl; // Added
     boolean subscribed;
-    @Temporal(TemporalType.TIMESTAMP)
+
     private Date subscriptionDateNow;
     boolean cancelled;
 

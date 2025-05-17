@@ -91,7 +91,7 @@ public class AIProcessingTest {
         };
         AIProcessor processor = controller.getBaseProcessor();
         assertNotNull(processor);
-        assertTrue(processor.getClass().getSimpleName().contains("Gemini"));
+        assertTrue(processor.getClass().getSimpleName().contains("OpenAi"));
 
         // Test task processing with different providers
         TaskSendParams params = createTaskParams("Test with different provider");

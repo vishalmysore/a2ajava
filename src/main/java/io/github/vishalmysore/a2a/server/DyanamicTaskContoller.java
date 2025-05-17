@@ -15,13 +15,12 @@ import com.t4a.processor.selenium.SeleniumProcessor;
 import com.t4a.transform.GeminiV2PromptTransformer;
 import com.t4a.transform.PromptTransformer;
 import io.github.vishalmysore.a2a.domain.*;
-import jakarta.annotation.PostConstruct;
+
 import lombok.extern.java.Log;
-import org.apache.tomcat.jni.FileInfo;
-import org.springframework.beans.factory.annotation.Qualifier;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -43,9 +42,6 @@ import java.util.concurrent.Executors;
  * based on the input prompt
  */
 @Log
-
-@Service
-@Qualifier(TaskControllerQualifiers.DYNAMIC_TASK_CONTROLLER)
 public class DyanamicTaskContoller implements A2ATaskController {
     protected final Map<String, Task> tasks = new ConcurrentHashMap<>();
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
@@ -69,7 +65,11 @@ public class DyanamicTaskContoller implements A2ATaskController {
 
     ObjectMapper objectMapper = new ObjectMapper();
 
-    @PostConstruct
+    public DyanamicTaskContoller() {
+      init();
+    }
+
+
     public void init() {
         Properties properties = new Properties();
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("tools4ai.properties")) {

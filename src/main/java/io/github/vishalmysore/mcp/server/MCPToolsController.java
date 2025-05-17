@@ -13,11 +13,8 @@ import io.github.vishalmysore.mcp.domain.*;
 import lombok.Getter;
 import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -27,7 +24,7 @@ import java.util.*;
 //@//RestController
 //@RequestMapping("/mcp")
 @Log
-@Service
+
 public class MCPToolsController  {
 
     @Getter
@@ -40,7 +37,14 @@ public class MCPToolsController  {
         return baseProcessor;
     }
 
-    @PostConstruct
+   public MCPToolsController() {
+        init();
+    }
+
+    public MCPToolsController(AIProcessor baseProcessor) {
+        this.baseProcessor = baseProcessor;
+        init();
+   }
     public void init() {
 
         Properties properties = new Properties();

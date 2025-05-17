@@ -19,7 +19,7 @@ import java.util.Map;
  * Generates the agent card dynamically based on the available actions and groups rather than
  * hardcoding it.
  */
-@Service
+
 public class DynamicAgentCardController implements A2AAgentCardController {
 
     private PromptTransformer promptTransformer = new GeminiV2PromptTransformer();

@@ -1,24 +1,23 @@
 package io.github.vishalmysore.a2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+
 import lombok.Data;
 
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 
 @Data
-@Entity
+
 public class TaskStatus {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+
     @JsonIgnore
     private String id;
 
-    @Enumerated(EnumType.STRING)
+
     private TaskState state;
 
-    @OneToOne(cascade = CascadeType.ALL)
+
     private Message message;
 
     private String timestamp;

@@ -19,8 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
  * This is the main entry point for the JSON-RPC API for Google A2A clients
  * You need to look at the sample to see how it works
  */
-@Primary
-@Service
+
 @Log
 public class JsonRpcController implements A2ARPCController {
 
@@ -30,10 +29,7 @@ public class JsonRpcController implements A2ARPCController {
      * The DynamicTaskController is responsible for handling dynamic task-related operations.
      * IT can handle any task wheter ticket or food prefernce etc
      */
-
-    @Autowired
-    @Qualifier(TaskControllerQualifiers.DYNAMIC_TASK_CONTROLLER)
-    private DyanamicTaskContoller dynamicTaskController;
+    private DyanamicTaskContoller dynamicTaskController = new DyanamicTaskContoller();
 
     public A2ATaskController getTaskController() {
         return dynamicTaskController;

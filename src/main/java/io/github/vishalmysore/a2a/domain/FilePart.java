@@ -1,28 +1,22 @@
 package io.github.vishalmysore.a2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+
 import lombok.ToString;
 
 
 import java.util.Map;
 
-@Entity
-@DiscriminatorValue("file")
+
 @ToString
 public class FilePart extends Part {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+
     @JsonIgnore
     private String id;
     private String type = "file";
-    @OneToOne
+
     private FileContent file;
-    @ElementCollection
-    @CollectionTable(name = "file_part_metadata",
-            joinColumns = @JoinColumn(name = "part_id"))
-    @MapKeyColumn(name = "metadata_key")
-    @Column(name = "metadata_value", columnDefinition = "TEXT")
+
     private Map<String, String> metadata;
 
     public String getType() {

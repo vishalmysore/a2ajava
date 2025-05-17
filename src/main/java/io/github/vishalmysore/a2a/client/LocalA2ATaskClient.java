@@ -19,22 +19,21 @@ import java.util.*;
  * For normal client server application you can use client built in angular or react or any other web framework
  */
 @Log
-@Service
+
 public class LocalA2ATaskClient {
 
     public static final String TASKS_SEND = "tasks/send";
     public static final String TASKS_GET = "tasks/get";
     public static final String ERROR_SENDING_FILE_TASK = "Error sending file task: ";
-    @Setter
-    @Autowired
-    private JsonRpcController jrc ;
+
+    private JsonRpcController jrc = null;
 
 
     /**
      * need for spring autowiring
      */
     public LocalA2ATaskClient() {
-
+        jrc = new JsonRpcController();
     }
 
 

@@ -1,29 +1,23 @@
 package io.github.vishalmysore.a2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+
 import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Entity
-@DiscriminatorValue("text")
+
 @ToString
 public class TextPart extends Part {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+
     @JsonIgnore
     private String id;
     private String type = "text";
     private String text;
 
-    @ElementCollection
-    @CollectionTable(name = "text_part_metadata",
-            joinColumns = @JoinColumn(name = "part_id"))
-    @MapKeyColumn(name = "metadata_key")
-    @Column(name = "metadata_value", columnDefinition = "TEXT")
+
     private Map<String, String> metadata = new HashMap<>();
 
     // Update getter and setter to use String instead of Object

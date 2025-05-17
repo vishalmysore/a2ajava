@@ -3,8 +3,6 @@ package io.github.vishalmysore.a2a.server;
 import com.t4a.api.GroupInfo;
 import com.t4a.predict.PredictionLoader;
 import com.t4a.processor.AIProcessingException;
-import com.t4a.processor.GeminiV2ActionProcessor;
-import com.t4a.processor.OpenAiActionProcessor;
 import com.t4a.transform.GeminiV2PromptTransformer;
 import com.t4a.transform.OpenAIPromptTransformer;
 import com.t4a.transform.PromptTransformer;
@@ -14,7 +12,6 @@ import lombok.Getter;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
 
 import java.io.IOException;
@@ -31,7 +28,7 @@ import java.util.Properties;
  * hardcoding it.
  * In real applicaiton you can extend his class and call the super class
  */
-@Service
+
 @Log
 public class RealTimeAgentCardController implements A2AAgentCardController {
 
