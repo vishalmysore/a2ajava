@@ -6,6 +6,7 @@ package io.github.vishalmysore.a2a.domain;
 import lombok.Data;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class Task implements A2ATask {
 
         Message message = new Message();
         message.setRole("agent");
-        message.setParts(List.of(textPart));
+        message.setParts(new ArrayList<>(List.of(textPart)));
 
         TaskStatus processingStatus = new TaskStatus(state);
         processingStatus.setMessage(message);

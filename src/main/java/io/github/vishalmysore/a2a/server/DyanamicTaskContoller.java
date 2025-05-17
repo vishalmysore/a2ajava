@@ -119,7 +119,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
             }
             task.setSessionId(sessionId);
             task.setDetailedAndMessage(TaskState.SUBMITTED," Your Task with id " + taskId + " is submitted");
-            task.setHistory(List.of(taskSendParams.getMessage()));
+            task.setHistory(new ArrayList<>(List.of(taskSendParams.getMessage())));
             SendTaskResponse sendTaskResponse = new SendTaskResponse();
             tasks.put(taskId, task);
         }

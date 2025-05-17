@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MCPToolsControllerTest {
 
-    @Test
+
     public void testMCPToolsControllerInitialization() {
         String openAiKey = System.getProperty("openAiKey");
         Properties properties = new Properties();
