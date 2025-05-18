@@ -11,10 +11,14 @@ import com.t4a.predict.PredictionLoader;
 import com.t4a.processor.*;
 import io.github.vishalmysore.mcp.domain.*;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.java.Log;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -37,14 +41,18 @@ public class MCPToolsController  {
         return baseProcessor;
     }
 
-   public MCPToolsController() {
+    @Getter
+    @Setter
+    private String serverName = "sampleServer";
+
+    @Getter
+    @Setter
+
+    private String version = "1.0.0";
+
+    public MCPToolsController(){
         init();
     }
-
-    public MCPToolsController(AIProcessor baseProcessor) {
-        this.baseProcessor = baseProcessor;
-        init();
-   }
     public void init() {
 
         Properties properties = new Properties();
@@ -70,6 +78,22 @@ public class MCPToolsController  {
 
         toolsResult = new ListToolsResult();
         toolsResult.setTools(tools);
+    }
+
+    public ResponseEntity<Map<String, String>> getServerConfig() {
+        return ResponseEntity.ok(Map.of(
+                "name", getServerName(),
+                "version", getVersion()
+        ));
+    }
+
+    private boolean validateSchema(ToolInputSchema schema) {
+        // Example validation logic (replace with actual JSON schema validation if needed)
+        if (schema.getProperties() == null || schema.getRequired() == null) {
+            log.severe("Schema validation failed: Missing properties or required fields.");
+            return false;
+        }
+        return true;
     }
 
     private List<Tool> convertGroupActionsToTools(Map<GroupInfo, String> groupActions) {
@@ -98,67 +122,43 @@ public class MCPToolsController  {
                     AIProcessor processor = getBaseProcessor();
                     String aiResponse = null;
                     try {
-                        aiResponse = processor.query("I am giving you a json string check the parameters section and return the required fields including subfields as simple json, do not include any other commentary or special characters "+jsonStr);
-                        aiResponse =utils.extractJson(aiResponse);
+                        aiResponse = processor.query("I am giving you a json string check the parameters section and return the required fields including subfields as simple json, do not include any other commentary, control or special characters " + jsonStr);
+                        aiResponse = utils.extractJson(aiResponse);
                         log.info(aiResponse);
                     } catch (AIProcessingException e) {
                         throw new RuntimeException(e);
                     }
-                //    Method method = methodAction.getActionMethod();
-                 //   Parameter[] methodParams = method.getParameters();
-
-                    //for (Parameter param : methodParams) {
-                      //  String paramName = param.getName();
-
-                        // ToolParameters (for Claude/LLM)
-                       // ToolParameter toolParam = new ToolParameter();
-                       // toolParam.setType(getJsonType(param.getType()));
-                       // toolParam.setDescription("Parameter: " + paramName);
-                       // parameters.getProperties().put(paramName, toolParam);
-
-                        // InputSchema (for MCP)
-                        //ToolPropertySchema schema = new ToolPropertySchema();
-                        //schema.setType(getJsonType(param.getType()));
-                        //schema.setDescription("Parameter: " + paramName);
-                        //schemaProperties.put(paramName, schema);
-
-                        //if (!param.isAnnotationPresent(Nullable.class)) {
-                          //  parameters.getRequired().add(paramName);
-                            //requiredFields.add(paramName);
-                        //}
-                    //}
-
-                    tool.setParameters(parameters);
-
-
 
                     String customParam = "provideAllValuesInPlainEnglish";
 
                     // ToolParameters (for Claude/LLM)
                     ToolParameter toolParam = new ToolParameter();
                     toolParam.setType("string");
-                    toolParam.setDescription(aiResponse );
+                    toolParam.setDescription(aiResponse);
                     parameters.getProperties().put(customParam, toolParam);
 
                     // InputSchema (for MCP)
                     ToolPropertySchema schema = new ToolPropertySchema();
                     schema.setType("string");
                     schema.setDescription(aiResponse);
+                    schema.setAdditionalProperties(new HashMap<>()); // Setting it to an empty map as required
                     schemaProperties.put(customParam, schema);
 
-
-                        parameters.getRequired().add(customParam);
-                        requiredFields.add(customParam);
+                    parameters.getRequired().add(customParam);
+                    requiredFields.add(customParam);
                     ToolInputSchema inputSchema = new ToolInputSchema();
                     inputSchema.setProperties(schemaProperties);
                     inputSchema.setRequired(requiredFields);
+
+                    // Validate schema
+                    if (!validateSchema(inputSchema)) {
+                        log.severe("Invalid schema for tool: " + tool.getName());
+                        continue;
+                    }
+
                     tool.setInputSchema(inputSchema);
-
-
                     tools.add(tool);
                 }
-
-
             }
         }
         return tools;
@@ -187,15 +187,31 @@ public class MCPToolsController  {
         AIAction action = predictions.get(request.getName());
         AIProcessor processor = getBaseProcessor();
         try {
-            Object result = processor.processSingleAction(request.toString(),action,new LoggingHumanDecision(),new LogginggExplainDecision(),callback);
+            Object result = processor.processSingleAction(request.toString(), action, new LoggingHumanDecision(), new LogginggExplainDecision(), callback);
 
             CallToolResult callToolResult = new CallToolResult();
             List<Content> content = new ArrayList<>();
             TextContent textContent = new TextContent();
-            textContent.setText(result.toString());
+
+            // Ensure the text field is properly set
+            if (result != null) {
+                textContent.setText(result.toString());
+            } else {
+                textContent.setText("No result available");
+            }
+
+            textContent.setType("text");
             content.add(textContent);
             callToolResult.setContent(content);
-            textContent.setType("text");
+
+            // Validate the CallToolResult object
+            if (textContent.getText() == null || textContent.getText().isEmpty()) {
+                callToolResult.setIsError(true);
+                log.severe("TextContent.text is missing or empty");
+            } else {
+                callToolResult.setIsError(false);
+            }
+
             callback.setContext(callToolResult);
             return callToolResult;
         } catch (AIProcessingException e) {
@@ -204,6 +220,7 @@ public class MCPToolsController  {
 
         return null;
     }
+
     private Object[] buildMethodArguments(Method method, String jsonStr) throws Exception {
         Parameter[] parameters = method.getParameters();
         Object[] args = new Object[parameters.length];

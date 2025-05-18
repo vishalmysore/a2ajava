@@ -9,5 +9,5 @@ public class ToolPropertySchema {
     private String type;
     private String description;
     private Map<String, Object> additionalProperties;
-    private ToolPropertySchema items;
+    private boolean items;
 }
