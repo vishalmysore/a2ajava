@@ -21,8 +21,8 @@ public class MCPActionCallback implements ActionCallback  {
     }
 
     @Override
-    public void setContext(Object obj) {
-
+    public void setContext(Object context) {
+     this.context= context;
     }
 
     @Override

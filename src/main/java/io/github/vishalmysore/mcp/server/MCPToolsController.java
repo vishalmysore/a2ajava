@@ -187,11 +187,15 @@ public class MCPToolsController  {
         AIAction action = predictions.get(request.getName());
         AIProcessor processor = getBaseProcessor();
         try {
-            Object result = processor.processSingleAction(request.toString(), action, new LoggingHumanDecision(), new LogginggExplainDecision(), callback);
-
             CallToolResult callToolResult = new CallToolResult();
+            callback.setContext(callToolResult);
             List<Content> content = new ArrayList<>();
             TextContent textContent = new TextContent();
+            textContent.setType("text");
+            Object result = processor.processSingleAction(request.toString(), action, new LoggingHumanDecision(), new LogginggExplainDecision(), callback);
+
+
+
 
             // Ensure the text field is properly set
             if (result != null) {
@@ -200,9 +204,10 @@ public class MCPToolsController  {
                 textContent.setText("No result available");
             }
 
-            textContent.setType("text");
+
             content.add(textContent);
             callToolResult.setContent(content);
+
 
             // Validate the CallToolResult object
             if (textContent.getText() == null || textContent.getText().isEmpty()) {
@@ -212,7 +217,7 @@ public class MCPToolsController  {
                 callToolResult.setIsError(false);
             }
 
-            callback.setContext(callToolResult);
+
             return callToolResult;
         } catch (AIProcessingException e) {
             log.severe(e.getMessage());
