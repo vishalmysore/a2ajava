@@ -1,55 +1,21 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListResourcesRequestSchema, ListToolsRequestSchema, ReadResourceRequestSchema, } from "@modelcontextprotocol/sdk/types.js";
-import puppeteer from "puppeteer-core";
-import { Browserbase } from "@browserbasehq/sdk";
 import fs from 'node:fs/promises';
 
-const logFilePath = '/Users/kavin/proxy_server.log';
+const logFilePath = '/temp/proxy_server.log';
+
 const SERVER_BASE_URL = process.env.SERVER_BASE_URL || "http://localhost:7860";
 
-
 // Create server
-async function createServer() {
-    try {
-        const response = await fetch("${SERVER_BASE_URL}/mcp/server-config", {
-            method: "GET",
-            headers: { "Content-Type": "application/json" }
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const config = await response.json();
-        return new Server({
-            name: config.name || "springboot-proxy",
-            version: config.version || "1.0.0"
-        }, {
-            capabilities: {
-                tools: {},
-            },
-        });
-    } catch (error) {
-        console.error("Failed to fetch server config:", error);
-        // Fallback to default values
-        return new Server({
-            name: "springboot-proxy",
-            version: "1.0.0"
-        }, {
-            capabilities: {
-                tools: {},
-            },
-        });
-    }
-}
-
-// Modified runServer function
-async function runServer() {
-    const transport = new StdioServerTransport();
-    const server = await createServer();
-    await server.connect(transport);
-}
+const server = new Server({
+  name: "springboot-proxy",
+  version: "1.0.0",
+}, {
+  capabilities: {
+    tools: {},  // We'll load tools dynamically from Spring Boot
+  },
+});
 
 // Handler: List tools from Spring Boot
 server.setRequestHandler(ListToolsRequestSchema, async () => {
@@ -132,7 +98,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 });
 
 
-// Launch server over stdio
 
+// Launch server over stdio
+async function runServer() {
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+ // await logToFile("Proxy server is running on stdio...");
+}
 
 runServer().catch(console.error);
