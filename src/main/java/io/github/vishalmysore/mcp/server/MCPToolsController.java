@@ -192,6 +192,7 @@ public class MCPToolsController  {
             List<Content> content = new ArrayList<>();
             TextContent textContent = new TextContent();
             textContent.setType("text");
+            callToolResult.setContent(content);
             Object result = processor.processSingleAction(request.toString(), action, new LoggingHumanDecision(), new LogginggExplainDecision(), callback);
 
 
@@ -206,7 +207,7 @@ public class MCPToolsController  {
 
 
             content.add(textContent);
-            callToolResult.setContent(content);
+
 
 
             // Validate the CallToolResult object

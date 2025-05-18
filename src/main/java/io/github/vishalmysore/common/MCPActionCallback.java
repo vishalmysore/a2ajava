@@ -5,6 +5,10 @@ import com.t4a.detect.ActionState;
 import io.github.vishalmysore.a2a.domain.Task;
 import io.github.vishalmysore.a2a.domain.TaskState;
 import io.github.vishalmysore.mcp.domain.CallToolResult;
+import io.github.vishalmysore.mcp.domain.TextContent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This interface is used to define the callback type for the Model Context Protocol (MCP). This will be passed
@@ -37,6 +41,15 @@ public class MCPActionCallback implements ActionCallback  {
 
     @Override
     public void sendtStatus(String status, ActionState state) {
-        ((CallToolResult) getContext()).getContent().get(0);
+
+        List list =  ((CallToolResult) getContext()).getContent();
+        if (list == null) {
+            list = new ArrayList<>();
+            ((CallToolResult) getContext()).setContent(list);
+        }
+        TextContent textContent = new TextContent();
+        textContent.setType("text");
+        textContent.setText(status+state.getValue());
+        list.add(textContent);
     }
 }
