@@ -1,12 +1,9 @@
 package io.github.vishalmysore.a2a.client;
 
 import io.github.vishalmysore.a2a.domain.*;
-import io.github.vishalmysore.a2a.server.JsonRpcController;
-import lombok.Setter;
+import io.github.vishalmysore.common.server.JsonRpcController;
 import lombok.extern.java.Log;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.File;

@@ -9,6 +9,7 @@ import com.t4a.api.GroupInfo;
 import com.t4a.detect.ActionCallback;
 import com.t4a.predict.PredictionLoader;
 import com.t4a.processor.*;
+import io.github.vishalmysore.common.MCPActionCallback;
 import io.github.vishalmysore.mcp.domain.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -182,7 +183,24 @@ public class MCPToolsController  {
     }
 
 
-    public CallToolResult callTool(@RequestBody ToolCallRequest request, ActionCallback callback) {
+    public ResponseEntity<JSONRPCResponse> callTool(@RequestBody ToolCallRequest request) {
+        CallToolResult result = callToolWithCallback(request, new MCPActionCallback());
+        log.info("Received result: " + result);
+        JSONRPCResponse response = new JSONRPCResponse();
+        response.setId(Math.random()+"");
+        response.setResult(result);
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<JSONRPCResponse> callTool(@RequestBody ToolCallRequest request,ActionCallback callback) {
+        CallToolResult result = callToolWithCallback(request, callback);
+        log.info("Received result: " + result);
+        JSONRPCResponse response = new JSONRPCResponse();
+        response.setId(Math.random()+"");
+        response.setResult(result);
+        return ResponseEntity.ok(response);
+    }
+    public CallToolResult callToolWithCallback(@RequestBody ToolCallRequest request, ActionCallback callback) {
         Map<String, AIAction> predictions = PredictionLoader.getInstance().getPredictions();
         AIAction action = predictions.get(request.getName());
         AIProcessor processor = getBaseProcessor();
