@@ -187,7 +187,7 @@ public class MCPToolsController  {
         CallToolResult result = callToolWithCallback(request, new MCPActionCallback());
         log.info("Received result: " + result);
         JSONRPCResponse response = new JSONRPCResponse();
-        response.setId(Math.random()+"");
+        response.setId(UUID.randomUUID().toString());
         response.setResult(result);
         return ResponseEntity.ok(response);
     }
@@ -196,7 +196,7 @@ public class MCPToolsController  {
         CallToolResult result = callToolWithCallback(request, callback);
         log.info("Received result: " + result);
         JSONRPCResponse response = new JSONRPCResponse();
-        response.setId(Math.random()+"");
+        response.setId(UUID.randomUUID().toString());
         response.setResult(result);
         return ResponseEntity.ok(response);
     }
