@@ -81,6 +81,14 @@ public class MCPToolsController  {
         toolsResult.setTools(tools);
     }
 
+
+    public void addResources(ListResourcesResult result) {
+
+    }
+
+    public void addPrompts(ListPromptsResult result) {
+
+    }
     public ResponseEntity<Map<String, String>> getServerConfig() {
         return ResponseEntity.ok(Map.of(
                 "name", getServerName(),
@@ -228,13 +236,6 @@ public class MCPToolsController  {
 
 
 
-            // Validate the CallToolResult object
-            if (textContent.getText() == null || textContent.getText().isEmpty()) {
-                callToolResult.setIsError(true);
-                log.severe("TextContent.text is missing or empty");
-            } else {
-                callToolResult.setIsError(false);
-            }
 
 
             return callToolResult;

@@ -30,6 +30,7 @@ Use these example to quickly build agents using this library
 * [A2A MongoDB RAG Agent](https://github.com/vishalmysore/a2a-mongo-rag-search) – Perform semantic search and reasoning across agent tasks using RAG with MongoDB Agent. 
 * [Simple Agent in Kotlin](https://github.com/vishalmysore/a2a-kotlin) - Use A2AJava to build a simple agent in Kotlin.
 * [Build Agent in MCP](tutorial/mcp/11_MCP.md) - Use A2AJava to build a simple agent in MCP.
+* [Connect MCP Agent in Java](https://github.com/vishalmysore/mcp-connector/) - MCP Connector for Java Based agents 
 
 ### Coming Soon
 * **A2A Sensor Agent** – Use A2A to stream data from physical sensors and trigger real-time actions. ( [Please look at ChotuRobo Series](https://www.linkedin.com/posts/vishalrow_github-modelcontextprotocolservers-model-activity-7318222463857766400-YuFV/))

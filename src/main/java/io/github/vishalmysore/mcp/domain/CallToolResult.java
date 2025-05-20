@@ -24,6 +24,6 @@ import java.util.Map;
 public class CallToolResult extends Result{
     @NotNull
     private List<Content> content;
-    private Boolean isError;
-    private Map<String, Object> _meta;
+  //  private Boolean isError;
+  //  private Map<String, Object> _meta;
 }

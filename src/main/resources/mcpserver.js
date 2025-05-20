@@ -20,7 +20,7 @@ const server = new Server({
 // Handler: List tools from Spring Boot
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   try {
-    const response = await fetch("${SERVER_BASE_URL}/mcp/list-tools", {
+    const response = await fetch("http://localhost:7860/v1/tools", {
       method: "GET",
       headers: { "Content-Type": "application/json" }
     });
@@ -41,7 +41,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     throw error;
   }
 });
-
 // Handler: Call a tool by proxying to Spring Boot
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
@@ -53,7 +52,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     }, null, 2);
   //  await logToFile(outgoingRequestLog);
 
-    const response = await fetch("${SERVER_BASE_URL}/mcp/call-tool", {
+    const response = await fetch("http://localhost:7860/v1/tools/call", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -87,8 +86,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     // json remove attribute _meta
 
     const res = data.result;
-    delete res._meta;
-    delete res.isError;
+   // delete res._meta;
+   // delete res.isError;
     // console.log("Received response from Spring Boot:", res);
     return res; // Must match CallToolResponseSchema
   } catch (error) {

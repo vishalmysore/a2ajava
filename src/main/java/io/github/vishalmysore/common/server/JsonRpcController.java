@@ -7,9 +7,7 @@ import io.github.vishalmysore.a2a.domain.*;
 import io.github.vishalmysore.a2a.server.A2ARPCController;
 import io.github.vishalmysore.a2a.server.A2ATaskController;
 import io.github.vishalmysore.a2a.server.DyanamicTaskContoller;
-import io.github.vishalmysore.mcp.domain.JSONRPCResponse;
-import io.github.vishalmysore.mcp.domain.Tool;
-import io.github.vishalmysore.mcp.domain.ToolCallRequest;
+import io.github.vishalmysore.mcp.domain.*;
 import io.github.vishalmysore.mcp.server.MCPToolsController;
 import lombok.extern.java.Log;
 import org.springframework.http.HttpStatus;
@@ -17,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +113,7 @@ public class JsonRpcController implements A2ARPCController {
 
                 capabilities.put("tools", tools);
 
-                   mcpResult.put("protocolVersion", "2025-03-26");
+                   mcpResult.put("protocolVersion", "2024-11-05");
                    mcpResult.put("serverInfo", serverInfo);
                    mcpResult.put("capabilities", capabilities);
 
@@ -125,7 +124,7 @@ public class JsonRpcController implements A2ARPCController {
                 return response;
             } case "notifications/initialized": {
                 // For notifications, return null since no response is expected
-                return null;
+                return ResponseEntity.noContent().build();
             } case "tools/list": {
 
                 ResponseEntity<Map<String, List<Tool>>> toolsResponse = getMCPToolsController().listTools();
@@ -161,6 +160,34 @@ public class JsonRpcController implements A2ARPCController {
                 response.put("id", request.getId());
                 response.put("result", toolResponse.getBody().getResult());
                 postProcessing(method,response);
+                return response;
+            } case "resources/list": {
+                ListResourcesRequest listResourcesRequest = new ObjectMapper().convertValue(request, ListResourcesRequest.class);
+
+                ListResourcesResult listResourcesResult = new ListResourcesResult();
+                // Initialize with empty collections
+
+                listResourcesResult.setResources(new ArrayList<>());
+
+
+
+                Map<String, Object> response = new HashMap<>();
+                response.put("jsonrpc", "2.0");
+                response.put("id", request.getId());
+                response.put("result", listResourcesResult);
+                getMCPToolsController().addResources(listResourcesResult);
+                postProcessing(method, response);
+                return response;
+            } case "notifications/cancelled": {
+                 return ResponseEntity.noContent().build();
+            } case "prompts/list": {
+                ListPromptsResult listPromptsResult = new ListPromptsResult();
+                Map<String, Object> response = new HashMap<>();
+                response.put("jsonrpc", "2.0");
+                response.put("id", request.getId());
+                response.put("result", listPromptsResult);
+                getMCPToolsController().addPrompts(listPromptsResult);
+                postProcessing(method, response);
                 return response;
             }
             default:

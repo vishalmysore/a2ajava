@@ -1,10 +1,20 @@
 package io.github.vishalmysore.mcp.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Sent from the client to request a list of resources.
  */
 public class ListResourcesRequest extends ClientRequest {
     private final String method = "resources/list";
+
+    @Getter
+    @Setter
+    private String id;
+    @Getter
+    @Setter
+    private String jsonrpc;
     private Params params;
 
     public String getMethod() {

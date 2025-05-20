@@ -1,9 +1,18 @@
 package io.github.vishalmysore.mcp.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Sent from the client to request a list of prompts and prompt templates the server has.
  */
 public class ListPromptsRequest extends ClientRequest {
+    @Getter
+    @Setter
+    private String id;
+    @Getter
+    @Setter
+    private String jsonrpc;
     private final String method = "prompts/list";
     private Params params;
 
