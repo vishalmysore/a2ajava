@@ -19,7 +19,8 @@ This project provides a Java implementation for both an A2A (Agent-to-Agent) ser
 
 ## Quick Start  
 
-Use these example to quickly build agents using this library  
+Use these example to quickly build agents using this library    
+
 * [Database Agent](https://github.com/vishalmysore/SqlAIAgent) - Use A2A to build a database agent using Derby DB  
 * [Spring A2A Agent](https://github.com/vishalmysore/SpringActions) - Use A2A to build a spring agent using A2A and MCP  
 * [Standalone Java](https://github.com/vishalmysore/a2a-examples) - Several Examples on how to Use A2A to build a standalone java agent using A2A and MCP    
@@ -31,6 +32,7 @@ Use these example to quickly build agents using this library
 * [Simple Agent in Kotlin](https://github.com/vishalmysore/a2a-kotlin) - Use A2AJava to build a simple agent in Kotlin.
 * [Build Agent in MCP](tutorial/mcp/11_MCP.md) - Use A2AJava to build a simple agent in MCP.
 * [Connect MCP Agent in Java](https://github.com/vishalmysore/mcp-connector/) - MCP Connector for Java Based agents 
+* [MCP Agent in Kotlin](https://github.com/vishalmysore/mcp-kotlin) - Build MCP Agent in Kotlin and connect to Claude or A2A Clients  
 
 ### Coming Soon
 * **A2A Sensor Agent** – Use A2A to stream data from physical sensors and trigger real-time actions. ( [Please look at ChotuRobo Series](https://www.linkedin.com/posts/vishalrow_github-modelcontextprotocolservers-model-activity-7318222463857766400-YuFV/))
