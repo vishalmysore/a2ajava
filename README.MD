@@ -21,14 +21,14 @@ This project provides a Java implementation for both an A2A (Agent-to-Agent) ser
 
 Use these example to quickly build agents using this library    
 
-* [Connect MCP Agent in Java](https://github.com/vishalmysore/mcp-connector/) - MCP Connector for Java Based agents  
-* [Spring A2A Agent](https://github.com/vishalmysore/SpringActions) - Use A2A to build a spring agent using A2A and MCP  
-* [Database Agent](https://github.com/vishalmysore/SqlAIAgent) - Use A2A to build a database agent using Derby DB     
-* [Standalone Java](https://github.com/vishalmysore/a2a-examples) - Several Examples on how to Use A2A to build a standalone java agent using A2A and MCP    
-* [Log Monitoring Agent](https://github.com/vishalmysore/agenticlog) - Use A2A to build a log monitoring agent which triggers a2a task based on the log messages.
-* [A2A Kafka Agent](https://github.com/vishalmysore/a2akafkaagent) - Use A2A to build a kafka agent which can trigger a2a task based on the kafka messages.
-* [A2A Selenium Web Agent](https://github.com/vishalmysore/a2awebagent) - Use A2A to build a selenium agent which can trigger a2a task based for browsing , validation of web pages.
-* [A2A Grafana Agent](https://github.com/vishalmysore/a2a-grafana) - Build observable Agents using A2A and Grafana
+* [Connect MCP Agent in Java](https://github.com/vishalmysore/mcp-connector/) - MCP Connector for Java Based agents , connect your a2a server to MCP client like claude or connect your MCP server to a2a client. Or vice versa or any permutation and combination  
+* [Spring A2A Agent](https://github.com/vishalmysore/SpringActions) - Use a2ajava to build a spring agent using A2A and MCP, can work with a2a client or with mcp client like claude desktop or connect to visual studio code as agent   
+* [Database Agent](https://github.com/vishalmysore/SqlAIAgent) - Use a2ajava to build a database agent using Derby DB, start stop database , insert data , create table all with agentic operation for both mcp as well as a2a      
+* [Standalone Java](https://github.com/vishalmysore/a2a-examples) - Several Examples on how to Use a2ajava to build a standalone java agent using A2A and MCP work with any client     
+* [Log Monitoring Agent](https://github.com/vishalmysore/agenticlog) - Use a2ajava to build a log monitoring agent which triggers a2a task based on the log messages. Works with both a2a and mcp clients dual protocol 
+* [A2A Kafka Agent](https://github.com/vishalmysore/a2akafkaagent) - Use a2ajava to build a kafka agent which can trigger a2a task or mcp tool based on the kafka messages.
+* [A2A Selenium Web Agent](https://github.com/vishalmysore/a2awebagent) - Use a2ajava to build a selenium agent which can trigger a2a task or mcp tool for web browsing , validation of web pages.
+* [A2A Grafana Agent](https://github.com/vishalmysore/a2a-grafana) - Build observable Agents using A2A or MCP and Grafana
 * [A2A MongoDB RAG Agent](https://github.com/vishalmysore/a2a-mongo-rag-search) – Perform semantic search and reasoning across agent tasks using RAG with MongoDB Agent. 
 * [Simple Agent in Kotlin](https://github.com/vishalmysore/a2a-kotlin) - Use A2AJava to build a simple agent in Kotlin.
 * [Build Agent in MCP](tutorial/mcp/11_MCP.md) - Use A2AJava to build a simple agent in MCP. 

@@ -11,6 +11,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 
 
@@ -32,7 +33,7 @@ import java.util.Properties;
 @Log
 public class RealTimeAgentCardController implements A2AAgentCardController {
 
-    private PromptTransformer promptTransformer = new GeminiV2PromptTransformer();
+    private PromptTransformer promptTransformer;
 
 
     public static final String WELL_KNOWN_PATH = "/.well-known/";
@@ -43,7 +44,14 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
     @Value("${server.port:8080}")
     private String serverPort;
 
+    public RealTimeAgentCardController() {
+        promptTransformer = new GeminiV2PromptTransformer();
+    }
 
+    public RealTimeAgentCardController(ApplicationContext context) {
+        PredictionLoader.getInstance(context);
+        promptTransformer = new GeminiV2PromptTransformer();
+    }
 
     @Override
     public PromptTransformer getPromptTransformer() {

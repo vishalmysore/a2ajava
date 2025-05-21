@@ -3,6 +3,7 @@ package io.github.vishalmysore.common.server;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.t4a.predict.PredictionLoader;
 import io.github.vishalmysore.a2a.domain.*;
 import io.github.vishalmysore.a2a.server.A2ARPCController;
 import io.github.vishalmysore.a2a.server.A2ATaskController;
@@ -10,6 +11,7 @@ import io.github.vishalmysore.a2a.server.DyanamicTaskContoller;
 import io.github.vishalmysore.mcp.domain.*;
 import io.github.vishalmysore.mcp.server.MCPToolsController;
 import lombok.extern.java.Log;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,9 +37,21 @@ public class JsonRpcController implements A2ARPCController {
      * The DynamicTaskController is responsible for handling dynamic task-related operations.
      * IT can handle any task wheter ticket or food prefernce etc
      */
-    private DyanamicTaskContoller dynamicTaskController = new DyanamicTaskContoller();
+    private DyanamicTaskContoller dynamicTaskController;
 
-    private MCPToolsController  mcpToolsController = new MCPToolsController();
+    private MCPToolsController  mcpToolsController;
+
+    public JsonRpcController() {
+        dynamicTaskController = new DyanamicTaskContoller();
+        mcpToolsController = new MCPToolsController();
+    }
+
+    public JsonRpcController(ApplicationContext applicationContext) {
+        PredictionLoader.getInstance(applicationContext);
+        dynamicTaskController = new DyanamicTaskContoller();
+        mcpToolsController = new MCPToolsController();
+    }
+
     public A2ATaskController getTaskController() {
         return dynamicTaskController;
     }
