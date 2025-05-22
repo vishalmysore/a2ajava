@@ -219,9 +219,8 @@ public class MCPToolsController  {
             TextContent textContent = new TextContent();
             textContent.setType("text");
             callToolResult.setContent(content);
-            Object result = processor.processSingleAction(request.toString(), action, new LoggingHumanDecision(), new LogginggExplainDecision(), callback);
 
-
+            Object result = processAction(request, callback, processor, action);
 
 
             // Ensure the text field is properly set
@@ -244,6 +243,11 @@ public class MCPToolsController  {
         }
 
         return null;
+    }
+
+    protected Object processAction(ToolCallRequest request, ActionCallback callback, AIProcessor processor, AIAction action) throws AIProcessingException {
+        Object result = processor.processSingleAction(request.toString(), action, new LoggingHumanDecision(), new LogginggExplainDecision(), callback);
+        return result;
     }
 
     private Object[] buildMethodArguments(Method method, String jsonStr) throws Exception {
