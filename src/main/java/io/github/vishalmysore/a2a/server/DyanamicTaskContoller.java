@@ -10,8 +10,6 @@ import com.t4a.processor.OpenAiActionProcessor;
 import com.t4a.processor.scripts.ScriptProcessor;
 import com.t4a.processor.scripts.ScriptResult;
 import com.t4a.processor.scripts.SeleniumScriptProcessor;
-import com.t4a.processor.selenium.SeleniumGeminiProcessor;
-import com.t4a.processor.selenium.SeleniumProcessor;
 import com.t4a.transform.GeminiV2PromptTransformer;
 import com.t4a.transform.PromptTransformer;
 import io.github.vishalmysore.a2a.domain.*;
@@ -54,7 +52,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
 
     protected PromptTransformer promptTransformer = new GeminiV2PromptTransformer();
 
-    protected SeleniumProcessor seleniumProcessor = new SeleniumGeminiProcessor();
+    //protected SeleniumProcessor seleniumProcessor = new SeleniumGeminiProcessor();
 
     protected ScriptProcessor scriptProcessor = new ScriptProcessor();
 
