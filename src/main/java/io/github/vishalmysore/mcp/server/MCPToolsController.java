@@ -11,6 +11,7 @@ import com.t4a.predict.PredictionLoader;
 import com.t4a.processor.*;
 import io.github.vishalmysore.common.MCPActionCallback;
 import io.github.vishalmysore.mcp.domain.*;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.java.Log;
@@ -19,9 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
@@ -52,8 +54,9 @@ public class MCPToolsController  {
     private String version = "1.0.0";
 
     public MCPToolsController(){
-        init();
+
     }
+    @PostConstruct
     public void init() {
 
         Properties properties = new Properties();
@@ -77,10 +80,14 @@ public class MCPToolsController  {
         Map<GroupInfo, String> groupActions = PredictionLoader.getInstance().getActionGroupList().getGroupActions();
         List<Tool> tools = convertGroupActionsToTools(groupActions);
 
-        toolsResult = new ListToolsResult();
-        toolsResult.setTools(tools);
+        ListToolsResult newToolsResult = new ListToolsResult();
+        newToolsResult.setTools(tools);
+        storeListToolsResult(newToolsResult);
     }
 
+    public void storeListToolsResult(ListToolsResult toolsResult) {
+        this.toolsResult = toolsResult;
+    }
 
     public void addResources(ListResourcesResult result) {
 
@@ -105,6 +112,14 @@ public class MCPToolsController  {
         return true;
     }
 
+    /**
+     * This can be implmented by subclasses to restrict the methods that can be used
+     * @param method
+     * @return
+     */
+    public boolean isMethodAllowed(Method method)    {
+        return true;
+    }
     private List<Tool> convertGroupActionsToTools(Map<GroupInfo, String> groupActions) {
         List<Tool> tools = new ArrayList<>();
         Map<String, AIAction> predictions = PredictionLoader.getInstance().getPredictions();
@@ -117,6 +132,9 @@ public class MCPToolsController  {
                 AIAction action = predictions.get(actionName.trim());
                 if (action instanceof GenericJavaMethodAction) {
                     GenericJavaMethodAction methodAction = (GenericJavaMethodAction) action;
+                    Method m = methodAction.getActionMethod();
+                    if(!isMethodAllowed(m))
+                        continue;
                     log.info("Processing action: " + actionName);
                     Tool tool = new Tool();
                     tool.setName(action.getActionName());
@@ -212,17 +230,16 @@ public class MCPToolsController  {
         Map<String, AIAction> predictions = PredictionLoader.getInstance().getPredictions();
         AIAction action = predictions.get(request.getName());
         AIProcessor processor = getBaseProcessor();
+        CallToolResult callToolResult = new CallToolResult();
+        List<Content> content = new ArrayList<>();
+        TextContent textContent = new TextContent();
+        textContent.setType("text");
+        content.add(textContent);
+        callToolResult.setContent(content);
         try {
-            CallToolResult callToolResult = new CallToolResult();
             callback.setContext(callToolResult);
-            List<Content> content = new ArrayList<>();
-            TextContent textContent = new TextContent();
-            textContent.setType("text");
-            callToolResult.setContent(content);
 
             Object result = processAction(request, callback, processor, action);
-
-
             // Ensure the text field is properly set
             if (result != null) {
                 textContent.setText(result.toString());
@@ -230,19 +247,18 @@ public class MCPToolsController  {
                 textContent.setText("No result available");
             }
 
-
-            content.add(textContent);
-
-
-
-
-
-            return callToolResult;
+           // return callToolResult;
         } catch (AIProcessingException e) {
-            log.severe(e.getMessage());
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            log.severe(sw.toString());
+
+            textContent.setText("access denied, you are not authorized to use this tool");
+
         }
 
-        return null;
+        return callToolResult;
     }
 
     protected Object processAction(ToolCallRequest request, ActionCallback callback, AIProcessor processor, AIAction action) throws AIProcessingException {

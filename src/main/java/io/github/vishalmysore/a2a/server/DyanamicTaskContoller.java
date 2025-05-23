@@ -183,7 +183,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
             errorMessage.setRole("agent");
             TextPart errorPart = new TextPart();
             errorPart.setType("text");
-            errorPart.setText("Processing failed: " +sw.toString());
+            errorPart.setText("Processing failed: Access Denied");
             errorMessage.setParts(List.of(errorPart));
             failedStatus.setMessage(errorMessage);
             task.setStatus(failedStatus);

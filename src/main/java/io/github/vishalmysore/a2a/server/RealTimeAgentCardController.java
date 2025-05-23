@@ -1,5 +1,8 @@
 package io.github.vishalmysore.a2a.server;
 
+import com.t4a.annotations.Agent;
+import com.t4a.api.AIAction;
+import com.t4a.api.GenericJavaMethodAction;
 import com.t4a.api.GroupInfo;
 import com.t4a.predict.PredictionLoader;
 import com.t4a.processor.AIProcessingException;
@@ -17,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
@@ -52,7 +56,9 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
         PredictionLoader.getInstance(context);
         promptTransformer = new GeminiV2PromptTransformer();
     }
-
+    public boolean isMethodAllowed(Method method)    {
+        return true;
+    }
     @Override
     public PromptTransformer getPromptTransformer() {
         return promptTransformer;
@@ -79,15 +85,29 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
             throw new RuntimeException("Error loading properties file", e);
         }
         Map<GroupInfo, String> groupActions = PredictionLoader.getInstance().getActionGroupList().getGroupActions();
+        Map<String, AIAction> predictions = PredictionLoader.getInstance().getPredictions();
         StringBuilder realTimeDescription = new StringBuilder("This agent provides the following capabilities: ");
 
         for (Map.Entry<GroupInfo, String> entry : groupActions.entrySet()) {
             GroupInfo group = entry.getKey();
+            String[] actionNames = entry.getValue().split(",");
+            StringBuilder methodNames = new StringBuilder();
+
+            for (String actionName : actionNames) {
+                AIAction action = predictions.get(actionName.trim());
+                if (action instanceof GenericJavaMethodAction methodAction) {
+                    Method m = methodAction.getActionMethod();
+                    if (isMethodAllowed(m)) {
+                        methodNames.append(",");
+                        methodNames.append(actionName.trim());
+                    }
+                }
+            }
             realTimeDescription.append(group.getGroupName())
                     .append(" (")
                     .append(group.getGroupDescription())
                     .append("), with actions: ")
-                    .append(entry.getValue())
+                    .append(methodNames)
                     .append("; ");
         }
 
@@ -100,14 +120,15 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
         try {
             if(groupActions.isEmpty()) {
                 log.warning("No actions found for the agent card");
-                this.cachedAgentCard = new AgentCard();
+                AgentCard card = new AgentCard();
+                storeCard(card);
 
             } else {
-                this.cachedAgentCard = (AgentCard) promptTransformer.transformIntoPojo(
+                AgentCard card = (AgentCard) promptTransformer.transformIntoPojo(
                         "use this description and also populate skills in detail " + finalDescription,
-                        AgentCard.class
+                        AgentCard.class);
+                  storeCard(card);
 
-                );
             }
             String hostName = InetAddress.getLocalHost().getHostName();
             this.cachedAgentCard.setUrl("http://" + hostName + ":" + serverPort);
@@ -120,7 +141,9 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
     }
 
 
-
+   public void storeCard(AgentCard card) {
+        this.cachedAgentCard = card;
+    }
 
     public ResponseEntity<AgentCard> getAgentCard() {
         return ResponseEntity.ok(cachedAgentCard);
