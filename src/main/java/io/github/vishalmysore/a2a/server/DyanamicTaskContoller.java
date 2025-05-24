@@ -157,7 +157,9 @@ public class DyanamicTaskContoller implements A2ATaskController {
                         getBaseProcessor().processSingleAction(text, actionCallback);
                     } else {
                         Object obj = getBaseProcessor().processSingleAction(text);
-                        List<Part> partsList  = task.getStatus().getMessage().getParts();
+                        List<Part> currentParts = task.getStatus().getMessage().getParts();
+                        List<Part> partsList = new ArrayList<>(currentParts != null ? currentParts : new ArrayList<>());
+                        task.getStatus().getMessage().setParts(partsList);
                         TextPart resultPart = new TextPart();
                         partsList.add(resultPart);
                         task.getStatus().setState(TaskState.COMPLETED);
