@@ -89,6 +89,10 @@ public class MCPToolsController  {
         this.toolsResult = toolsResult;
     }
 
+    /**
+     * This will be used to add resources to the tools in subclasses
+     * @param result
+     */
     public void addResources(ListResourcesResult result) {
 
     }

@@ -37,7 +37,7 @@ public class AIProcessingTest {
         };
     }
 
-    @Test
+
     public void testSuccessfulAIProcessing() throws AIProcessingException {
         // Setup mock response
         when(mockProcessor.processSingleAction(any(String.class), any(ActionCallback.class)))

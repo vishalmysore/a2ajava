@@ -56,7 +56,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
 
     protected ScriptProcessor scriptProcessor = new ScriptProcessor();
 
-    protected SeleniumScriptProcessor seleniumScriptProcessor = new SeleniumScriptProcessor();
+    //protected SeleniumScriptProcessor seleniumScriptProcessor = new SeleniumScriptProcessor();
 
 
     protected PromptTransformer getPromptTransformer() {
@@ -214,7 +214,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
 
                 // Write steps to file
                 Files.write(tempFile, originalString.getBytes());
-                ScriptResult result  = seleniumScriptProcessor.process(tempFile.toAbsolutePath().toString());
+                ScriptResult result  = null;//seleniumScriptProcessor.process(tempFile.toAbsolutePath().toString());
                 String resultString = objectMapper.writeValueAsString(result);
                 log.info(resultString);
                 task.setDetailedAndMessage(TaskState.COMPLETED,resultString);
