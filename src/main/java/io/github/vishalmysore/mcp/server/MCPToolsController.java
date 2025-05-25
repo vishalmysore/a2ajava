@@ -236,35 +236,52 @@ public class MCPToolsController  {
         AIProcessor processor = getBaseProcessor();
         CallToolResult callToolResult = new CallToolResult();
         List<Content> content = new ArrayList<>();
-        TextContent textContent = new TextContent();
-        textContent.setType("text");
-        content.add(textContent);
-        callToolResult.setContent(content);
+
         try {
             callback.setContext(callToolResult);
-
             Object result = processAction(request, callback, processor, action);
-            // Ensure the text field is properly set
+
             if (result != null) {
-                textContent.setText(result.toString());
+                String resultStr = result.toString();
+                // Check if result is Base64 encoded
+                if (isBase64(resultStr)) {
+                    ImageContent imageContent = new ImageContent();
+                   // imageContent.setType("image");
+                    imageContent.setData(resultStr);
+                    imageContent.setMimeType("image/png"); // Set appropriate MIME type
+                    content.add(imageContent);
+                } else {
+                    TextContent textContent = new TextContent();
+                    textContent.setType("text");
+                    textContent.setText(resultStr);
+                    content.add(textContent);
+                }
             } else {
+                TextContent textContent = new TextContent();
+                textContent.setType("text");
                 textContent.setText("No result available");
+                content.add(textContent);
             }
-
-           // return callToolResult;
         } catch (AIProcessingException e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            log.severe(sw.toString());
-
+            TextContent textContent = new TextContent();
+            textContent.setType("text");
             textContent.setText("access denied, you are not authorized to use this tool");
-
+            content.add(textContent);
+            log.severe(e.getMessage());
         }
 
+        callToolResult.setContent(content);
         return callToolResult;
     }
 
+    private boolean isBase64(String str) {
+        try {
+            Base64.getDecoder().decode(str);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
     protected Object processAction(ToolCallRequest request, ActionCallback callback, AIProcessor processor, AIAction action) throws AIProcessingException {
         Object result = processor.processSingleAction(request.toString(), action, new LoggingHumanDecision(), new LogginggExplainDecision(), callback);
         return result;
