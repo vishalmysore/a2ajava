@@ -44,12 +44,14 @@ public class JsonRpcController implements A2ARPCController {
     public JsonRpcController() {
         dynamicTaskController = new DyanamicTaskContoller();
         mcpToolsController = new MCPToolsController();
+        mcpToolsController.init();
     }
 
     public JsonRpcController(ApplicationContext applicationContext) {
         PredictionLoader.getInstance(applicationContext);
         dynamicTaskController = new DyanamicTaskContoller();
         mcpToolsController = new MCPToolsController();
+        mcpToolsController.init();
     }
 
     public A2ATaskController getTaskController() {

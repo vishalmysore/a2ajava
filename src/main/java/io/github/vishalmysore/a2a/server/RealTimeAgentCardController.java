@@ -134,7 +134,7 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
             this.cachedAgentCard.setUrl("http://" + hostName + ":" + serverPort);
         } catch (AIProcessingException e) {
             log.severe("The skills are not populate in the agent card as actions are more in number \n you can either try with different processor \n" +
-                    " or you can populate skills individually and add to agent card ");
+                    " or you can populate skills individually and add to agent card , or it could be that AI key is not initialized "+e.getMessage());
         } catch (UnknownHostException e) {
             log.warning("host not knwon set the url manually card.setUrl");
         }
