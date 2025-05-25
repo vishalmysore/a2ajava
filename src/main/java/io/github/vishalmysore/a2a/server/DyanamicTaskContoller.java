@@ -7,9 +7,10 @@ import com.t4a.processor.AIProcessingException;
 import com.t4a.processor.AIProcessor;
 import com.t4a.processor.GeminiV2ActionProcessor;
 import com.t4a.processor.OpenAiActionProcessor;
+import com.t4a.processor.scripts.BaseScriptProcessor;
 import com.t4a.processor.scripts.ScriptProcessor;
 import com.t4a.processor.scripts.ScriptResult;
-import com.t4a.processor.scripts.SeleniumScriptProcessor;
+
 import com.t4a.transform.GeminiV2PromptTransformer;
 import com.t4a.transform.PromptTransformer;
 import io.github.vishalmysore.a2a.domain.*;
@@ -25,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -54,11 +56,12 @@ public class DyanamicTaskContoller implements A2ATaskController {
 
     //protected SeleniumProcessor seleniumProcessor = new SeleniumGeminiProcessor();
 
-    protected ScriptProcessor scriptProcessor = new ScriptProcessor();
+   // protected ScriptProcessor scriptProcessor = new ScriptProcessor();
 
     //protected SeleniumScriptProcessor seleniumScriptProcessor = new SeleniumScriptProcessor();
 
 
+    private BaseScriptProcessor scriptProcessor;
     protected PromptTransformer getPromptTransformer() {
         return promptTransformer;
     }
@@ -71,6 +74,15 @@ public class DyanamicTaskContoller implements A2ATaskController {
       init();
     }
 
+
+    @PostConstruct
+    public void initOptionalProcessors (){
+        scriptProcessor = new ScriptProcessor();
+    }
+
+    public BaseScriptProcessor getScriptProcessor() {
+        return scriptProcessor;
+    }
 
     public void init() {
         Properties properties = new Properties();
@@ -216,7 +228,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
 
                 // Write steps to file
                 Files.write(tempFile, originalString.getBytes());
-                ScriptResult result  = null;//seleniumScriptProcessor.process(tempFile.toAbsolutePath().toString());
+                ScriptResult result  = getScriptProcessor().process(tempFile.toAbsolutePath().toString());
                 String resultString = objectMapper.writeValueAsString(result);
                 log.info(resultString);
                 task.setDetailedAndMessage(TaskState.COMPLETED,resultString);

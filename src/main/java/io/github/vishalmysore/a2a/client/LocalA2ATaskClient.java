@@ -33,6 +33,11 @@ public class LocalA2ATaskClient {
         jrc = new JsonRpcController();
     }
 
+    public LocalA2ATaskClient(JsonRpcController jrc) {
+        this.jrc = jrc;
+    }
+
+
 
     private JsonRpcRequest createRequest(String method, Object params) {
         return new JsonRpcRequest("2.0", method, params, UUID.randomUUID().toString());
