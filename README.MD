@@ -1,7 +1,8 @@
 # Java Implementation of Google's A2A Protocol: Connecting the Agentverse
 
 This project provides a Java implementation for both an A2A (Agent-to-Agent) server and client. 
-**A2A is an open protocol developed by Google** to standardize how AI agents communicate and exchange information, fostering a vibrant ecosystem of interoperable AI. This api also supports building MCP Servers in Java with use of simple annotations. Imagine a world where diverse AI agents, built with different tools and by different creators, can seamlessly collaborate to solve complex problems - that's the vision A2A is bringing to life. This implementation demonstrates how to set up this communication in Java, using the Spring Framework, with a focus on sending and retrieving tasks, ( I have added a several agents to showcase how this works.)  
+**A2A is an open protocol developed by Google** to standardize how AI agents communicate and exchange information, fostering a vibrant ecosystem of interoperable AI. This api also supports building MCP Servers in Java with use of simple annotations. Imagine a world where diverse AI agents, built with different tools and by different creators, can seamlessly collaborate to solve complex problems - that's the vision A2A is bringing to life. This implementation demonstrates how to set up this communication in Java, using the Spring Framework, with a focus on sending and retrieving tasks.
+a2ajava is a Swiss Army knife for building agentic applications. It is multi-protocol — works seamlessly with both A2A (Agent-to-Agent) and MCP (Model Context Protocol). It is multi-language — supports Java, Kotlin, and Groovy. It is multi-platform — compatible with Gemini, OpenAI, Claude, and Grok. It is multi-client — includes A2A and MCP clients with connectors in Java, Node, and Python. It offers multi-integration — out-of-the-box support for Selenium, human-in-the-loop workflows, and multi-LLM voting for consensus-based decision making. Agents built using the A2A protocol with a2ajava run seamlessly on MCP as well, ensuring maximum interoperability across platforms.
 
 [![Need More Info? Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/vishalmysore/a2ajava) [![codecov](https://codecov.io/gh/vishalmysore/a2ajava/graph/badge.svg?token=HieisRv0xC)](https://codecov.io/gh/vishalmysore/a2ajava)
 <a target="_blank" href="https://sonarcloud.io/summary/new_code?id=vishalmysore_a2ajava"><img src="https://sonarcloud.io/api/project_badges/measure?project=vishalmysore_a2ajava&metric=alert_status"/></a>
@@ -53,6 +54,12 @@ Use these example to quickly build agents using this library
 * [Human In Loop](tutorial/8_HumanInLoop.md)
 * [Kubernetes Example](tutorial/9_Kubernetes.md)
 * [Multi Agents](tutorial/10_ComplexAgents.md)
+
+## Live Demo 
+Live demos have been deployed on hugginface you are welcome to try them out. Or clone the space and create your own space
+
+* [A2A MCP RAG Application with Tool calling](https://vishalmysore-a2amcpmongo.hf.space/) - A2A Java Agent with Spring Boot and MongoDB Atlas for semantic search and reasoning. This application demonstrates how to use A2A and MCP protocols to build a RAG application with tool calling capabilities. It uses MongoDB Atlas for vector search and reasoning across agent tasks.
+* [A2A and MCP RBAC Security](https://vishalmysore-a2amcpdemo.hf.space/) - A2A and MCP demo with RBAC security. This application demonstrates how to use A2A and MCP protocols to build a secure application with role-based access control. It uses Spring Security and JWT for authentication and authorization.
 
 ## Whats so special about A2AJava library?
 
@@ -222,9 +229,10 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 
 ## Important Disclaimer(s)
 
-* This Java implementation provides a starting point for building A2A-compliant and MCP-Compliant agents and is being actively developed as and when I get time.  
-* The A2A protocol is an evolving standard, and this implementation may need to be updated as the protocol matures.  Always refer to the official A2A documentation for the latest specifications and best practices.  
-* This implementation is not affiliated with or endorsed by Google.  It is my independent effort to demonstrate the A2A protocol in Java.  
+  
+* The A2A and MCP protocol is an evolving standard, and this implementation may need to be updated as the protocols matures.  Always refer to the official A2A documentation for the latest specifications and best practices.  
+* This implementation is not affiliated with or endorsed by Google or Anthropic.  It is my independent effort to demonstrate the A2A and MCP protocol in Java.
+* Unit test coverage needs to be enhanced , will be working on it 
   
   
   

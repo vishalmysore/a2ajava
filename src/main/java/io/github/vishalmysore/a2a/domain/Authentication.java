@@ -2,6 +2,7 @@ package io.github.vishalmysore.a2a.domain;
 
 
 
+import com.t4a.annotations.Prompt;
 import lombok.Data;
 import lombok.ToString;
 
@@ -12,6 +13,7 @@ import java.util.Base64;
 @ToString(exclude = "credentials")
 public class Authentication {
 
+    @Prompt(describe = "The authentication schemes supported by the a2a protocol server, e.g., Basic, Bearer, ApiKey. Dont keep it empty")
     private String[] schemes;
     private String credentials;
 
