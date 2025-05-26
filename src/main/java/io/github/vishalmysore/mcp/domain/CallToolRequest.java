@@ -1,5 +1,9 @@
 package io.github.vishalmysore.mcp.domain;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.Map;
 
 /**
@@ -19,6 +23,15 @@ public class CallToolRequest {
 
     public void setParams(Params params) {
         this.params = params;
+    }
+
+    public static CallToolRequest fromString(String jsonString) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(jsonString, CallToolRequest.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Error parsing CallToolRequest: " + e.getMessage(), e);
+        }
     }
 
     public static class Params {

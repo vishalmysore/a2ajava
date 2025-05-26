@@ -267,7 +267,10 @@ public class MCPToolsController  {
             textContent.setType("text");
             textContent.setText("access denied, you are not authorized to use this tool");
             content.add(textContent);
-            log.severe(e.getMessage());
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            log.severe(sw.toString());
         }
 
         callToolResult.setContent(content);

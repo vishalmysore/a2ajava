@@ -1,18 +1,26 @@
 package io.github.vishalmysore.mcp.domain;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * A resource, which may be text or binary data.
  */
-public class Resource {
-    /**
+public class Resource {    /**
      * Optional annotations for the client.
      */
     private Annotations annotations;
+    
     /**
      * The contents of the resource.
      */
-    private Object contents;  // Can be TextResourceContents or BlobResourceContents. Use Object
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+    @JsonSubTypes({
+        @JsonSubTypes.Type(value = TextResourceContents.class, name = "text"),
+        @JsonSubTypes.Type(value = BlobResourceContents.class, name = "blob")
+    })
+    private Object contents;
+    
     /**
      * The URI of the resource.
      */

@@ -156,54 +156,91 @@ public class DyanamicTaskContoller implements A2ATaskController {
 
 
     protected void processTaskLogic(TaskSendParams taskSendParams, Task task, String taskId, ActionCallback actionCallback) {
-
         try {
-            List<Part> parts = taskSendParams.getMessage().getParts();
-            if (parts != null && !parts.isEmpty()) {
-                Part part = parts.get(0);
-                if (part instanceof TextPart textPart && "text".equals(textPart.getType())) {
-                    String text = textPart.getText();
-
-                    if(actionCallback!= null) {
-                        actionCallback.setContext(task);
-                        getBaseProcessor().processSingleAction(text, actionCallback);
-                    } else {
-                        Object obj = getBaseProcessor().processSingleAction(text);
-                        List<Part> currentParts = task.getStatus().getMessage().getParts();
-                        List<Part> partsList = new ArrayList<>(currentParts != null ? currentParts : new ArrayList<>());
-                        task.getStatus().getMessage().setParts(partsList);
-                        TextPart resultPart = new TextPart();
-                        partsList.add(resultPart);
-                        task.getStatus().setState(TaskState.COMPLETED);
-                        resultPart.setType("text");
-                        if(obj!=null) {
-                            resultPart.setText(JsonUtils.convertObjectToJson(obj));
-                        } else {
-                            resultPart.setText("No result");
-                        }
-                    }
-                }  if (part instanceof FilePart filePart && "file".equals(filePart.getType())) {
-                    processFileTaskLogic( taskSendParams,  task,  taskId,  actionCallback);
-                }
-            }
+            processParts(taskSendParams, task, taskId, actionCallback);
         } catch (Exception e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            TaskStatus failedStatus = new TaskStatus(TaskState.FAILED);
-            Message errorMessage = new Message();
-            errorMessage.setRole("agent");
-            TextPart errorPart = new TextPart();
-            errorPart.setType("text");
-            errorPart.setText("Processing failed: Access Denied");
-            errorMessage.setParts(List.of(errorPart));
-            failedStatus.setMessage(errorMessage);
-            task.setStatus(failedStatus);
-
-
-            log.severe("Complete stack trace:\n" + sw.toString());
-            tasks.put(taskId, task);
+            handleProcessingError(task, taskId, e);
         }
+    }
+
+    private void processParts(TaskSendParams taskSendParams, Task task, String taskId, ActionCallback actionCallback) throws AIProcessingException {
+        List<Part> parts = taskSendParams.getMessage().getParts();
+        if (parts == null || parts.isEmpty()) {
+            return;
+        }
+
+        Part part = parts.get(0);
+        if (part instanceof TextPart textPart) {
+            processTextPart(textPart, task, actionCallback);
+        } else if (part instanceof FilePart) {
+            processFileTaskLogic(taskSendParams, task, taskId, actionCallback);
+        }
+    }
+
+    private void processTextPart(TextPart textPart, Task task, ActionCallback actionCallback) throws AIProcessingException {
+        if (!"text".equals(textPart.getType())) {
+            return;
+        }
+
+        String text = textPart.getText();
+        if (actionCallback != null) {
+            processWithCallback(text, task, actionCallback);
+        } else {
+            processWithoutCallback(text, task);
+        }
+    }
+
+    private void processWithCallback(String text, Task task, ActionCallback actionCallback) throws AIProcessingException {
+        actionCallback.setContext(task);
+        getBaseProcessor().processSingleAction(text, actionCallback);
+    }
+
+    private void processWithoutCallback(String text, Task task) throws AIProcessingException {
+        Object obj = getBaseProcessor().processSingleAction(text);
+        updateTaskWithResult(task, obj);
+    }
+
+    private void updateTaskWithResult(Task task, Object obj) {
+        List<Part> currentParts = task.getStatus().getMessage().getParts();
+        List<Part> partsList = new ArrayList<>(currentParts != null ? currentParts : new ArrayList<>());
+
+        TextPart resultPart = createResultPart(obj);
+        partsList.add(resultPart);
+
+        task.getStatus().setState(TaskState.COMPLETED);
+        task.getStatus().getMessage().setParts(partsList);
+    }
+
+    private TextPart createResultPart(Object obj) {
+        TextPart resultPart = new TextPart();
+        resultPart.setType("text");
+        resultPart.setText(obj != null ? JsonUtils.convertObjectToJson(obj) : "No result");
+        return resultPart;
+    }
+
+    private void handleProcessingError(Task task, String taskId, Exception e) {
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+
+        TaskStatus failedStatus = createFailedStatus();
+        task.setStatus(failedStatus);
+
+        log.severe("Complete stack trace:\n" + sw.toString());
+        tasks.put(taskId, task);
+    }
+
+    private TaskStatus createFailedStatus() {
+        TaskStatus failedStatus = new TaskStatus(TaskState.FAILED);
+        Message errorMessage = new Message();
+        errorMessage.setRole("agent");
+
+        TextPart errorPart = new TextPart();
+        errorPart.setType("text");
+        errorPart.setText("Processing failed: Access Denied");
+
+        errorMessage.setParts(List.of(errorPart));
+        failedStatus.setMessage(errorMessage);
+        return failedStatus;
     }
     protected void processFileTaskLogic(TaskSendParams taskSendParams, Task task, String taskId, ActionCallback actionCallback) {
         try {
