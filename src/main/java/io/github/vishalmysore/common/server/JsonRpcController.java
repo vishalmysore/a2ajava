@@ -81,7 +81,7 @@ public class JsonRpcController implements A2ARPCController {
         switch (method) {
             case "tasks/send":
                 TaskSendParams sendParams = new ObjectMapper().convertValue(params, TaskSendParams.class);
-                result = getTaskController().sendTask(sendParams);
+                result = getTaskController().sendTask(sendParams,null,false);
                 postProcessing(method,result);
                 return result;
             case "tasks/get":

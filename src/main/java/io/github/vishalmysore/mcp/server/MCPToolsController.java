@@ -265,11 +265,11 @@ public class MCPToolsController  {
         } catch (AIProcessingException e) {
             TextContent textContent = new TextContent();
             textContent.setType("text");
-            textContent.setText("access denied, you are not authorized to use this tool");
             content.add(textContent);
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
+            textContent.setText("Technical issue occurred while processing the request: " + sw.toString());
             log.severe(sw.toString());
         }
 
