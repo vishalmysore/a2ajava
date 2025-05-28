@@ -242,19 +242,23 @@ public class MCPToolsController  {
             Object result = processAction(request, callback, processor, action);
 
             if (result != null) {
-                String resultStr = result.toString();
-                // Check if result is Base64 encoded
-                if (isBase64(resultStr)) {
-                    ImageContent imageContent = new ImageContent();
-                   // imageContent.setType("image");
-                    imageContent.setData(resultStr);
-                    imageContent.setMimeType("image/png"); // Set appropriate MIME type
-                    content.add(imageContent);
+                if(result instanceof  Content) {
+                    content.add((Content) result);
                 } else {
-                    TextContent textContent = new TextContent();
-                    textContent.setType("text");
-                    textContent.setText(resultStr);
-                    content.add(textContent);
+                    String resultStr = result.toString();
+                    // Check if result is Base64 encoded
+                    if (isBase64(resultStr)) {
+                        ImageContent imageContent = new ImageContent();
+                       // imageContent.setType("image");
+                        imageContent.setData(resultStr);
+                        imageContent.setMimeType("image/png"); // Set appropriate MIME type
+                        content.add(imageContent);
+                    } else {
+                        TextContent textContent = new TextContent();
+                        textContent.setType("text");
+                        textContent.setText(resultStr);
+                        content.add(textContent);
+                    }
                 }
             } else {
                 TextContent textContent = new TextContent();

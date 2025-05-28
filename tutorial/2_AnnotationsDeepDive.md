@@ -16,6 +16,18 @@ A2AJava's annotation system provides a powerful way to convert natural language 
 
 ### Overview
 A2AJava can automatically convert natural language text into Java objects. This feature uses AI to extract structured data from unstructured text.
+You can convert you entire springboot based applicaiton into a2a and mcp compliant agent by using these  4 annotations:
+
+```java
+import com.t4a.annotations.Action;
+
+@EnableAgent  - converts your springboot application into an A2A agent
+@EnabaleAgentSecurity- adds security features to your agent
+@Agent(groupName = "organization", groupDescription = "Handles organization data") - creates an agent group
+@Action(description = "") - creates an action within the agent group
+
+```
+
 
 ### Basic Example
 ```java
