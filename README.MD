@@ -36,6 +36,9 @@ Use these example to quickly build agents using this library
 * [MCP Agent in Kotlin](https://github.com/vishalmysore/mcp-kotlin) - Build MCP Agent in Kotlin and connect to Claude or A2A Clients  
 * [MCP and A2A RAG Server](https://github.com/vishalmysore/mcp-rag-server) - State of the art RAG server using A2A and MCP with MongoDB Atlas works with both MCP as well as A2A clients
 * [A2A and MCP Agent with Security](https://github.com/vishalmysore/a2a-mcp-with-security) - Build A2A and MCP agent with security using Spring Security and JWT. 
+* [A2A and MCP in Groovy](https://github.com/vishalmysore/a2aGroovy) - Build A2A and MCP agent in Groovy using A2AJava library.
+* [A2A and MCP in Scala](https://github.com/vishalmysore/a2aScala) - Build A2A and MCP agent in Scala using A2AJava library.
+* [A2A and MCP with Playwright](https://github.com/vishalmysore/a2aPlaywright) - Build A2A and MCP agent with Playwright for web automation using A2AJava library.
 
 ### Coming Soon
 * **A2A Sensor Agent** – Use A2A to stream data from physical sensors and trigger real-time actions. ( [Please look at ChotuRobo Series](https://www.linkedin.com/posts/vishalrow_github-modelcontextprotocolservers-model-activity-7318222463857766400-YuFV/))
@@ -61,6 +64,9 @@ Live demos have been deployed on hugginface you are welcome to try them out. Or 
 * [A2A MCP RAG Application with Tool calling](https://vishalmysore-a2amcpmongo.hf.space/) - A2A Java Agent with Spring Boot and MongoDB Atlas for semantic search and reasoning. This application demonstrates how to use A2A and MCP protocols to build a RAG application with tool calling capabilities. It uses MongoDB Atlas for vector search and reasoning across agent tasks.
 * [A2A and MCP RBAC Security](https://vishalmysore-a2amcpdemo.hf.space/) - A2A and MCP demo with RBAC security. This application demonstrates how to use A2A and MCP protocols to build a secure application with role-based access control. It uses Spring Security and JWT for authentication and authorization.
 * [A2A and MCP with Selenium](https://vishalmysore-a2amcpselenium.hf.space/) - A2A and MCP demo with Selenium integration. This application demonstrates how to use A2A and MCP protocols to build a web automation application with Selenium. It uses Spring Boot and Selenium for web automation and A2A and MCP protocols for communication.
+* [A2A and MCP with Playwright](https://vishalmysore-a2apw.hf.space/) - A2A and MCP demo with Playwright integration. This application demonstrates how to use A2A and MCP protocols to build a web automation application with Playwright. It uses Spring Boot and Playwright for web automation and A2A and MCP protocols for communication.
+* [A2A and MCP with Spring](https://huggingface.co/spaces/VishalMysore/a2amcpspring) - A2A and MCP demo with Spring integration. This application demonstrates how to use A2A and MCP protocols to build a web application with Spring Boot. It uses Spring Boot and A2A and MCP protocols for communication.
+* [A2A and MCP with Database](https://huggingface.co/spaces/VishalMysore/a2amcpdatabase) - A2A and MCP demo with Database integration. This application demonstrates how to use A2A and MCP protocols to build a database application with Spring Boot and Derby DB. It uses Spring Boot and A2A and MCP protocols for communication.
 
 ## Whats so special about A2AJava library?
 
