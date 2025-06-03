@@ -47,8 +47,8 @@ public class MCPAgent implements Agent {
         Map<String, Object> arguments = new HashMap<>();
         arguments.put("provideAllValuesInPlainEnglish", query);
         arguments.put("name", methodName);
-        Params
-        request.setParams();
+        CallToolRequest.Params params = new CallToolRequest.Params();
+        request.setParams(params);
         return callTool(request);
 
     }
