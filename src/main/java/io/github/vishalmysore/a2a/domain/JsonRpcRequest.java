@@ -1,6 +1,8 @@
 package io.github.vishalmysore.a2a.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.vishalmysore.common.CommonClientRequest;
+import io.github.vishalmysore.mcp.domain.ClientRequest;
 import lombok.*;
 
 @Getter
@@ -8,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class JsonRpcRequest {
+public class JsonRpcRequest implements CommonClientRequest {
     private String jsonrpc;
     private String method;
     private Object params;

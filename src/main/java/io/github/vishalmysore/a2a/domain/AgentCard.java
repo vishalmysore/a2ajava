@@ -1,6 +1,7 @@
 package io.github.vishalmysore.a2a.domain;
 
 import com.t4a.annotations.ListType;
+import io.github.vishalmysore.common.AgentInfo;
 import lombok.Data;
 import lombok.ToString;
 
@@ -10,7 +11,7 @@ import java.util.UUID;
 
 @Data
 @ToString
-public class AgentCard {
+public class AgentCard implements AgentInfo {
     private String name;
     private String description;
     private String url;

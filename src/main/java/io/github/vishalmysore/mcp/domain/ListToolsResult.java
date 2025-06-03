@@ -1,6 +1,8 @@
 package io.github.vishalmysore.mcp.domain;
 
 
+import io.github.vishalmysore.common.AgentInfo;
+import lombok.ToString;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -10,7 +12,8 @@ import java.util.Map;
  * The server's response to a tools/list request from the client.
  */
 @Component
-public class ListToolsResult {
+@ToString
+public class ListToolsResult implements AgentInfo {
     /**
      * This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
      */

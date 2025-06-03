@@ -9,4 +9,5 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = ImageContent.class, name = "image")
 })
 public interface Content {
+    String getType();
 }

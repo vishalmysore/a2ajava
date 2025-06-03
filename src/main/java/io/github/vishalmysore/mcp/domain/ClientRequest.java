@@ -1,4 +1,6 @@
 package io.github.vishalmysore.mcp.domain;
 
-public abstract class ClientRequest {
+import io.github.vishalmysore.common.CommonClientRequest;
+
+public abstract class ClientRequest implements CommonClientRequest {
 }
