@@ -35,6 +35,20 @@ public class CallToolRequest implements CommonClientRequest {
         this.params = params;
     }
 
+    public void putArgument(String key, Object value) {
+        // Initialize params if null
+        if (this.params == null) {
+            this.params = new Params();
+        }
+
+        // Initialize arguments map if null
+        if (this.params.getArguments() == null) {
+            this.params.setArguments(new java.util.HashMap<>());
+        }
+
+        // Put the key-value pair
+        this.params.getArguments().put(key, value);
+    }
 
 
     public static CallToolRequest fromString(String jsonString) {

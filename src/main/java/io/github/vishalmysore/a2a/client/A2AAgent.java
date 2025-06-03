@@ -2,20 +2,26 @@ package io.github.vishalmysore.a2a.client;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.vishalmysore.a2a.domain.AgentCard;
+import io.github.vishalmysore.a2a.domain.*;
 import io.github.vishalmysore.common.Agent;
 import io.github.vishalmysore.common.AgentInfo;
-import io.github.vishalmysore.common.CommonClientRequest;
+
 import io.github.vishalmysore.common.CommonClientResponse;
-import io.github.vishalmysore.mcp.domain.JSONRPCResponse;
+
 import lombok.extern.java.Log;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Log
@@ -44,7 +50,38 @@ public class A2AAgent implements Agent {
 
     @Override
     public CommonClientResponse remoteMethodCall(String query) {
-      return null;
+        try {
+            Message message = new Message();
+            TextPart textPart = new TextPart();
+            textPart.setText(query);
+            message.setParts(Collections.singletonList(textPart));
+
+            TaskSendParams params = new TaskSendParams();
+            params.setMessage(message);
+
+            params.setId(String.valueOf(UUID.randomUUID()));
+            JsonRpcRequest request = createRequest("tasks/send", params);
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<Task> response = restTemplate.postForEntity(
+                    getServerUrl().toURI().toString(),
+                    request,
+                    Task.class
+            );
+
+            Task task = response.getBody();
+
+            return task;
+        } catch (HttpClientErrorException e) {
+            log.severe("Error sending task: " + e.getMessage());
+            throw e;
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private JsonRpcRequest createRequest(String method, Object params) {
+        return new JsonRpcRequest("2.0", method, params, UUID.randomUUID().toString());
     }
 
     @Override
@@ -85,6 +122,7 @@ public class A2AAgent implements Agent {
 
 
                 this.agentCard = mapper.readValue(response.toString(), AgentCard.class);
+              //  serverUrl = new URL(this.agentCard.getUrl());
             }
 
         } catch (IOException e) {

@@ -1,6 +1,7 @@
 package regression;
 
 import io.github.vishalmysore.a2a.client.A2AAgent;
+import io.github.vishalmysore.a2a.client.A2ATaskClient;
 import io.github.vishalmysore.a2a.domain.AgentCard;
 import io.github.vishalmysore.common.AgentInfo;
 import io.github.vishalmysore.mcp.client.MCPAgent;
@@ -15,10 +16,15 @@ import java.util.List;
 public class ConnectToServer {
     public static void main(String[] args) {
         A2AAgent a2aagent = new A2AAgent();
-      //  a2aagent.connect("https://vishalmysore-a2amcpspring.hf.space/");
-     //   AgentInfo card = a2aagent.getInfo();
+         a2aagent.connect("http://localhost:7860");
+       // AgentInfo card = a2aagent.getInfo();
+        A2ATaskClient taskClient = new A2ATaskClient("http://localhost:7860");
+        taskClient.sendTask("vishal is coming home what should i cook");
+        //Object task = a2aagent.remoteMethodCall("vishal is coming home what should i cook");
+       // log.info("Task result: " + task);
      //   log.info("Connected to server: " + card);
-        MCPAgent mcpAgent = new MCPAgent();
+
+     /*   MCPAgent mcpAgent = new MCPAgent();
         mcpAgent.connect("https://vishalmysore-a2amcpspring.hf.space/");
         AgentInfo mcpCard = mcpAgent.getInfo();
         log.info("Connected to MCP server: " + mcpCard);
@@ -43,5 +49,7 @@ public class ConnectToServer {
 
         result = (CallToolResult) mcpAgent.remoteMethodCall("whatThisPersonFavFood", "vishal is coming home what should i cook");
         log.info("Tool call result: " + result);
+        */
+
     }
 }

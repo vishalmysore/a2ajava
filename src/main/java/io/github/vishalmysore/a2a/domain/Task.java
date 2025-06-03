@@ -3,6 +3,8 @@ package io.github.vishalmysore.a2a.domain;
 
 
 
+import io.github.vishalmysore.common.CommonClientRequest;
+import io.github.vishalmysore.common.CommonClientResponse;
 import lombok.Data;
 import lombok.ToString;
 
@@ -28,7 +30,7 @@ import java.util.Map;
 @Data
 
 @ToString
-public class Task implements A2ATask {
+public class Task implements A2ATask, CommonClientRequest, CommonClientResponse {
 
     private String id;
     private String sessionId;

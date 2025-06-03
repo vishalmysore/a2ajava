@@ -3,6 +3,7 @@ package io.github.vishalmysore.a2a.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.vishalmysore.a2a.domain.*;
+import lombok.Getter;
 import lombok.extern.java.Log;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -20,6 +21,8 @@ import java.util.UUID;
  * For normal client server application you can use client built in angular or react or any other web framework
  */
 @Log
+@Getter
+
 public class A2ATaskClient {
     private static final String DEFAULT_BASE_URL = "http://localhost:8080/rpc";
     private final String baseUrl;
@@ -53,7 +56,7 @@ public class A2ATaskClient {
 
             TaskSendParams params = new TaskSendParams();
             params.setMessage(message);
-
+            params.setId(String.valueOf(UUID.randomUUID()));
             JsonRpcRequest request = createRequest("tasks/send", params);
             ResponseEntity<Task> response = restTemplate.postForEntity(
                     baseUrl,

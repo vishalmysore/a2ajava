@@ -44,11 +44,8 @@ public class MCPAgent implements Agent {
     @Override
     public CommonClientResponse remoteMethodCall(String methodName, String query) {
         CallToolRequest request = new CallToolRequest();
-        Map<String, Object> arguments = new HashMap<>();
-        arguments.put("provideAllValuesInPlainEnglish", query);
-        arguments.put("name", methodName);
-        CallToolRequest.Params params = new CallToolRequest.Params();
-        request.setParams(params);
+        request.putArgument("provideAllValuesInPlainEnglish", query);
+        request.putArgument("name", methodName);
         return callTool(request);
 
     }
