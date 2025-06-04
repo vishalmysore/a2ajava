@@ -1,16 +1,28 @@
 package regression.client;
 
+import com.t4a.predict.PredictionLoader;
 import io.github.vishalmysore.a2a.client.LocalA2ATaskClient;
 import io.github.vishalmysore.a2a.domain.JsonRpcRequest;
 import io.github.vishalmysore.a2a.domain.Task;
 import io.github.vishalmysore.common.server.JsonRpcController;
 import io.github.vishalmysore.mcp.domain.CallToolRequest;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class A2ATaskClientExampleTest {
 
-
+    @BeforeAll
+    public static void initLoader() {
+        System.out.println("Waiting for other tests to complete...");
+        try {
+            Thread.sleep(5000); // ⏱️ 5 seconds
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        PredictionLoader.getInstance();  // trigger once per test class
+    }
+    @Test
     public void testSendTask() {
         // Mock or simulate the behavior of sendTask
         // Example: Assert that the task is sent successfully
@@ -34,7 +46,7 @@ public class A2ATaskClientExampleTest {
         }
     }
 
-
+@Test
     public void testMCPClientLifeCycle() {
         String[] jsonRequests = {
                 "{\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2024-11-05\",\"capabilities\":{},\"clientInfo\":{\"name\":\"claude-ai\",\"version\":\"0.1.0\"}},\"jsonrpc\":\"2.0\",\"id\":0}",

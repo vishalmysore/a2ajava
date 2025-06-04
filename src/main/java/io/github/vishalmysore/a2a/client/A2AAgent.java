@@ -62,15 +62,13 @@ public class A2AAgent implements Agent {
             params.setId(String.valueOf(UUID.randomUUID()));
             JsonRpcRequest request = createRequest("tasks/send", params);
             RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<Task> response = restTemplate.postForEntity(
+            ResponseEntity<SendTaskResponse> response = restTemplate.postForEntity(
                     getServerUrl().toURI().toString(),
                     request,
-                    Task.class
+                    SendTaskResponse.class
             );
 
-            Task task = response.getBody();
-
-            return task;
+            return response.getBody();
         } catch (HttpClientErrorException e) {
             log.severe("Error sending task: " + e.getMessage());
             throw e;
@@ -91,6 +89,8 @@ public class A2AAgent implements Agent {
 
     @Override
     public void connect(String url, String token) {
+        try {
+        serverUrl = new URL(url);
         if(!url.endsWith(".json")) {
             if (url.endsWith("/")) {
                 url += WELL_KNOWN_PATH + AGENT_PATH;
@@ -102,9 +102,9 @@ public class A2AAgent implements Agent {
                 throw new IllegalArgumentException("URL must end with " + WELL_KNOWN_PATH + AGENT_PATH);
             }
         }
-        try {
-            serverUrl = new URL(url);
-            HttpURLConnection conn = (HttpURLConnection) serverUrl.openConnection();
+
+            URL agentCardUrl = new URL(url);
+            HttpURLConnection conn = (HttpURLConnection) agentCardUrl.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Accept", "application/json");
 
@@ -122,7 +122,7 @@ public class A2AAgent implements Agent {
 
 
                 this.agentCard = mapper.readValue(response.toString(), AgentCard.class);
-              //  serverUrl = new URL(this.agentCard.getUrl());
+
             }
 
         } catch (IOException e) {

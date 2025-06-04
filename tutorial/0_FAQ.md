@@ -38,7 +38,9 @@ public class BookingAgent {
 ```
 
 ## How does agent card get generated?
-Agent cards are generated in three ways:
+If you are using the @EnableAgent annotation you dont have to use these , these classes are used for more custmization
+
+Agent cards are generated in three ways for custom usage:
 
 1. **Dynamic Generation**: Through `DynamicAgentCardController` which generates cards based on runtime annotations
 2. **Real-time Generation**: Using `RealTimeAgentCardController` which uses AI for dynamic description generation
@@ -180,3 +182,5 @@ a2a.persistence=database
 ```
 to save the data in db
 
+## How can I build agentic mesh applications?
+ Yes source code for agentic mesh is https://github.com/vishalmysore/agenticmesh
