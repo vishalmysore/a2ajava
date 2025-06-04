@@ -1,23 +1,15 @@
 package io.github.vishalmysore.mcp.domain;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.BeforeEach;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.vishalmysore.mcp.client.MCPAgent;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.HashMap;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MCPTestDomain {
 
@@ -538,4 +530,413 @@ public class MCPTestDomain {
             throw new RuntimeException("Failed to test InitializeResult: " + e.getMessage(), e);
         }
     }
+
+    @Test
+    public void testUnsubscribeRequest() {
+        try {
+            UnsubscribeRequest request = new UnsubscribeRequest();
+            UnsubscribeRequest.Params params = new UnsubscribeRequest.Params();
+            params.setUri("file:///test/resource.txt");
+            request.setParams(params);
+
+            String jsonString = mapper.writeValueAsString(request);
+            UnsubscribeRequest parsedRequest = mapper.readValue(jsonString, UnsubscribeRequest.class);
+
+            assertNotNull(parsedRequest);
+            assertEquals("resources/unsubscribe", parsedRequest.getMethod());
+            assertEquals("file:///test/resource.txt", parsedRequest.getParams().getUri());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to test UnsubscribeRequest: " + e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void testToolSchemas() {
+        try {
+            // Test ToolPropertySchema
+            ToolPropertySchema propSchema = new ToolPropertySchema();
+            propSchema.setType("string");
+            propSchema.setDescription("A test property");
+            Map<String, Object> additionalProps = new HashMap<>();
+            additionalProps.put("format", "date-time");
+            propSchema.setAdditionalProperties(additionalProps);
+            propSchema.setItems(true);
+
+            String propJson = mapper.writeValueAsString(propSchema);
+            ToolPropertySchema parsedPropSchema = mapper.readValue(propJson, ToolPropertySchema.class);
+
+            assertNotNull(parsedPropSchema);
+            assertEquals("string", parsedPropSchema.getType());
+            assertEquals("A test property", parsedPropSchema.getDescription());
+            assertTrue(parsedPropSchema.isItems());
+            assertEquals("date-time", parsedPropSchema.getAdditionalProperties().get("format"));
+
+            // Test ToolInputSchema
+            ToolInputSchema inputSchema = new ToolInputSchema();
+            Map<String, ToolPropertySchema> properties = new HashMap<>();
+            properties.put("testProp", propSchema);
+            inputSchema.setProperties(properties);
+            inputSchema.setRequired(Arrays.asList("testProp"));
+
+            String inputJson = mapper.writeValueAsString(inputSchema);
+            ToolInputSchema parsedInputSchema = mapper.readValue(inputJson, ToolInputSchema.class);
+
+            assertNotNull(parsedInputSchema);
+            assertEquals("object", parsedInputSchema.getType());
+            assertEquals(1, parsedInputSchema.getProperties().size());
+            assertEquals(1, parsedInputSchema.getRequired().size());
+            assertEquals("testProp", parsedInputSchema.getRequired().get(0));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to test Tool Schemas: " + e.getMessage(), e);
+        }
+    }    @Test
+    public void testResourceReference() {
+        try {
+            ResourceReference ref = new ResourceReference();
+            ref.setUri("file:///test/ref.txt");
+
+            String jsonString = mapper.writeValueAsString(ref);
+            ResourceReference parsedRef = mapper.readValue(jsonString, ResourceReference.class);
+
+            assertNotNull(parsedRef);
+            assertEquals("file:///test/ref.txt", parsedRef.getUri());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to test ResourceReference: " + e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void testSubscribeRequest() {
+        try {
+            SubscribeRequest request = new SubscribeRequest();
+            SubscribeRequest.Params params = new SubscribeRequest.Params();
+            params.setUri("file:///test/resource.txt");
+            request.setParams(params);
+
+            String jsonString = mapper.writeValueAsString(request);
+            SubscribeRequest parsedRequest = mapper.readValue(jsonString, SubscribeRequest.class);
+
+            assertNotNull(parsedRequest);
+            assertEquals("resources/subscribe", parsedRequest.getMethod());
+            assertEquals("file:///test/resource.txt", parsedRequest.getParams().getUri());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to test SubscribeRequest: " + e.getMessage(), e);
+        }
+    }    @Test
+    public void testSetLevelRequest() {
+        try {
+            SetLevelRequest request = new SetLevelRequest();
+            SetLevelRequest.Params params = new SetLevelRequest.Params();
+            params.setLevel("info");
+            request.setParams(params);
+
+            String jsonString = mapper.writeValueAsString(request);
+            SetLevelRequest parsedRequest = mapper.readValue(jsonString, SetLevelRequest.class);
+
+            assertNotNull(parsedRequest);
+            assertEquals("server/setLevel", parsedRequest.getMethod());
+            assertEquals("info", parsedRequest.getParams().getLevel());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to test SetLevelRequest: " + e.getMessage(), e);
+        }
+    }    @Test
+    public void testSamplingContext() {
+        try {
+            SamplingContext context = new SamplingContext();
+            context.setUri("file:///test/context.txt");
+            
+            List<PromptMessage> messages = new ArrayList<>();
+            PromptMessage message = new PromptMessage();
+            message.setRole(Role.USER);
+            TextContent content = new TextContent();
+            content.setText("Test context");
+            content.setType("text");
+            message.setContent(content);
+            messages.add(message);
+            context.setMessages(messages);
+
+            String jsonString = mapper.writeValueAsString(context);
+            SamplingContext parsedContext = mapper.readValue(jsonString, SamplingContext.class);
+
+            assertNotNull(parsedContext);
+            assertEquals("file:///test/context.txt", parsedContext.getUri());
+            assertEquals(1, parsedContext.getMessages().size());
+            PromptMessage parsedMessage = parsedContext.getMessages().get(0);
+            assertEquals(Role.USER, parsedMessage.getRole());
+            assertTrue(parsedMessage.getContent() instanceof TextContent);
+            assertEquals("Test context", ((TextContent)parsedMessage.getContent()).getText());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to test SamplingContext: " + e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void testResourceTemplate() {
+        try {
+            ResourceTemplate template = new ResourceTemplate();
+            template.setName("test-template");
+            template.setUri("file:///templates/test.txt");
+            
+            Annotations annotations = new Annotations();
+            annotations.setPriority(2.0);
+            template.setAnnotations(annotations);
+
+            String jsonString = mapper.writeValueAsString(template);
+            ResourceTemplate parsedTemplate = mapper.readValue(jsonString, ResourceTemplate.class);
+
+            assertNotNull(parsedTemplate);
+            assertEquals("test-template", parsedTemplate.getName());
+            assertEquals("file:///templates/test.txt", parsedTemplate.getUri());
+            assertEquals(2.0, parsedTemplate.getAnnotations().getPriority());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to test ResourceTemplate: " + e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void testToolAnnotationsAndParameters() {
+        try {
+            // Test ToolAnnotations
+            ToolAnnotations annotations = new ToolAnnotations();
+            Map<String, Object> props = new HashMap<>();
+            props.put("isAsync", true);
+            props.put("timeout", 5000);
+            annotations.setProperties(props);
+
+            String annotationsJson = mapper.writeValueAsString(annotations);
+            ToolAnnotations parsedAnnotations = mapper.readValue(annotationsJson, ToolAnnotations.class);
+
+            assertNotNull(parsedAnnotations);
+            assertTrue((Boolean) parsedAnnotations.getProperties().get("isAsync"));
+            assertEquals(5000, parsedAnnotations.getProperties().get("timeout"));
+
+            // Test ToolParameter
+            ToolParameter param = new ToolParameter();
+            param.setType("string");
+            param.setDescription("A test parameter");
+
+            String paramJson = mapper.writeValueAsString(param);
+            ToolParameter parsedParam = mapper.readValue(paramJson, ToolParameter.class);
+
+            assertNotNull(parsedParam);
+            assertEquals("string", parsedParam.getType());
+            assertEquals("A test parameter", parsedParam.getDescription());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to test Tool annotations and parameters: " + e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void testToolCallRequest() {
+        try {
+            ToolCallRequest request = new ToolCallRequest();
+            request.setName("testTool");
+            Map<String, Object> args = new HashMap<>();
+            args.put("input", "test input");
+            args.put("options", Arrays.asList("opt1", "opt2"));
+            request.setArguments(args);
+
+            String jsonString = mapper.writeValueAsString(request);
+            ToolCallRequest parsedRequest = mapper.readValue(jsonString, ToolCallRequest.class);
+
+            assertNotNull(parsedRequest);
+            assertEquals("testTool", parsedRequest.getName());
+            assertEquals("test input", parsedRequest.getArguments().get("input"));
+            assertTrue(parsedRequest.getArguments().get("options") instanceof List);
+            @SuppressWarnings("unchecked")
+            List<String> options = (List<String>) parsedRequest.getArguments().get("options");
+            assertEquals(2, options.size());
+            assertEquals("opt1", options.get(0));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to test ToolCallRequest: " + e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void testToolParameterCombinations() {
+        try {
+            // Create tool parameter with all fields
+            ToolParameter param = new ToolParameter();
+            param.setType("object");
+            param.setDescription("Complex parameter");
+
+            // Test array type parameter
+            String paramJson1 = "{\"type\":\"array\",\"description\":\"List parameter\"}";
+            ToolParameter parsedParam1 = mapper.readValue(paramJson1, ToolParameter.class);
+            assertEquals("array", parsedParam1.getType());
+            assertEquals("List parameter", parsedParam1.getDescription());
+
+            // Test number type parameter
+            String paramJson2 = "{\"type\":\"number\",\"description\":\"Numeric parameter\"}";
+            ToolParameter parsedParam2 = mapper.readValue(paramJson2, ToolParameter.class);
+            assertEquals("number", parsedParam2.getType());
+            assertEquals("Numeric parameter", parsedParam2.getDescription());
+
+            // Test boolean type parameter
+            String paramJson3 = "{\"type\":\"boolean\",\"description\":\"Flag parameter\"}";
+            ToolParameter parsedParam3 = mapper.readValue(paramJson3, ToolParameter.class);
+            assertEquals("boolean", parsedParam3.getType());
+            assertEquals("Flag parameter", parsedParam3.getDescription());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to test Tool parameter combinations: " + e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void testToolAnnotationsEdgeCases() {
+        try {
+            ToolAnnotations annotations = new ToolAnnotations();
+            
+            // Test with empty map
+            String jsonString1 = mapper.writeValueAsString(annotations);
+            ToolAnnotations parsedAnnotations1 = mapper.readValue(jsonString1, ToolAnnotations.class);
+            assertNotNull(parsedAnnotations1.getProperties());
+            assertTrue(parsedAnnotations1.getProperties().isEmpty());
+
+            // Test with null values
+            Map<String, Object> props = new HashMap<>();
+            props.put("nullValue", null);
+            annotations.setProperties(props);
+            String jsonString2 = mapper.writeValueAsString(annotations);
+            ToolAnnotations parsedAnnotations2 = mapper.readValue(jsonString2, ToolAnnotations.class);
+            assertTrue(parsedAnnotations2.getProperties().containsKey("nullValue"));
+            assertNull(parsedAnnotations2.getProperties().get("nullValue"));
+
+            // Test with nested objects
+            Map<String, Object> nestedProps = new HashMap<>();
+            Map<String, Object> nestedMap = new HashMap<>();
+            nestedMap.put("nestedKey", "nestedValue");
+            nestedProps.put("nested", nestedMap);
+            annotations.setProperties(nestedProps);
+            String jsonString3 = mapper.writeValueAsString(annotations);
+            ToolAnnotations parsedAnnotations3 = mapper.readValue(jsonString3, ToolAnnotations.class);
+            assertTrue(parsedAnnotations3.getProperties().get("nested") instanceof Map);
+            @SuppressWarnings("unchecked")
+            Map<String, Object> parsedNestedMap = (Map<String, Object>) parsedAnnotations3.getProperties().get("nested");
+            assertEquals("nestedValue", parsedNestedMap.get("nestedKey"));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to test Tool annotations edge cases: " + e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void testResourceTemplateEdgeCases() {
+        try {
+            ResourceTemplate template = new ResourceTemplate();
+            
+            // Test with minimum required fields
+            String jsonString1 = mapper.writeValueAsString(template);
+            ResourceTemplate parsedTemplate1 = mapper.readValue(jsonString1, ResourceTemplate.class);
+            assertNotNull(parsedTemplate1);
+            assertNull(parsedTemplate1.getName());
+            assertNull(parsedTemplate1.getUri());
+            assertNull(parsedTemplate1.getAnnotations());
+
+            // Test with empty strings
+            template.setName("");
+            template.setUri("");
+            String jsonString2 = mapper.writeValueAsString(template);
+            ResourceTemplate parsedTemplate2 = mapper.readValue(jsonString2, ResourceTemplate.class);
+            assertEquals("", parsedTemplate2.getName());
+            assertEquals("", parsedTemplate2.getUri());
+
+            // Test with special characters in name and URI
+            template.setName("Test Template!@#$%^&*()");
+            template.setUri("file:///path/with/spaces and ★special★ chars/template.txt");
+            String jsonString3 = mapper.writeValueAsString(template);
+            ResourceTemplate parsedTemplate3 = mapper.readValue(jsonString3, ResourceTemplate.class);
+            assertEquals("Test Template!@#$%^&*()", parsedTemplate3.getName());
+            assertEquals("file:///path/with/spaces and ★special★ chars/template.txt", parsedTemplate3.getUri());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to test Resource template edge cases: " + e.getMessage(), e);
+        }
+    }
+
+    @Test
+    public void testImplementation() {
+        Implementation impl = new Implementation();
+        impl.setName("TestServer");
+        impl.setVersion("1.0.0");
+        
+        assertEquals("TestServer", impl.getName());
+        assertEquals("1.0.0", impl.getVersion());
+    }
+
+    @Test
+    public void testClientCapabilitiesConfig() {
+        ClientCapabilities caps = new ClientCapabilities();
+        
+        // Test roots capabilities
+        ClientCapabilities.Roots roots = new ClientCapabilities.Roots();
+        roots.setListChanged(true);
+        assertEquals(true, roots.getListChanged());
+        
+        Map<String, Object> sampling = new HashMap<>();
+        sampling.put("method", "temperature");
+        sampling.put("value", 0.7);
+        caps.setSampling(sampling);
+    }
+    
+    @Test
+    public void testServerCapabilitiesConfig() {
+        ServerCapabilities caps = new ServerCapabilities();
+        
+        List<String> contentTypes = Arrays.asList("text/plain", "application/json");
+        caps.setContentTypes(contentTypes);
+        assertEquals(contentTypes, caps.getContentTypes());
+        
+        List<String> roles = Arrays.asList("USER", "ASSISTANT", "SYSTEM");
+        caps.setRoles(roles);
+        assertEquals(roles, caps.getRoles());
+        
+        List<String> samplingMethods = Arrays.asList("temperature", "top_p");
+        caps.setSamplingMethods(samplingMethods);
+        assertEquals(samplingMethods, caps.getSamplingMethods());
+    }
+    
+    @Test
+    public void testMCPGenericResponse() {
+        MCPGenericResponse<String> response = new MCPGenericResponse<>();
+        response.setJsonrpc("2.0");
+        response.setId("123");
+        response.setResult("Test Result");
+        
+        assertEquals("2.0", response.getJsonrpc());
+        assertEquals("123", response.getId());
+        assertEquals("Test Result", response.getResult());
+    }
+    
+    @Test
+    public void testInitializedNotification() {
+        // Test InitializedNotification as example
+        InitializedNotification notification = new InitializedNotification();
+        InitializedNotification.Params params = new InitializedNotification.Params();
+        
+        Map<String, Object> meta = new HashMap<>();
+        meta.put("clientId", "test-client");
+        meta.put("timestamp", System.currentTimeMillis());
+        
+        params.setMeta(meta);
+        notification.setParams(params);
+        
+        assertEquals("notifications/initialized", notification.getMethod());
+        assertEquals(meta, notification.getParams().getMeta());
+    }
+    
+    @Test
+    public void testMCPAgentSetup() throws MalformedURLException {
+        URL serverUrl = new URL("http://localhost:8080");
+        MCPAgent agent = new MCPAgent(serverUrl);
+        
+        // Test basic properties
+        assertEquals("mcp", agent.getType());
+        assertEquals(serverUrl, agent.getServerUrl());
+        assertFalse(agent.isConnected());
+        
+        // Test object mapper configuration
+        ObjectMapper mapper = agent.getMapper();
+        assertFalse(mapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
+    }
+    
+    // ...existing tests...
 }
