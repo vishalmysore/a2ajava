@@ -1,23 +1,34 @@
 package io.github.vishalmysore.mcp.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.t4a.JsonUtils;
+import com.t4a.predict.PredictionLoader;
+import com.t4a.processor.AIProcessingException;
+import com.t4a.processor.AIProcessor;
+import com.t4a.transform.PromptTransformer;
 import io.github.vishalmysore.common.Agent;
 import io.github.vishalmysore.common.AgentInfo;
 import io.github.vishalmysore.common.CommonClientRequest;
 import io.github.vishalmysore.common.CommonClientResponse;
 import io.github.vishalmysore.mcp.domain.*;
+import lombok.extern.java.Log;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@Log
 public class MCPAgent implements Agent {
     private URL serverUrl;
     private ListToolsResult toolsResult;
+    private JsonUtils utils = new JsonUtils();
+    private String availableTools = "[]";
+
     private String type ="mcp";
     private ObjectMapper mapper;
 
@@ -38,7 +49,28 @@ public class MCPAgent implements Agent {
 
     @Override
     public CommonClientResponse remoteMethodCall(String query) {
-        throw new UnsupportedOperationException("Remote method calls without name are not supported in MCPAgent. Use specific methods for tool calls.");
+        PromptTransformer processor = PredictionLoader.getInstance().createOrGetPromptTransformer();
+        String toolNameJson = null;
+        try {
+            toolNameJson = processor.transformIntoJson("{toolName:''}", query);
+        } catch (AIProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        toolNameJson = utils.extractJson(toolNameJson);
+        JsonNode root = null;
+        try {
+            root = mapper.readTree(toolNameJson);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        JsonNode idNode = root.get("toolName");
+        if (idNode == null || idNode.asText().trim().isEmpty()) {
+            log.warning("No valid agent ID found in JSON");
+            return null;
+        }
+        String methodName = idNode.asText();
+        return remoteMethodCall(methodName, query);
     }
 
     @Override
@@ -66,6 +98,9 @@ public class MCPAgent implements Agent {
         MCPGenericResponse<ListToolsResult> response = getRemoteData(request, new TypeReference<MCPGenericResponse<ListToolsResult>>() {});
 
         toolsResult =(ListToolsResult) response.getResult();
+        if (toolsResult != null) {
+            availableTools = toolsResult.retrieveToolList();
+        }
     }
 
     @Override

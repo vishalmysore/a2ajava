@@ -66,24 +66,7 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
 
     @PostConstruct
     public void init() {
-        Properties properties = new Properties();
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("tools4ai.properties")) {
-            if (input == null) {
-                throw new RuntimeException("Unable to find tools4ai.properties");
-            }
-            properties.load(input);
-
-            String provider = properties.getProperty("agent.provider");
-            if ("openai".equals(provider)) {
-                promptTransformer = new OpenAIPromptTransformer();
-            } else if ("gemini".equals(provider)) {
-                promptTransformer = new GeminiV2PromptTransformer();
-            } else {
-                log.info("Provider not found defaulting to Gemini");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Error loading properties file", e);
-        }
+        promptTransformer = PredictionLoader.getInstance().createOrGetPromptTransformer();
         Map<GroupInfo, String> groupActions = PredictionLoader.getInstance().getActionGroupList().getGroupActions();
         Map<String, AIAction> predictions = PredictionLoader.getInstance().getPredictions();
         StringBuilder realTimeDescription = new StringBuilder("This agent provides the following capabilities: ");

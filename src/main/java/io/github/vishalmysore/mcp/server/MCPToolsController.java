@@ -59,24 +59,7 @@ public class MCPToolsController  {
     @PostConstruct
     public void init() {
 
-        Properties properties = new Properties();
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("tools4ai.properties")) {
-            if (input == null) {
-                throw new RuntimeException("Unable to find tools4ai.properties");
-            }
-            properties.load(input);
-
-            String provider = properties.getProperty("agent.provider");
-            if ("openai".equals(provider)) {
-                baseProcessor = new OpenAiActionProcessor();
-            } else if ("gemini".equals(provider)) {
-                baseProcessor = new GeminiV2ActionProcessor();
-            } else {
-                log.info("Provider not found defaulting to Gemini");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Error loading properties file", e);
-        }
+        baseProcessor = PredictionLoader.getInstance().createOrGetAIProcessor();
         Map<GroupInfo, String> groupActions = PredictionLoader.getInstance().getActionGroupList().getGroupActions();
         List<Tool> tools = convertGroupActionsToTools(groupActions);
 

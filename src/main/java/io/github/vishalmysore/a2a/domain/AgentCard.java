@@ -3,6 +3,7 @@ package io.github.vishalmysore.a2a.domain;
 import com.t4a.annotations.ListType;
 import io.github.vishalmysore.common.AgentInfo;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 @Data
 @ToString
+@EqualsAndHashCode
 public class AgentCard implements AgentInfo {
     private String name;
     private String description;

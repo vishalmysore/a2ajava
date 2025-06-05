@@ -84,7 +84,7 @@ public class A2AAgent implements Agent {
 
     @Override
     public CommonClientResponse remoteMethodCall(String remoteMethodName, String query) {
-      return null;
+      return remoteMethodCall(query+" - possible action for this query is "+remoteMethodName);
     }
 
     @Override

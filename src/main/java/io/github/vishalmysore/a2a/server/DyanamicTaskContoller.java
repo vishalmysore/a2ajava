@@ -3,6 +3,7 @@ package io.github.vishalmysore.a2a.server;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.t4a.JsonUtils;
 import com.t4a.detect.ActionCallback;
+import com.t4a.predict.PredictionLoader;
 import com.t4a.processor.AIProcessingException;
 import com.t4a.processor.AIProcessor;
 import com.t4a.processor.GeminiV2ActionProcessor;
@@ -85,24 +86,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
     }
 
     public void init() {
-        Properties properties = new Properties();
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("tools4ai.properties")) {
-            if (input == null) {
-                throw new RuntimeException("Unable to find tools4ai.properties");
-            }
-            properties.load(input);
-
-            String provider = properties.getProperty("agent.provider");
-            if ("openai".equals(provider)) {
-                baseProcessor = new OpenAiActionProcessor();
-            } else if ("gemini".equals(provider)) {
-                baseProcessor = new GeminiV2ActionProcessor();
-            } else {
-                log.info("Unsupported provider: agent.provider in tools4ai.properties " + provider+" using Gemini as default");
-            }
-        } catch (IOException e) {
-            log.info("Provider not found defaulting to Gemini");
-        }
+       baseProcessor = PredictionLoader.getInstance().createOrGetAIProcessor();
     }
     @Override
     public AIProcessor getBaseProcessor() {
