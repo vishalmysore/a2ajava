@@ -64,7 +64,7 @@ public interface Agent {
             }
 
         } catch (IOException e) {
-            throw new RuntimeException("Request failed", e);
+            throw new RuntimeException("Request failed - Probably sever is down "+getInfo(), e);
         }
     }
 

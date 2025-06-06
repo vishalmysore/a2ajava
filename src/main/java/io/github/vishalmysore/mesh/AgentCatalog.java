@@ -1,7 +1,6 @@
 package io.github.vishalmysore.mesh;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.t4a.JsonUtils;
 import com.t4a.predict.PredictionLoader;
 import com.t4a.processor.AIProcessingException;
@@ -20,6 +19,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * AgentCatalog is a class that manages a collection of agents, allowing for adding, retrieving, and processing queries through these agents.
+ * It supports both A2A and MCP agents, providing a unified interface for interacting with them.
+ */
 @Getter
 @Setter
 @Log
@@ -27,7 +30,7 @@ public class AgentCatalog {
     private Map<AgentIdentity,Agent> agents;
     private PromptTransformer promptTransformer;
     JsonUtils jsonUtils = new JsonUtils();
-    ObjectMapper mapper = new ObjectMapper();
+
     public AgentCatalog(){
         log.info("Initializing AgentCatalog");
         agents = new HashMap<>();
@@ -132,43 +135,25 @@ public class AgentCatalog {
 
         // Process the query using the prompt transformer
         String identiy = null;
+        String uniqueIdStr = "agentUniqueIDTobeUsedToIdentifyTheAgent";
         try {
-            identiy = promptTransformer.transformIntoJson("{agentUniqueIDTobeUsedToIdentifyTheAgent:''}"," this is user prompt { "+query+"}  I am trying to find which agent can handle it from this info {"+getAgentsInfo()+"}");
+            identiy = promptTransformer.transformIntoJson(jsonUtils.createJson(uniqueIdStr).toString()," this is user prompt { "+query+"}  I am trying to find which agent can handle it from this info {"+getAgentsInfo()+"}");
         } catch (AIProcessingException e) {
             throw new RuntimeException(e);
         }
         log.info("Agent Identity: " + identiy);
-        Agent agent = retrieveAgentByJson(jsonUtils.extractJson(identiy));
+        Agent agent = retrieveAgentByID(jsonUtils.getFieldValue(identiy, uniqueIdStr));
         log.info("Retrieved Agent: " + agent.getType());
         CommonClientResponse response = agent.remoteMethodCall(query);
         return response;
     }
 
-    /**
-     * Retrieve an agent using a JSON string containing the agent's unique ID
-     * Expected JSON format: {"agentUniqueIDTobeUsedToIdentifyTheAgent": "uniqueId"}
-     * 
-     * @param jsonStr JSON string containing the agent unique ID
-     * @return Agent if found, null otherwise 
-     */
-    public Agent retrieveAgentByJson(String jsonStr) {
-        if (jsonStr == null || jsonStr.trim().isEmpty()) {
-            log.warning("Empty or null JSON string provided");
-            return null;
-        }
+
+    public Agent retrieveAgentByID(String agentId) {
 
         try {
 
-            JsonNode root = mapper.readTree(jsonStr);
-            
-            JsonNode idNode = root.get("agentUniqueIDTobeUsedToIdentifyTheAgent");
-            if (idNode == null || idNode.asText().trim().isEmpty()) {
-                log.warning("No valid agent ID found in JSON");
-                return null;
-            }
-            
-            String agentId = idNode.asText();
-            
+            log.info("Retrieving agent by ID: " + agentId);
             // Create an AgentIdentity to use as map key
             return agents.entrySet().stream()
                 .filter(entry -> agentId.equals(entry.getKey().getAgentUniqueIDTobeUsedToIdentifyTheAgent()))

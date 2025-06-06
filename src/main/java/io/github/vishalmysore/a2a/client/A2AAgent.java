@@ -22,7 +22,10 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
+/** * A2AAgent is a client for interacting with an A2A (Agent to Agent) server.
+ * It allows sending tasks and retrieving agent information.
+ */
 
 @Log
 public class A2AAgent implements Agent {

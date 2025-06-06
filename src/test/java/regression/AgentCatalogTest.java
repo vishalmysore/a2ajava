@@ -33,9 +33,9 @@ public class AgentCatalogTest {
       //  agent = agentCatalog.retrieveAgentByJson(jsonUtils.extractJson(identiy));
      //   log.info("Retrieved Agent: " + agent.getType());
 
-        log.info(agentCatalog.processQuery("what is vishal favorite food:").toString());
+        log.info(agentCatalog.processQuery("what is vishal favorite food:").getTextResult());
 
-        log.info(agentCatalog.processQuery("get me the list of the books").toString());
+        log.info(agentCatalog.processQuery("get me the list of the books").getTextResult());
 
     }
 }

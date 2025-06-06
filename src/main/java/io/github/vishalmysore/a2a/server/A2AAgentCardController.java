@@ -9,6 +9,9 @@ import io.github.vishalmysore.a2a.domain.AgentCard;
 import io.github.vishalmysore.a2a.domain.Skill;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Interface for A2A Agent Card Controller.
+ */
 public interface A2AAgentCardController {
     public ResponseEntity<AgentCard> getAgentCard();
 
@@ -16,10 +19,8 @@ public interface A2AAgentCardController {
 
     default Skill getSkill(String actionName) throws AIProcessingException {
         GenericJavaMethodAction action = (GenericJavaMethodAction)PredictionLoader.getInstance().getAiAction(actionName);
-        StringBuilder description = new StringBuilder("Name of the skill : "+action.getActionName()+" description : " + action.getDescription()+" parameter "+action.getJsonRPC());
-        Skill skill = (Skill)getPromptTransformer().transformIntoPojo(
-                "use this description and also populate skills in detail " + description,
+        return (Skill)getPromptTransformer().transformIntoPojo(
+                "use this description and also populate skills in detail " + "Name of the skill : " + action.getActionName() + " description : " + action.getDescription() + " parameter " + action.getJsonRPC(),
                 Skill.class);
-        return skill;
     }
 }

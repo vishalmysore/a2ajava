@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 
 
@@ -53,6 +54,7 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
     }
 
     public RealTimeAgentCardController(ApplicationContext context) {
+
         PredictionLoader.getInstance(context);
         promptTransformer = new GeminiV2PromptTransformer();
     }

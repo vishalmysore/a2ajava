@@ -1,10 +1,12 @@
 package io.github.vishalmysore.mcp.domain;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
 
 @Data
+@ToString
 public class Tool {
     private ToolParameters parameters;
 
