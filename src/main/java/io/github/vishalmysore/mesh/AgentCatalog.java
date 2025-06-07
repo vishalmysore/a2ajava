@@ -139,7 +139,7 @@ public class AgentCatalog {
         try {
             identiy = promptTransformer.transformIntoJson(jsonUtils.createJson(uniqueIdStr).toString()," this is user prompt { "+query+"}  I am trying to find which agent can handle it from this info {"+getAgentsInfo()+"}");
         } catch (AIProcessingException e) {
-            throw new RuntimeException(e);
+            log.severe("Error transforming query into JSON: " + e.getMessage());
         }
         log.info("Agent Identity: " + identiy);
         Agent agent = retrieveAgentByID(jsonUtils.getFieldValue(identiy, uniqueIdStr));

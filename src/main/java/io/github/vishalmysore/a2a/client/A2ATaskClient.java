@@ -89,7 +89,7 @@ public class A2ATaskClient {
             );
 
             Task task = response.getBody();
-            if (task != null && task.getStatus().equals("completed")) {
+            if (task != null && task.getStatus().toString().equals("completed")) {
                 pendingTasks.removeIf(t -> t.getId().equals(taskId));
                 completedTasks.add(task);
             }

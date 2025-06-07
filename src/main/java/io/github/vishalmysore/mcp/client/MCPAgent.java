@@ -54,14 +54,14 @@ public class MCPAgent implements Agent {
         try {
             toolNameJson = processor.transformIntoJson("{toolName:''}", query);
         } catch (AIProcessingException e) {
-            throw new RuntimeException(e);
+            log.severe("Error processing query: " + e.getMessage());
         }
         toolNameJson = utils.extractJson(toolNameJson);
         JsonNode root = null;
         try {
             root = mapper.readTree(toolNameJson);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            log.severe("Error processing query: " + e.getMessage());
         }
 
         JsonNode idNode = root.get("toolName");
@@ -92,7 +92,7 @@ public class MCPAgent implements Agent {
         try {
             serverUrl = new URL(url);
         } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            log.severe("Invalid server URL: " + e.getMessage());
         }
         ListToolsRequest request = new ListToolsRequest();
         MCPGenericResponse<ListToolsResult> response = getRemoteData(request, new TypeReference<MCPGenericResponse<ListToolsResult>>() {});
@@ -105,7 +105,7 @@ public class MCPAgent implements Agent {
 
     @Override
     public void disconnect() {
-
+      log.info("Disconnecting MCPAgent");
     }
 
     @Override

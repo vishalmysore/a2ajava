@@ -59,6 +59,7 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
         promptTransformer = new GeminiV2PromptTransformer();
     }
     public boolean isMethodAllowed(Method method)    {
+        log.info(method.getName());
         return true;
     }
     @Override

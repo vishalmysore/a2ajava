@@ -7,7 +7,7 @@ import com.t4a.transform.GeminiV2PromptTransformer;
 import com.t4a.transform.PromptTransformer;
 import io.github.vishalmysore.a2a.domain.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,7 @@ import java.util.Map;
 
 public class DynamicAgentCardController implements A2AAgentCardController {
 
+    public static final String CONTENT_TYPE = "application/json";
     private PromptTransformer promptTransformer = new GeminiV2PromptTransformer();
 
     @Override
@@ -34,12 +35,12 @@ public class DynamicAgentCardController implements A2AAgentCardController {
         agentCard.setName("TicketQueen : Ticket Booking Agent");
         Map<String, AIAction> actions = PredictionLoader.getInstance().getPredictions();
         StringBuilder description = new StringBuilder("This agent can help you with: ");
-        actions.values().forEach(action -> {
+        actions.values().forEach(action ->
             description.append(action.getActionName())
                     .append(" - ")
                     .append(action.getDescription())
-                    .append(", ");
-        });
+                    .append(", ")
+        );
 
         // Remove trailing comma and space
         if (description.length() > 2) {
@@ -48,7 +49,7 @@ public class DynamicAgentCardController implements A2AAgentCardController {
 
         agentCard.setDescription(description.toString());
 
-      //  agentCard.setDescription("book your airlines ticket, hotel ticket, and train ticket , also find out the preference of food of a person, it will also provide details on your existing booking or help in cancelling it or provideing realt time update ");
+
         agentCard.setUrl("http://localhost:8080"); //  Replace with actual URL
         agentCard.setProvider(new Provider("Ticket Corp", "https://github.com/vishalmysore/choturobo"));
         agentCard.setVersion("1.0.0");
@@ -56,7 +57,7 @@ public class DynamicAgentCardController implements A2AAgentCardController {
         agentCard.setCapabilities(new Capabilities(false, false, false));
         agentCard.setAuthentication(new Authentication(new String[]{"Bearer"}));
         agentCard.setDefaultInputModes(new String[]{"text/plain"});
-        agentCard.setDefaultOutputModes(new String[]{"application/json"});
+        agentCard.setDefaultOutputModes(new String[]{CONTENT_TYPE});
 
         Map<GroupInfo, String> groupActions = PredictionLoader.getInstance().getActionGroupList().getGroupActions();
         List<Skill> skills = new ArrayList<>();
@@ -77,8 +78,8 @@ public class DynamicAgentCardController implements A2AAgentCardController {
 
             skill.setTags(tags);
             skill.setExamples(new String[]{"Example for " + groupInfo.getGroupName()});
-            skill.setInputModes(new String[]{"application/json"});
-            skill.setOutputModes(new String[]{"application/json"});
+            skill.setInputModes(new String[]{CONTENT_TYPE});
+            skill.setOutputModes(new String[]{CONTENT_TYPE});
             skills.add(skill);
         }
 

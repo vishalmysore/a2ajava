@@ -47,6 +47,7 @@ import java.util.concurrent.Executors;
  */
 @Log
 public class DyanamicTaskContoller implements A2ATaskController {
+    public static final String MESSAGE = "message";
     protected final Map<String, Task> tasks = new ConcurrentHashMap<>();
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
     @Getter
@@ -55,11 +56,6 @@ public class DyanamicTaskContoller implements A2ATaskController {
 
     protected PromptTransformer promptTransformer = new GeminiV2PromptTransformer();
 
-    //protected SeleniumProcessor seleniumProcessor = new SeleniumGeminiProcessor();
-
-   // protected ScriptProcessor scriptProcessor = new ScriptProcessor();
-
-    //protected SeleniumScriptProcessor seleniumScriptProcessor = new SeleniumScriptProcessor();
 
 
     private BaseScriptProcessor scriptProcessor;
@@ -118,7 +114,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
             task.setSessionId(sessionId);
             task.setDetailedAndMessage(TaskState.SUBMITTED," Your Task with id " + taskId + " is submitted");
             task.setHistory(new ArrayList<>(List.of(taskSendParams.getMessage())));
-            SendTaskResponse sendTaskResponse = new SendTaskResponse();
+
             tasks.put(taskId, task);
         }
 
@@ -238,7 +234,9 @@ public class DyanamicTaskContoller implements A2ATaskController {
             String originalString = new String(Base64.getDecoder().decode(base64EcbodedString));
             tasks.put(taskId, task);
 
-            //    actionCallback.setContext(task);
+                if(actionCallback!= null) {
+                    actionCallback.setContext(task);
+                }
                 FileProcessingInfo info = (FileProcessingInfo) getPromptTransformer().transformIntoPojo(originalString,FileProcessingInfo.class);
                 log.info("taskId " + taskId + " file info " + info);
                 Path tempFile = Files.createTempFile(task.getId()+System.currentTimeMillis()+"web_steps_", ".txt");
@@ -257,10 +255,10 @@ public class DyanamicTaskContoller implements A2ATaskController {
                 Files.createDirectories(archiveDir);
                 Files.move(tempFile, archiveDir.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
                 log.info("Moved file to archive: " + fileName);
-               // getBaseProcessor().processSingleAction(base64EcbodedString, actionCallback);
+
 
         } catch (AIProcessingException | IOException e) {
-            throw new RuntimeException(e);
+            log.warning(e.getMessage());
         }
     }
 
@@ -346,7 +344,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
         task.setCancelled(true);
 
         // Optionally, remove the task from the map if needed
-        // tasks.remove(taskId);
+         tasks.remove(taskId);
 
         return "Task cancelled successfully!";
     }
@@ -389,11 +387,11 @@ public class DyanamicTaskContoller implements A2ATaskController {
         }
         return ResponseEntity.ok(config);
     }
-    private void sendSseEvent(String taskId, Object event) {
+    public void sendSseEvent(String taskId, Object event) {
         SseEmitter emitter = emitters.get(taskId);
         if (emitter != null) {
             try {
-                emitter.send(SseEmitter.event().name("message").data(event));
+                emitter.send(SseEmitter.event().name(MESSAGE).data(event));
             } catch (IOException e) {
                 // Handle client disconnection or error
                 emitters.remove(taskId);
@@ -404,76 +402,82 @@ public class DyanamicTaskContoller implements A2ATaskController {
 
 
 
-    @Override
     public SseEmitter sendSubscribeTask(TaskSendSubscribeParams params) {
-        String id = params.getId(); // assuming your params object has an id field
-        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE); //timeout
+        String id = params.getId();
+        SseEmitter emitter = createEmitter(id);
+        Task task = getOrCreateTask(params);
+
+        processTaskAsync(task, emitter, id, params.getMessage());
+
+        return emitter;
+    }
+
+    private SseEmitter createEmitter(String id) {
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         emitters.put(id, emitter);
-        String taskId = params.getId();
-        Task task;
 
-        if (tasks.containsKey(taskId)) {
-            task = tasks.get(taskId);
-            List<Message> history = task.getHistory();
-            if (history == null) {
-                history = new ArrayList<>();
-            }
-            List<Message> mutableHistory = new ArrayList<>(history);
-            mutableHistory.add(params.getMessage());
-            task.setHistory(mutableHistory);
-        } else {
-            task = new Task();
-            task.setId(taskId);
-            String sessionId = params.getSessionId();
-            if (sessionId == null || sessionId.isEmpty()) {
-                sessionId = UUID.randomUUID().toString();
-            }
-            task.setSessionId(sessionId);
-            task.setStatus(new TaskStatus(TaskState.SUBMITTED));
-            task.setHistory(List.of(params.getMessage()));
-            SendTaskResponse sendTaskResponse = new SendTaskResponse();
-            tasks.put(taskId, task);
-        }
-        nonBlockingService.execute(() -> {
-            try {
-                List<Part> parts = params.getMessage().getParts();
-                String messageId = (String) params.getMessage().getMetadata().get("message_id");
-                if (parts != null && !parts.isEmpty()) {
-                    Part part = parts.get(0);
-                    if (part instanceof TextPart textPart && "text".equals(textPart.getType())) {
-                        // Process text part
-                        String text = textPart.getText();
-                        // Use text for GeminiV2ActionProcessor
-
-                        SSEEmitterCallback sseEmitterCallback = new SSEEmitterCallback(id,emitter);
-                        sseEmitterCallback.setContext(task);
-                        getBaseProcessor().processSingleAction(text, sseEmitterCallback);
-                    }
-                }
-
-            } catch (Exception e) {
-                emitter.completeWithError(e);
-            }
-        });
-        //handle client disconnects
         emitter.onCompletion(() -> {
             emitters.remove(id);
             log.info("Client disconnected for task: " + id);
         });
+
         emitter.onError((throwable) -> {
             emitters.remove(id);
             log.info("Error occurred for task " + id + ": " + throwable.getMessage());
         });
+
         emitter.onTimeout(() -> {
             emitters.remove(id);
             emitter.complete();
             log.info("Timeout occurred for task: " + id);
         });
-        return emitter;
 
+        return emitter;
     }
-  //  @GetMapping(value = "/resubscribe/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter resubscribe(@PathVariable String id) {
+
+    private Task getOrCreateTask(TaskSendSubscribeParams params) {
+        String taskId = params.getId();
+        Message message = params.getMessage();
+
+        Task task = tasks.get(taskId);
+        if (task != null) {
+            List<Message> history = task.getHistory() != null ? new ArrayList<>(task.getHistory()) : new ArrayList<>();
+            history.add(message);
+            task.setHistory(history);
+            return task;
+        }
+
+        task = new Task();
+        task.setId(taskId);
+        String sessionId = Optional.ofNullable(params.getSessionId()).filter(s -> !s.isEmpty()).orElse(UUID.randomUUID().toString());
+        task.setSessionId(sessionId);
+        task.setStatus(new TaskStatus(TaskState.SUBMITTED));
+        task.setHistory(List.of(message));
+
+        tasks.put(taskId, task);
+        return task;
+    }
+
+    private void processTaskAsync(Task task, SseEmitter emitter, String id, Message message) {
+        nonBlockingService.execute(() -> {
+            try {
+                List<Part> parts = message.getParts();
+                if (parts != null && !parts.isEmpty()) {
+                    Part part = parts.get(0);
+                    if (part instanceof TextPart textPart && "text".equals(textPart.getType())) {
+                        String text = textPart.getText();
+                        SSEEmitterCallback callback = new SSEEmitterCallback(id, emitter);
+                        callback.setContext(task);
+                        getBaseProcessor().processSingleAction(text, callback);
+                    }
+                }
+            } catch (Exception e) {
+                emitter.completeWithError(e);
+            }
+        });
+    }
+
+    public SseEmitter resubscribe(String id) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         emitters.put(id, emitter);
 
@@ -481,11 +485,11 @@ public class DyanamicTaskContoller implements A2ATaskController {
         if (task != null) {
             //send current status
             try {
-                emitter.send(SseEmitter.event().name("message").data(new TaskStatusUpdateEvent(id, task.getStatus(), false)));
+                emitter.send(SseEmitter.event().name(MESSAGE).data(new TaskStatusUpdateEvent(id, task.getStatus(), false)));
                 //send all artifacts
                 if (task.getArtifacts() != null) {
                     for (Artifact artifact : task.getArtifacts()) {
-                        emitter.send(SseEmitter.event().name("message").data(new TaskArtifactUpdateEvent(id, artifact)));
+                        emitter.send(SseEmitter.event().name(MESSAGE).data(new TaskArtifactUpdateEvent(id, artifact)));
                     }
                 }
 
@@ -497,11 +501,11 @@ public class DyanamicTaskContoller implements A2ATaskController {
         }
         else {
             try {
-                emitter.send(SseEmitter.event().name("message").data("Task does not exist"));
+                emitter.send(SseEmitter.event().name(MESSAGE).data("Task does not exist"));
                 emitter.complete();
                 emitters.remove(id);
             } catch (IOException e) {
-                log.severe("Error sending task  message" + e.getMessage());
+                log.severe("Error sending task "+MESSAGE + e.getMessage());
             }
 
         }

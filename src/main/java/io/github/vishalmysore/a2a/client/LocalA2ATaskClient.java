@@ -55,9 +55,9 @@ public class LocalA2ATaskClient {
             params.setMessage(message);
 
             JsonRpcRequest request = createRequest(TASKS_SEND, params);
-            Task task = ((SendTaskResponse)jrc.handleRpc(request)).getResult();
+           return ((SendTaskResponse)jrc.handleRpc(request)).getResult();
 
-            return task;
+
         } catch (HttpClientErrorException e) {
             log.severe("Error sending task: " + e.getMessage());
             throw e;
@@ -73,9 +73,9 @@ public class LocalA2ATaskClient {
             JsonRpcRequest request = createRequest(TASKS_GET, params);
             ResponseEntity<Task> response = (ResponseEntity<Task>)jrc.handleRpc(request);
 
-            Task task = response.getBody();
+          return response.getBody();
 
-            return task;
+
         } catch (HttpClientErrorException e) {
             log.severe("Error getting task: " + e.getMessage());
             throw e;
@@ -84,6 +84,7 @@ public class LocalA2ATaskClient {
 
     public Task sendFileTask(String filePath) {
         try {
+            log.info(filePath);
             Message message = new Message();
             FilePart filePart = new FilePart();
             FileContent content = new FileContent();
@@ -94,10 +95,10 @@ public class LocalA2ATaskClient {
             params.setId(String.valueOf(UUID.randomUUID()));
             params.setMessage(message);
 
-            JsonRpcRequest request = createRequest("tasks/send", params);
-            Task task = ((SendTaskResponse)jrc.handleRpc(request)).getResult();
+            JsonRpcRequest request = createRequest(TASKS_SEND, params);
+            return ((SendTaskResponse)jrc.handleRpc(request)).getResult();
 
-            return task;
+
         } catch (HttpClientErrorException e) {
             log.severe(ERROR_SENDING_FILE_TASK
                     + e.getMessage());
@@ -115,12 +116,12 @@ public class LocalA2ATaskClient {
             params.setId(String.valueOf(UUID.randomUUID()));
             params.setMessage(message);
 
-            JsonRpcRequest request = createRequest("tasks/send", params);
-            Task task = ((SendTaskResponse)jrc.handleRpc(request)).getResult();
+            JsonRpcRequest request = createRequest(TASKS_SEND, params);
+            return  ((SendTaskResponse)jrc.handleRpc(request)).getResult();
 
-            return task;
+
         } catch (HttpClientErrorException e) {
-            log.severe("Error sending file task: " + e.getMessage());
+            log.severe(ERROR_SENDING_FILE_TASK + e.getMessage());
             throw e;
         }
     }
@@ -138,12 +139,12 @@ public class LocalA2ATaskClient {
             params.setId(String.valueOf(UUID.randomUUID()));
             params.setMessage(message);
 
-            JsonRpcRequest request = createRequest("tasks/send", params);
-            Task task = ((SendTaskResponse)jrc.handleRpc(request)).getResult();
+            JsonRpcRequest request = createRequest(TASKS_SEND, params);
+            return ((SendTaskResponse)jrc.handleRpc(request)).getResult();
 
-            return task;
+
         } catch (HttpClientErrorException e) {
-            log.severe("Error sending file task: " + e.getMessage());
+            log.severe(ERROR_SENDING_FILE_TASK+ e.getMessage());
             throw e;
         }
     }
@@ -159,10 +160,10 @@ public class LocalA2ATaskClient {
             params.setId(String.valueOf(UUID.randomUUID()));
             params.setMessage(message);
 
-            JsonRpcRequest request = createRequest("tasks/send", params);
-            Task task = ((SendTaskResponse)jrc.handleRpc(request)).getResult();
+            JsonRpcRequest request = createRequest(TASKS_SEND, params);
+            return((SendTaskResponse)jrc.handleRpc(request)).getResult();
 
-            return task;
+
         } catch (HttpClientErrorException e) {
             log.severe("Error sending data task: " + e.getMessage());
             throw e;
@@ -186,21 +187,21 @@ public class LocalA2ATaskClient {
                     messageParts.add(filePart);
                 } else {
                     DataPart dataPart = new DataPart();
-                    // dataPart.setData(part);
+
                     messageParts.add(dataPart);
                 }
             }
 
-            //   message.setParts(messageParts);
+
 
             TaskSendParams params = new TaskSendParams();
             params.setId(String.valueOf(UUID.randomUUID()));
             params.setMessage(message);
 
-            JsonRpcRequest request = createRequest("tasks/send", params);
-            Task task = ((SendTaskResponse)jrc.handleRpc(request)).getResult();
+            JsonRpcRequest request = createRequest(TASKS_SEND, params);
+           return ((SendTaskResponse)jrc.handleRpc(request)).getResult();
 
-            return task;
+
         } catch (HttpClientErrorException e) {
             log.severe("Error sending multi-part task: " + e.getMessage());
             throw e;
