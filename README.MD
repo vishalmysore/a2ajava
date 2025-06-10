@@ -22,7 +22,7 @@ a2ajava is a Swiss Army knife for building agentic applications. It is multi-pro
 
 Use these example to quickly build agents using this library , forking and cloning these examples is the best way to get started with a2ajava. 
 
-* [Spring A2A Agent](https://github.com/vishalmysore/SpringActions) - Use a2ajava to build a spring agent using A2A and MCP, can work with a2a client or with mcp client like claude desktop or connect to visual studio code as agent.
+* [Spring A2A Agent](https://github.com/vishalmysore/SpringActions) - Use a2ajava to build a spring agent using A2A and MCP, can work with a2a client or with mcp client like claude desktop or connect to visual studio code as agent. This should be the first project to learn if you are new to agentic ai.
 * [Connect MCP Agent in Java](https://github.com/vishalmysore/mcp-connector/) - MCP Connector for Java Based agents , connect your a2a server to MCP client like claude or connect your MCP server to a2a client. Or vice versa or any permutation and combination
 * [Database Agent](https://github.com/vishalmysore/SqlAIAgent) - Use a2ajava to build a database agent using Derby DB, start stop database , insert data , create table all with agentic operation for both mcp as well as a2a      
 * [Standalone Java](https://github.com/vishalmysore/a2a-examples) - Several Examples on how to Use a2ajava to build a standalone java agent using A2A and MCP work with any client     
@@ -39,6 +39,10 @@ Use these example to quickly build agents using this library , forking and cloni
 * [A2A and MCP in Groovy](https://github.com/vishalmysore/a2aGroovy) - Build A2A and MCP agent in Groovy using A2AJava library.
 * [A2A and MCP in Scala](https://github.com/vishalmysore/a2aScala) - Build A2A and MCP agent in Scala using A2AJava library.
 * [A2A and MCP with Playwright](https://github.com/vishalmysore/a2aPlaywright) - Build A2A and MCP agent with Playwright for web automation using A2AJava library.
+* [MCP and A2A with Apache Thrift](https://github.com/vishalmysore/mcp-apache-thrift) - Build A2A and MCP agent with Apache Thrift for cross-language communication using A2AJava library. This example demonstrates how to use Thrift to call a service implemented in another language (e.g., Python, Go, C++) from a Java-based A2A or MCP agent.
+* [Single MCP Server and Client](https://github.com/vishalmysore/mcp-server-client)- Build a MCP server and client using A2AJava library. This example demonstrates how to build a MCP server and client using A2AJava library. It also demonstrates how to use the MCP protocol to call tools and tasks from the server.
+* [MCP Multi Server and Client](https://github.com/vishalmysore/mcp-a2a-multi-agent) - Build a MCP server and client with multiple servers using A2AJava library. This example demonstrates how to build a MCP server and client with multiple servers using A2AJava library. It also demonstrates how to use the MCP protocol to call tools and tasks from the server.
+* [Agentic Mesh - 4 Servers](https://github.com/vishalmysore/mcp-agentic-mesh)- Build a Agentic Mesh using A2AJava library. This example demonstrates how to build a Agentic Mesh using A2AJava library. It also demonstrates how to use the A2A protocol to call tools and tasks from the server.* 
 
 ### Coming Soon
 * **A2A Sensor Agent** – Use A2A to stream data from physical sensors and trigger real-time actions. ( [Please look at ChotuRobo Series](https://www.linkedin.com/posts/vishalrow_github-modelcontextprotocolservers-model-activity-7318222463857766400-YuFV/))

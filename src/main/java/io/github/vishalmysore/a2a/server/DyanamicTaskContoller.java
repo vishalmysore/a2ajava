@@ -514,7 +514,7 @@ public class DyanamicTaskContoller implements A2ATaskController {
             emitters.remove(id);
             log.severe("Client disconnected on resubscribe: " + id);
         });
-        emitter.onError((throwable) -> {
+        emitter.onError(throwable -> {
             emitters.remove(id);
             log.severe("Error on resubscribe for task " + id + ": " + throwable.getMessage());
         });

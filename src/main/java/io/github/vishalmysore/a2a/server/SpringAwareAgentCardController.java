@@ -1,7 +1,6 @@
 package io.github.vishalmysore.a2a.server;
 
-import com.t4a.predict.PredictionLoader;
-import com.t4a.transform.GeminiV2PromptTransformer;
+
 import org.springframework.context.ApplicationContext;
 
 /**

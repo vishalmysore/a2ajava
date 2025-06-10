@@ -1,13 +1,12 @@
 package io.github.vishalmysore.a2a.server;
 
-import com.t4a.annotations.Agent;
+
 import com.t4a.api.AIAction;
 import com.t4a.api.GenericJavaMethodAction;
 import com.t4a.api.GroupInfo;
 import com.t4a.predict.PredictionLoader;
 import com.t4a.processor.AIProcessingException;
 import com.t4a.transform.GeminiV2PromptTransformer;
-import com.t4a.transform.OpenAIPromptTransformer;
 import com.t4a.transform.PromptTransformer;
 import io.github.vishalmysore.a2a.domain.AgentCard;
 import jakarta.annotation.PostConstruct;
@@ -15,17 +14,13 @@ import lombok.Getter;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * This controller serves the real-time agent card for the TicketQueen agent.

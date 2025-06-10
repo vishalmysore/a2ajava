@@ -27,7 +27,7 @@ public interface A2ATaskController {
 
     default SendTaskResponse sendTask(TaskSendParams taskSendParams, ActionCallback callback) {
         return sendTask(taskSendParams, callback, true);
-    };
+    }
 
     public SendTaskResponse sendTask(TaskSendParams taskSendParams, ActionCallback callback,boolean isAsync);
 

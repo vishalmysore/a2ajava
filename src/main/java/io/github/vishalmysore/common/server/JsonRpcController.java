@@ -68,16 +68,14 @@ public class JsonRpcController implements A2ARPCController {
 
     /**
      * This method handles JSON-RPC requests. It is the main entry point for the JSON-RPC API.
-     * Will optimize this method later
-     * @param request
-     * @return
+     * Will optimize this method later     *
      */
     public Object handleRpc(@RequestBody JsonRpcRequest request) {
         String method = request.getMethod();
         Object params = request.getParams();
         log.info(request.toString());
         preProcessing(method,params);
-        Object result = null;
+        Object result ;
         switch (method) {
             case "tasks/send":
                 TaskSendParams sendParams = new ObjectMapper().convertValue(params, TaskSendParams.class);
@@ -166,8 +164,7 @@ public class JsonRpcController implements A2ARPCController {
                     toolRequest.setName((String) mcpParams.get("name"));
                     toolRequest.setArguments((Map<String, Object>) mcpParams.get("arguments"));
                 }
-                // toolRequest.setName(request.getParams().get("name").toString());
-                // toolRequest.setArguments(request.getParams().get("arguments"));
+
 
                 ResponseEntity<JSONRPCResponse> toolResponse = getMCPToolsController().callTool(toolRequest);
 
