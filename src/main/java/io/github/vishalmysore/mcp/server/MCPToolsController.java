@@ -9,6 +9,7 @@ import com.t4a.api.GroupInfo;
 import com.t4a.detect.ActionCallback;
 import com.t4a.predict.PredictionLoader;
 import com.t4a.processor.*;
+import com.t4a.transform.PromptTransformer;
 import io.github.vishalmysore.common.MCPActionCallback;
 import io.github.vishalmysore.mcp.domain.*;
 import jakarta.annotation.PostConstruct;
@@ -38,6 +39,7 @@ public class MCPToolsController  {
     private ListToolsResult toolsResult;
 
     private AIProcessor baseProcessor = new GeminiV2ActionProcessor();
+    private PromptTransformer promptTransformer;
 
     private JsonUtils utils = new JsonUtils();
     public AIProcessor getBaseProcessor() {
@@ -60,6 +62,7 @@ public class MCPToolsController  {
     public void init() {
 
         baseProcessor = PredictionLoader.getInstance().createOrGetAIProcessor();
+        promptTransformer = PredictionLoader.getInstance().createOrGetPromptTransformer();
         Map<GroupInfo, String> groupActions = PredictionLoader.getInstance().getActionGroupList().getGroupActions();
         List<Tool> tools = convertGroupActionsToTools(groupActions);
 
@@ -171,6 +174,15 @@ public class MCPToolsController  {
                     }
 
                     tool.setInputSchema(inputSchema);
+
+                    ToolAnnotations toolAnnotations = null;
+                    try {
+                        toolAnnotations = (ToolAnnotations)promptTransformer.transformIntoPojo("this is the tool name "+actionName+" and here are the parameterts it takes "+ jsonStr +"  I want you to give name name value pair describing what this tool does so that people can indentify this tool better", ToolAnnotations.class);
+                    } catch (AIProcessingException e) {
+                        log.warning(e.getMessage());
+                    }
+
+                    tool.setAnnotations(toolAnnotations);
                     tools.add(tool);
                 }
             }

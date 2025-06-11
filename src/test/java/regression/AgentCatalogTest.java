@@ -17,9 +17,9 @@ public class AgentCatalogTest {
         AgentCatalog agentCatalog = new AgentCatalog();
         Agent agent = agentCatalog.addAgent("https://vishalmysore-a2amcpspring.hf.space/");
         JsonUtils jsonUtils = new JsonUtils();
-        MCPAgent mcpAgent = new MCPAgent();
-        mcpAgent.connect("http://localhost:7860/");
-        agentCatalog.addAgent(mcpAgent);
+      //  MCPAgent mcpAgent = new MCPAgent();
+    //    mcpAgent.connect("http://localhost:7860/");
+      //  agentCatalog.addAgent(mcpAgent);
 
      //   log.info(agentCatalog.getAgentsInfo());
        // PromptTransformer promptTransformer = new OpenAIPromptTransformer();

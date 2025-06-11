@@ -202,6 +202,15 @@ public class JsonRpcController implements A2ARPCController {
                 getMCPToolsController().addPrompts(listPromptsResult);
                 postProcessing(method, response);
                 return response;
+            } case "ping": {
+                Map<String, Object> response = new HashMap<>();
+                Map<String, Object> mcpResult = new HashMap<>();
+                // Wrap in JSON-RPC response
+                response.put("jsonrpc", "2.0");
+                response.put("id", request.getId());
+                response.put("result", mcpResult);
+                postProcessing(method,response);
+                return response;
             }
             default:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Method not found: " + method);
