@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * This controller serves the real-time agent card for the TicketQueen agent.
@@ -113,6 +114,7 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
             }
             String hostName = InetAddress.getLocalHost().getHostName();
             this.cachedAgentCard.setUrl("http://" + hostName + ":" + serverPort);
+            poplateCardFromProperties(this.cachedAgentCard);
         } catch (AIProcessingException e) {
             log.severe("The skills are not populate in the agent card as actions are more in number \n you can either try with different processor \n" +
                     " or you can populate skills individually and add to agent card , or it could be that AI key is not initialized "+e.getMessage());
@@ -124,6 +126,95 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
 
    public void storeCard(AgentCard card) {
         this.cachedAgentCard = card;
+    }
+
+    private boolean isNonEmptyString(String value) {
+        return value != null && !value.trim().isEmpty();
+    }
+
+    public void poplateCardFromProperties(AgentCard card) {
+        Map<Object, Object> tools4AI = PredictionLoader.getInstance().getTools4AIProperties();
+
+        // Check and set description
+        String cardDescription = (String) tools4AI.get("a2a.card.description");
+        if (isNonEmptyString(cardDescription)) {
+            card.setDescription(cardDescription);
+        }
+
+        // Check and set name
+        String cardName = (String) tools4AI.get("a2a.card.name");
+        if (isNonEmptyString(cardName)) {
+            card.setName(cardName);
+        }
+
+        // Check and set capabilities
+        Boolean streaming = (Boolean) tools4AI.get("a2a.card.capabilities.streaming");
+        if (streaming != null) {
+            card.getCapabilities().setStreaming(streaming);
+        }
+
+        Boolean pushNotifications = (Boolean) tools4AI.get("a2a.card.capabilities.pushNotifications");
+        if (pushNotifications != null) {
+            card.getCapabilities().setPushNotifications(pushNotifications);
+        }
+
+        Boolean stateTransitionHistory = (Boolean) tools4AI.get("a2a.card.capabilities.stateTransitionHistory");
+        if (stateTransitionHistory != null) {
+            card.getCapabilities().setStateTransitionHistory(stateTransitionHistory);
+        }
+
+        // Check and set URL
+        String url = (String) tools4AI.get("a2a.card.url");
+        if (isNonEmptyString(url)) {
+            card.setUrl(url);
+        }
+
+        // Check and set version
+        String version = (String) tools4AI.get("a2a.card.version");
+        if (isNonEmptyString(version)) {
+            card.setVersion(version);
+        }
+
+        // Check and set documentation URL
+        String documentationUrl = (String) tools4AI.get("a2a.card.documentationUrl");
+        if (isNonEmptyString(documentationUrl)) {
+            card.setDocumentationUrl(documentationUrl);
+        }
+
+        // Check and set default output modes
+        String defaultOutputModes = (String) tools4AI.get("a2a.card.defaultOutputModes");
+        if (isNonEmptyString(defaultOutputModes)) {
+            card.setDefaultOutputModes(defaultOutputModes.split(","));
+        }
+
+        // Check and set default input modes
+        String defaultInputModes = (String) tools4AI.get("a2a.card.defaultInputModes");
+        if (isNonEmptyString(defaultInputModes)) {
+            card.setDefaultInputModes(defaultInputModes.split(","));
+        }
+
+        String organization = (String) tools4AI.get("a2a.card.provider.organization");
+        if (isNonEmptyString(organization)) {
+            card.getProvider().setOrganization(organization);
+        }
+
+// Set provider URL
+        String providerUrl = (String) tools4AI.get("a2a.card.provider.url");
+        if (isNonEmptyString(providerUrl)) {
+            card.getProvider().setUrl(providerUrl);
+        }
+
+// Set authentication schemes
+        String authSchemes = (String) tools4AI.get("a2a.card.authentication.schemes");
+        if (isNonEmptyString(authSchemes)) {
+            card.getAuthentication().setSchemes(authSchemes.split(","));
+        }
+
+// Set authentication credentials
+        String authCredentials = (String) tools4AI.get("a2a.card.authentication.credentials");
+        if (isNonEmptyString(authCredentials)) {
+            card.getAuthentication().setCredentials(authCredentials);
+        }
     }
 
     public ResponseEntity<AgentCard> getAgentCard() {

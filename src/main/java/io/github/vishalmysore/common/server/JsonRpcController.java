@@ -122,12 +122,12 @@ public class JsonRpcController implements A2ARPCController {
                 Map<String, Object> serverInfo = new HashMap<>();
                 Map<String, Object> capabilities = new HashMap<>();
                 Map<String, Object> tools = new HashMap<>();
-                serverInfo.put("name", "MCP Server");
-                serverInfo.put("version", "1.0.0");
+                serverInfo.put("name", getMCPToolsController().getServerName());
+                serverInfo.put("version", getMCPToolsController().getVersion());
 
                 capabilities.put("tools", tools);
 
-                   mcpResult.put("protocolVersion", "2024-11-05");
+                   mcpResult.put("protocolVersion", getMCPToolsController().getProtocolVersion());
                    mcpResult.put("serverInfo", serverInfo);
                    mcpResult.put("capabilities", capabilities);
 

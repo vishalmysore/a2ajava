@@ -38,6 +38,16 @@ public class MCPToolsController  {
     @Getter
     private ListToolsResult toolsResult;
 
+    @Getter
+    private ListResourcesResult resourcesResult;
+
+    @Getter
+    private ListPromptsResult promptsResult;
+
+    private List<Prompt> prompts;
+
+    @Getter
+    private List<Resource> resources;
     private AIProcessor baseProcessor = new GeminiV2ActionProcessor();
     private PromptTransformer promptTransformer;
 
@@ -48,12 +58,15 @@ public class MCPToolsController  {
 
     @Getter
     @Setter
-    private String serverName = "sampleServer";
+    private String serverName = "MCP Tools Server";
 
     @Getter
     @Setter
-
     private String version = "1.0.0";
+
+    @Getter
+    @Setter
+    private String protocolVersion ="2024-11-05";
 
     public MCPToolsController(){
 
@@ -69,6 +82,43 @@ public class MCPToolsController  {
         ListToolsResult newToolsResult = new ListToolsResult();
         newToolsResult.setTools(tools);
         storeListToolsResult(newToolsResult);
+        storeListReources(resources);
+        storeListPrompts(prompts);
+        setProperties();
+    }
+
+    public void setProperties() {
+        Map<Object, Object> tools4AIProperties = PredictionLoader.getInstance().getTools4AIProperties();
+
+        // Set serverName if the property is not null or empty
+        String serverName = (String) tools4AIProperties.get("mcp.tools.servername");
+        if (serverName != null && !serverName.trim().isEmpty()) {
+            setServerName(serverName);
+        }
+
+        // Set version if the property is not null or empty
+        String version = (String) tools4AIProperties.get("mcp.tools.version");
+        if (version != null && !version.trim().isEmpty()) {
+            setVersion(version);
+        }
+
+        // Set protocolVersion if the property is not null or empty
+        String protocolVersion = (String) tools4AIProperties.get("mcp.tools.protocolversion");
+        if (protocolVersion != null && !protocolVersion.trim().isEmpty()) {
+            setProtocolVersion(protocolVersion);
+        }
+    }
+
+    public void storeListReources(List<Resource> resources){
+        resourcesResult = new ListResourcesResult();
+        resourcesResult.setResources(resources);
+
+    }
+
+    public void storeListPrompts(List<Prompt> prompts){
+        promptsResult= new ListPromptsResult();
+        promptsResult.setPrompts(prompts);
+
     }
 
     public void storeListToolsResult(ListToolsResult toolsResult) {
@@ -102,6 +152,15 @@ public class MCPToolsController  {
         return true;
     }
 
+    public void addResource(Method method) {
+       Class clazz = method.getReturnType();
+       if (Resource.class.isAssignableFrom(clazz)) {
+           Resource r = new Resource();
+           resources.add(r);
+       }
+
+    }
+
     /**
      * This can be implmented by subclasses to restrict the methods that can be used
      * @param method
@@ -112,6 +171,7 @@ public class MCPToolsController  {
     }
     private List<Tool> convertGroupActionsToTools(Map<GroupInfo, String> groupActions) {
         List<Tool> tools = new ArrayList<>();
+
         Map<String, AIAction> predictions = PredictionLoader.getInstance().getPredictions();
 
         for (Map.Entry<GroupInfo, String> entry : groupActions.entrySet()) {
@@ -123,8 +183,10 @@ public class MCPToolsController  {
                 if (action instanceof GenericJavaMethodAction) {
                     GenericJavaMethodAction methodAction = (GenericJavaMethodAction) action;
                     Method m = methodAction.getActionMethod();
+
                     if(!isMethodAllowed(m))
                         continue;
+                    addResource(m);
                     log.info("Processing action: " + actionName);
                     Tool tool = new Tool();
                     tool.setName(action.getActionName());
