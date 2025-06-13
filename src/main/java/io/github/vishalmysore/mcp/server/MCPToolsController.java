@@ -161,6 +161,12 @@ public class MCPToolsController  {
 
     }
 
+    public void addPrompt(Tool tool) {
+        Prompt prompt = new Prompt();
+       // prompt.setAnnotations(tool.getAnnotations());
+
+    }
+
     /**
      * This can be implmented by subclasses to restrict the methods that can be used
      * @param method
@@ -187,6 +193,7 @@ public class MCPToolsController  {
                     if(!isMethodAllowed(m))
                         continue;
                     addResource(m);
+
                     log.info("Processing action: " + actionName);
                     Tool tool = new Tool();
                     tool.setName(action.getActionName());
@@ -246,6 +253,7 @@ public class MCPToolsController  {
 
                     tool.setAnnotations(toolAnnotations);
                     tools.add(tool);
+                    addPrompt(tool);
                 }
             }
         }
@@ -304,18 +312,11 @@ public class MCPToolsController  {
                 } else {
                     String resultStr = result.toString();
                     // Check if result is Base64 encoded
-                    if (isBase64(resultStr)) {
-                        ImageContent imageContent = new ImageContent();
-                       // imageContent.setType("image");
-                        imageContent.setData(resultStr);
-                        imageContent.setMimeType("image/png"); // Set appropriate MIME type
-                        content.add(imageContent);
-                    } else {
                         TextContent textContent = new TextContent();
                         textContent.setType("text");
                         textContent.setText(resultStr);
                         content.add(textContent);
-                    }
+
                 }
             } else {
                 TextContent textContent = new TextContent();
