@@ -53,7 +53,7 @@ public interface CommonClientResponse {
             }
             return "";
         } else {
-            throw new IllegalStateException("Unexpected response type: " + this.getClass());
+            throw new IllegalStateException("Unexpected response type inside CommonClientResponse class: " + this.getClass());
         }
     }
 
