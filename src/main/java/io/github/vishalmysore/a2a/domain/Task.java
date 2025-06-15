@@ -6,6 +6,8 @@ package io.github.vishalmysore.a2a.domain;
 import io.github.vishalmysore.common.CommonClientRequest;
 import io.github.vishalmysore.common.CommonClientResponse;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.util.ArrayList;
@@ -28,7 +30,8 @@ import java.util.Map;
  * All implementation of Task can be done in applications extending this library
  */
 @Data
-
+@Getter
+@Setter
 @ToString
 public class Task implements A2ATask, CommonClientRequest, CommonClientResponse {
 
