@@ -67,7 +67,7 @@ class ACPRestControllerTest {
                 AgentRun run = new AgentRun();
                 run.setRunId(UUID.randomUUID());
                 run.setAgentId(request.getAgentId());
-                run.setStatus(AgentRun.RunStatus.success);
+                run.setStatus(AgentRun.RunStatus.SUCCESS);
                 return ResponseEntity.ok(run);
             }
             
@@ -75,7 +75,7 @@ class ACPRestControllerTest {
             public ResponseEntity<io.github.vishalmysore.acp.domain.Thread> createThread(Map<String, Object> metadata) {
                 io.github.vishalmysore.acp.domain.Thread thread = new io.github.vishalmysore.acp.domain.Thread();
                 thread.setThreadId(UUID.randomUUID());
-                thread.setStatus(io.github.vishalmysore.acp.domain.Thread.ThreadStatus.idle);
+                thread.setStatus(io.github.vishalmysore.acp.domain.Thread.ThreadStatus.IDLE);
                 return ResponseEntity.ok(thread);
             }
             
@@ -138,7 +138,7 @@ class ACPRestControllerTest {
         assertEquals(200, response.getStatusCodeValue());
         assertNotNull(response.getBody());
         assertEquals(testAgentId, response.getBody().getAgentId());
-        assertEquals(AgentRun.RunStatus.success, response.getBody().getStatus());
+        assertEquals(AgentRun.RunStatus.SUCCESS, response.getBody().getStatus());
     }
 
     @Test
@@ -150,7 +150,7 @@ class ACPRestControllerTest {
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
         assertNotNull(response.getBody());
-        assertEquals(io.github.vishalmysore.acp.domain.Thread.ThreadStatus.idle, response.getBody().getStatus());
+        assertEquals(io.github.vishalmysore.acp.domain.Thread.ThreadStatus.IDLE, response.getBody().getStatus());
     }
 
     @Test

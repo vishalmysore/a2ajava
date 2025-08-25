@@ -49,7 +49,7 @@ class ACPIntegrationTest {
             public ResponseEntity<io.github.vishalmysore.acp.domain.Thread> createThread(Map<String, Object> metadata) {
                 io.github.vishalmysore.acp.domain.Thread thread = new io.github.vishalmysore.acp.domain.Thread();
                 thread.setThreadId(UUID.randomUUID());
-                thread.setStatus(io.github.vishalmysore.acp.domain.Thread.ThreadStatus.idle);
+                thread.setStatus(io.github.vishalmysore.acp.domain.Thread.ThreadStatus.IDLE);
                 thread.setCreatedAt(java.time.Instant.now());
                 thread.setUpdatedAt(java.time.Instant.now());
                 thread.setMetadata(metadata);
@@ -64,7 +64,7 @@ class ACPIntegrationTest {
                 AgentRun run = new AgentRun();
                 run.setRunId(UUID.randomUUID());
                 run.setAgentId(request.getAgentId());
-                run.setStatus(AgentRun.RunStatus.success);
+                run.setStatus(AgentRun.RunStatus.SUCCESS);
                 run.setCreatedAt(java.time.Instant.now());
                 run.setUpdatedAt(java.time.Instant.now());
                 return ResponseEntity.ok(run);
@@ -81,7 +81,7 @@ class ACPIntegrationTest {
                 run.setRunId(UUID.randomUUID());
                 run.setAgentId(request.getAgentId());
                 run.setThreadId(threadId);
-                run.setStatus(AgentRun.RunStatus.success);
+                run.setStatus(AgentRun.RunStatus.SUCCESS);
                 run.setCreatedAt(java.time.Instant.now());
                 run.setUpdatedAt(java.time.Instant.now());
                 return ResponseEntity.ok(run);
@@ -120,7 +120,7 @@ class ACPIntegrationTest {
         assertNotNull(threadResponse.getBody());
         
         io.github.vishalmysore.acp.domain.Thread thread = threadResponse.getBody();
-        assertEquals(io.github.vishalmysore.acp.domain.Thread.ThreadStatus.idle, thread.getStatus());
+        assertEquals(io.github.vishalmysore.acp.domain.Thread.ThreadStatus.IDLE, thread.getStatus());
         assertNotNull(thread.getThreadId());
 
         RunCreateStateless statelessRequest = new RunCreateStateless();
@@ -133,7 +133,7 @@ class ACPIntegrationTest {
         assertNotNull(statelessResponse.getBody());
         
         AgentRun statelessRun = statelessResponse.getBody();
-        assertEquals(AgentRun.RunStatus.success, statelessRun.getStatus());
+        assertEquals(AgentRun.RunStatus.SUCCESS, statelessRun.getStatus());
         assertNotNull(statelessRun.getRunId());
 
         RunCreateStateful statefulRequest = new RunCreateStateful();
@@ -147,7 +147,7 @@ class ACPIntegrationTest {
         assertNotNull(statefulResponse.getBody());
         
         AgentRun statefulRun = statefulResponse.getBody();
-        assertEquals(AgentRun.RunStatus.success, statefulRun.getStatus());
+        assertEquals(AgentRun.RunStatus.SUCCESS, statefulRun.getStatus());
         assertEquals(thread.getThreadId(), statefulRun.getThreadId());
         assertNotNull(statefulRun.getRunId());
     }

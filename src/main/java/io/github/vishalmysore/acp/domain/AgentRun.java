@@ -33,10 +33,10 @@ public class AgentRun {
     private UUID threadId;
     
     public enum RunStatus {
-        pending,
-        error,
-        success,
-        timeout,
-        interrupted
+        PENDING,
+        ERROR,
+        SUCCESS,
+        TIMEOUT,
+        INTERRUPTED
     }
 }

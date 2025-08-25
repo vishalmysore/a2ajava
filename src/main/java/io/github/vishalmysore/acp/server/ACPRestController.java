@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/acp")
@@ -42,13 +41,13 @@ public class ACPRestController implements ACPController {
             List<AgentCard> agentCards = agentCard != null ? List.of(agentCard) : List.of();
             List<Agent> agents = agentCards.stream()
                 .map(acpMapper::toAgent)
-                .collect(Collectors.toList());
+                .toList();
             
             if (request.getQuery() != null && !request.getQuery().isEmpty()) {
                 agents = agents.stream()
                     .filter(agent -> agent.getMetadata().getDescription()
                         .toLowerCase().contains(request.getQuery().toLowerCase()))
-                    .collect(Collectors.toList());
+                    .toList();
             }
             
             if (request.getLimit() != null) {
@@ -57,7 +56,7 @@ public class ACPRestController implements ACPController {
                 agents = agents.stream()
                     .skip(offset)
                     .limit(limit)
-                    .collect(Collectors.toList());
+                    .toList();
             }
             
             return ResponseEntity.ok(agents);
@@ -68,7 +67,7 @@ public class ACPRestController implements ACPController {
     }
     
     @Override
-    public ResponseEntity<Agent> getAgent(@PathVariable UUID agentId) {
+    public ResponseEntity<Agent> getAgent(@PathVariable("agentId") UUID agentId) {
         log.info("Getting agent with ID: {}", agentId);
         
         try {
@@ -91,7 +90,7 @@ public class ACPRestController implements ACPController {
     }
     
     @Override
-    public ResponseEntity<AgentACPDescriptor> getAgentDescriptor(@PathVariable UUID agentId) {
+    public ResponseEntity<AgentACPDescriptor> getAgentDescriptor(@PathVariable("agentId") UUID agentId) {
         log.info("Getting agent descriptor for ID: {}", agentId);
         
         try {
@@ -121,7 +120,7 @@ public class ACPRestController implements ACPController {
             AgentRun run = new AgentRun();
             run.setRunId(UUID.randomUUID());
             run.setAgentId(request.getAgentId());
-            run.setStatus(AgentRun.RunStatus.pending);
+            run.setStatus(AgentRun.RunStatus.PENDING);
             run.setCreatedAt(Instant.now());
             run.setUpdatedAt(Instant.now());
             
@@ -131,7 +130,7 @@ public class ACPRestController implements ACPController {
             task.setId(run.getRunId().toString());
             task.setStatus(new TaskStatus(TaskState.SUBMITTED));
             
-            run.setStatus(AgentRun.RunStatus.success);
+            run.setStatus(AgentRun.RunStatus.SUCCESS);
             run.setUpdatedAt(Instant.now());
             
             return ResponseEntity.ok(run);
@@ -148,7 +147,7 @@ public class ACPRestController implements ACPController {
         try {
             io.github.vishalmysore.acp.domain.Thread thread = new io.github.vishalmysore.acp.domain.Thread();
             thread.setThreadId(UUID.randomUUID());
-            thread.setStatus(io.github.vishalmysore.acp.domain.Thread.ThreadStatus.idle);
+            thread.setStatus(io.github.vishalmysore.acp.domain.Thread.ThreadStatus.IDLE);
             thread.setCreatedAt(Instant.now());
             thread.setUpdatedAt(Instant.now());
             thread.setMetadata(metadata);
@@ -165,7 +164,7 @@ public class ACPRestController implements ACPController {
     }
     
     @Override
-    public ResponseEntity<AgentRun> createStatefulRun(@PathVariable UUID threadId, @RequestBody RunCreateStateful request) {
+    public ResponseEntity<AgentRun> createStatefulRun(@PathVariable("threadId") UUID threadId, @RequestBody RunCreateStateful request) {
         log.info("Creating stateful run for thread {}: {}", threadId, request);
         
         try {
@@ -178,23 +177,23 @@ public class ACPRestController implements ACPController {
             run.setRunId(UUID.randomUUID());
             run.setAgentId(request.getAgentId());
             run.setThreadId(threadId);
-            run.setStatus(AgentRun.RunStatus.pending);
+            run.setStatus(AgentRun.RunStatus.PENDING);
             run.setCreatedAt(Instant.now());
             run.setUpdatedAt(Instant.now());
             
             runs.put(run.getRunId(), run);
             
-            thread.setStatus(io.github.vishalmysore.acp.domain.Thread.ThreadStatus.busy);
+            thread.setStatus(io.github.vishalmysore.acp.domain.Thread.ThreadStatus.BUSY);
             thread.setUpdatedAt(Instant.now());
             
             Task task = acpMapper.toTask(request);
             task.setId(run.getRunId().toString());
             task.setStatus(new TaskStatus(TaskState.SUBMITTED));
             
-            run.setStatus(AgentRun.RunStatus.success);
+            run.setStatus(AgentRun.RunStatus.SUCCESS);
             run.setUpdatedAt(Instant.now());
             
-            thread.setStatus(io.github.vishalmysore.acp.domain.Thread.ThreadStatus.idle);
+            thread.setStatus(io.github.vishalmysore.acp.domain.Thread.ThreadStatus.IDLE);
             thread.setUpdatedAt(Instant.now());
             
             return ResponseEntity.ok(run);

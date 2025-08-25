@@ -35,9 +35,9 @@ public class Thread {
     private Map<String, Object> values;
     
     public enum ThreadStatus {
-        idle,
-        busy,
-        interrupted,
-        error
+        IDLE,
+        BUSY,
+        INTERRUPTED,
+        ERROR
     }
 }

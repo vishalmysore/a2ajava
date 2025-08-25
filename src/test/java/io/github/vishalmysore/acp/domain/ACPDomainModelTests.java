@@ -51,14 +51,14 @@ class ACPDomainModelTests {
         run.setRunId(runId);
         run.setAgentId(agentId);
         run.setThreadId(threadId);
-        run.setStatus(AgentRun.RunStatus.pending);
+        run.setStatus(AgentRun.RunStatus.PENDING);
         run.setCreatedAt(now);
         run.setUpdatedAt(now);
         
         assertEquals(runId, run.getRunId());
         assertEquals(agentId, run.getAgentId());
         assertEquals(threadId, run.getThreadId());
-        assertEquals(AgentRun.RunStatus.pending, run.getStatus());
+        assertEquals(AgentRun.RunStatus.PENDING, run.getStatus());
         assertEquals(now, run.getCreatedAt());
         assertEquals(now, run.getUpdatedAt());
     }
@@ -73,7 +73,7 @@ class ACPDomainModelTests {
         Map<String, Object> values = new HashMap<>();
         
         thread.setThreadId(threadId);
-        thread.setStatus(Thread.ThreadStatus.idle);
+        thread.setStatus(Thread.ThreadStatus.IDLE);
         thread.setCreatedAt(now);
         thread.setUpdatedAt(now);
         thread.setMetadata(metadata);
@@ -81,7 +81,7 @@ class ACPDomainModelTests {
         thread.setValues(values);
         
         assertEquals(threadId, thread.getThreadId());
-        assertEquals(Thread.ThreadStatus.idle, thread.getStatus());
+        assertEquals(Thread.ThreadStatus.IDLE, thread.getStatus());
         assertEquals(now, thread.getCreatedAt());
         assertEquals(now, thread.getUpdatedAt());
         assertEquals(metadata, thread.getMetadata());
