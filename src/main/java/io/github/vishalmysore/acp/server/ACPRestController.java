@@ -67,7 +67,7 @@ public class ACPRestController implements ACPController {
     }
     
     @Override
-    public ResponseEntity<Agent> getAgent(@PathVariable("agentId") UUID agentId) {
+    public ResponseEntity<Agent> getAgent(@PathVariable UUID agentId) {
         log.info("Getting agent with ID: {}", agentId);
         
         try {
@@ -90,7 +90,7 @@ public class ACPRestController implements ACPController {
     }
     
     @Override
-    public ResponseEntity<AgentACPDescriptor> getAgentDescriptor(@PathVariable("agentId") UUID agentId) {
+    public ResponseEntity<AgentACPDescriptor> getAgentDescriptor(@PathVariable UUID agentId) {
         log.info("Getting agent descriptor for ID: {}", agentId);
         
         try {
@@ -164,7 +164,7 @@ public class ACPRestController implements ACPController {
     }
     
     @Override
-    public ResponseEntity<AgentRun> createStatefulRun(@PathVariable("threadId") UUID threadId, @RequestBody RunCreateStateful request) {
+    public ResponseEntity<AgentRun> createStatefulRun(@PathVariable UUID threadId, @RequestBody RunCreateStateful request) {
         log.info("Creating stateful run for thread {}: {}", threadId, request);
         
         try {

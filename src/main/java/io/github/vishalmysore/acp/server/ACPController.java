@@ -14,10 +14,10 @@ public interface ACPController {
     ResponseEntity<List<Agent>> searchAgents(@RequestBody AgentSearchRequest request);
     
     @GetMapping("/agents/{agentId}")
-    ResponseEntity<Agent> getAgent(@PathVariable("agentId") UUID agentId);
+    ResponseEntity<Agent> getAgent(@PathVariable UUID agentId);
     
     @GetMapping("/agents/{agentId}/descriptor")
-    ResponseEntity<AgentACPDescriptor> getAgentDescriptor(@PathVariable("agentId") UUID agentId);
+    ResponseEntity<AgentACPDescriptor> getAgentDescriptor(@PathVariable UUID agentId);
     
     @PostMapping("/runs")
     ResponseEntity<AgentRun> createStatelessRun(@RequestBody RunCreateStateless request);
@@ -26,5 +26,5 @@ public interface ACPController {
     ResponseEntity<io.github.vishalmysore.acp.domain.Thread> createThread(@RequestBody Map<String, Object> metadata);
     
     @PostMapping("/threads/{threadId}/runs")
-    ResponseEntity<AgentRun> createStatefulRun(@PathVariable("threadId") UUID threadId, @RequestBody RunCreateStateful request);
+    ResponseEntity<AgentRun> createStatefulRun(@PathVariable UUID threadId, @RequestBody RunCreateStateful request);
 }
