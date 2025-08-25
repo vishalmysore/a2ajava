@@ -1,8 +1,8 @@
 # Java Implementation of Google's A2A Protocol: Connecting the Agentverse
 
-This project provides a Java implementation for both an A2A (Agent-to-Agent) server and client. 
-**A2A is an open protocol developed by Google** to standardize how AI agents communicate and exchange information, fostering a vibrant ecosystem of interoperable AI. This api also supports building MCP Servers in Java with use of simple annotations. Imagine a world where diverse AI agents, built with different tools and by different creators, can seamlessly collaborate to solve complex problems - that's the vision A2A is bringing to life. This implementation demonstrates how to set up this communication in Java, using the Spring Framework, with a focus on sending and retrieving tasks.
-a2ajava is a Swiss Army knife for building agentic applications. It is multi-protocol — works seamlessly with both A2A (Agent-to-Agent) and MCP (Model Context Protocol). It is multi-language — supports Java, Kotlin, and Groovy. It is multi-platform — compatible with Gemini, OpenAI, Claude, and Grok. It is multi-client — includes A2A and MCP clients with connectors in Java, Node, and Python. It offers multi-integration — out-of-the-box support for Selenium, human-in-the-loop workflows, and multi-LLM voting for consensus-based decision making. Agents built using the A2A protocol with a2ajava run seamlessly on MCP as well, ensuring maximum interoperability across platforms.
+This project provides a Java implementation for A2A (Agent-to-Agent), MCP (Model Context Protocol), and ACP (Agent Connect Protocol) servers and clients. 
+**A2A is an open protocol developed by Google** to standardize how AI agents communicate and exchange information, fostering a vibrant ecosystem of interoperable AI. This api also supports building MCP Servers and ACP agents in Java with use of simple annotations. Imagine a world where diverse AI agents, built with different tools and by different creators, can seamlessly collaborate to solve complex problems - that's the vision these protocols are bringing to life. This implementation demonstrates how to set up this communication in Java, using the Spring Framework, with a focus on sending and retrieving tasks.
+a2ajava is a Swiss Army knife for building agentic applications. It is multi-protocol — works seamlessly with A2A (Agent-to-Agent), MCP (Model Context Protocol), and ACP (Agent Connect Protocol). It is multi-language — supports Java, Kotlin, and Groovy. It is multi-platform — compatible with Gemini, OpenAI, Claude, and Grok. It is multi-client — includes A2A, MCP, and ACP clients with connectors in Java, Node, and Python. It offers multi-integration — out-of-the-box support for Selenium, human-in-the-loop workflows, and multi-LLM voting for consensus-based decision making. Agents built using any protocol with a2ajava run seamlessly on all three protocols, ensuring maximum interoperability across platforms.
 
 [![Need More Info? Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/vishalmysore/a2ajava) [![codecov](https://codecov.io/gh/vishalmysore/a2ajava/graph/badge.svg?token=HieisRv0xC)](https://codecov.io/gh/vishalmysore/a2ajava)
 <a target="_blank" href="https://sonarcloud.io/summary/new_code?id=vishalmysore_a2ajava"><img src="https://sonarcloud.io/api/project_badges/measure?project=vishalmysore_a2ajava&metric=alert_status"/></a>
@@ -75,15 +75,15 @@ Live demos have been deployed on hugginface you are welcome to try them out. Or 
 ## Whats so special about A2AJava library?
 
 You can simple annotate your classes with @Agent and @Action and build a server.  The library will take care of the rest.  You can also use this library to build a client to send and receive messages from the server.  The library is built on top of Spring Boot and uses Jackson for JSON serialization/deserialization.  The library is designed to be easy to use and extend, so you can build your own agents quickly and easily.
-ALl methods annotated with @Action are exposed as A2A tasks and also MCP tools you dont need to do anything . 
+All methods annotated with @Action are exposed as A2A tasks, MCP tools, and ACP runs - you don't need to do anything extra. 
 Infuse AI in any running application  
 
-You can convert you entire springboot based application into a2a and mcp compliant agent by using these  4 annotations:
+You can convert your entire springboot based application into A2A, MCP, and ACP compliant agent by using these 4 annotations:
 
 ```java
 
-1 @EnableAgent  - converts your springboot application into an A2A agent
-2 @EnabaleAgentSecurity- adds security features to your agent
+1 @EnableAgent  - converts your springboot application into an A2A/MCP/ACP agent
+2 @EnableAgentSecurity - adds security features to your agent
 3 @Agent(groupName = "", groupDescription = "") - creates an agent group
 4 @Action(description = "") - creates an action within the agent group
 
@@ -257,7 +257,7 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
   
 * The A2A and MCP protocol is an evolving standard, and this implementation may need to be updated as the protocols matures.  Always refer to the official A2A documentation for the latest specifications and best practices.  
 * This implementation is not affiliated with or endorsed by Google or Anthropic.  It is my independent effort to demonstrate the A2A and MCP protocol in Java.
-* Unit test coverage needs to be enhanced , will be working on it 
+* Unit test coverage needs to be enhanced , will be working on it  
   
   
   
