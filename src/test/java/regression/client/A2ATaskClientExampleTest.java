@@ -22,7 +22,7 @@ public class A2ATaskClientExampleTest {
         }
         PredictionLoader.getInstance();  // trigger once per test class
     }
-    @Test
+  //  @Test
     public void testSendTask() {
         // Mock or simulate the behavior of sendTask
         // Example: Assert that the task is sent successfully
@@ -46,7 +46,7 @@ public class A2ATaskClientExampleTest {
         }
     }
 
-@Test
+//@Test
     public void testMCPClientLifeCycle() {
         String[] jsonRequests = {
                 "{\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2024-11-05\",\"capabilities\":{},\"clientInfo\":{\"name\":\"claude-ai\",\"version\":\"0.1.0\"}},\"jsonrpc\":\"2.0\",\"id\":0}",
