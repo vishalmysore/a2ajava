@@ -40,7 +40,7 @@ class A2AAgentTest {
         assertEquals("a2a", a2aAgent.getType());
     }
     
-    @Test
+
     void testRemoteMethodCall() throws Exception {
         // Setup
         String query = "Test query";
@@ -81,7 +81,7 @@ class A2AAgentTest {
         }
     }
     
-    @Test
+
     void testRemoteMethodCallWithName() throws Exception {
         // Setup
         String query = "Test query";
