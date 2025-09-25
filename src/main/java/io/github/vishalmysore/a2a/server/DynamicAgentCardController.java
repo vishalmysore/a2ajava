@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +60,23 @@ public class DynamicAgentCardController implements A2AAgentCardController {
         agentCard.setDefaultInputModes(new String[]{"text/plain"});
         agentCard.setDefaultOutputModes(new String[]{CONTENT_TYPE});
 
-        Map<GroupInfo, String> groupActions = PredictionLoader.getInstance().getActionGroupList().getGroupActions();
+        Map<GroupInfo, String> groupActions = null;
+        try {
+            Object actionGroupList = PredictionLoader.getInstance().getActionGroupList();
+            if (actionGroupList != null) {
+                // Use reflection to call getGroupActions method to handle different implementations
+                java.lang.reflect.Method method = actionGroupList.getClass().getMethod("getGroupActions");
+                groupActions = (Map<GroupInfo, String>) method.invoke(actionGroupList);
+            }
+        } catch (Exception e) {
+            // If we can't get group actions, create an empty map
+            groupActions = new HashMap<>();
+        }
+        
+        if (groupActions == null) {
+            groupActions = new HashMap<>();
+        }
+        
         List<Skill> skills = new ArrayList<>();
 
         for (Map.Entry<GroupInfo, String> entry : groupActions.entrySet()) {

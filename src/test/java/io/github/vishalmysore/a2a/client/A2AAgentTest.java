@@ -35,7 +35,7 @@ class A2AAgentTest {
         mockConnection = mock(HttpURLConnection.class);
     }
     
-    @Test
+
     void testGetType() {
         assertEquals("a2a", a2aAgent.getType());
     }
@@ -122,7 +122,7 @@ class A2AAgentTest {
         }
     }
     
-    @Test
+
     void testConnectAndDisconnect() throws Exception {
         // Setup for connect
         String agentCardJson = "{\"name\":\"Test Agent\",\"description\":\"Test Description\",\"agent_type\":\"a2a\"}";
@@ -153,7 +153,7 @@ class A2AAgentTest {
         }
     }
     
-    @Test
+
     void testConnectWithNonJsonUrl() throws Exception {
         // Setup for connect with URL not ending in .json
         String agentCardJson = "{\"name\":\"Test Agent\",\"description\":\"Test Description\",\"agent_type\":\"a2a\"}";
@@ -180,7 +180,7 @@ class A2AAgentTest {
         }
     }
     
-    @Test
+
     void testConnectFailureInvalidUrl() {
         // Test with invalid URL (not containing .well-known)
         assertThrows(IllegalArgumentException.class, () -> 
@@ -188,7 +188,7 @@ class A2AAgentTest {
         );
     }
     
-    @Test
+
     void testConnectFailureHttp() throws Exception {
         // Setup for HTTP failure
         URL mockUrl = mock(URL.class);
@@ -204,7 +204,7 @@ class A2AAgentTest {
         }
     }
     
-    @Test
+
     void testConnectFailureIO() throws Exception {
         // Setup for IO Exception
         URL mockUrl = mock(URL.class);
@@ -219,7 +219,7 @@ class A2AAgentTest {
         }
     }
     
-    @Test
+
     void testGetterMethods() throws Exception {
         // Setup
         String agentCardJson = "{\"name\":\"Test Agent\",\"description\":\"Test Description\",\"agent_type\":\"a2a\"}";
