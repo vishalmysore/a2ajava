@@ -37,6 +37,11 @@ public class A2AAgent implements Agent {
     public static final String AGENT_PATH ="/agent.json";
 
     private String type ="a2a";
+    
+    /**
+     * Enable A2UI extension (sends X-A2A-Extensions header)
+     */
+    private boolean enableA2UIExtension = false;
 
 
     public A2AAgent() {
@@ -64,10 +69,25 @@ public class A2AAgent implements Agent {
 
             params.setId(String.valueOf(UUID.randomUUID()));
             JsonRpcRequest request = createRequest("tasks/send", params);
+            
+            // A2A v1.0: Add protocol version header and optional extension headers
             RestTemplate restTemplate = new RestTemplate();
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            headers.set("A2A-Version", "1.0");
+            
+            // Add A2UI extension header if needed (can be customized by clients)
+            if (enableA2UIExtension) {
+                headers.set("X-A2A-Extensions", "https://a2ui.org/a2a-extension/a2ui/v0.8");
+            }
+            
+            headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+            
+            org.springframework.http.HttpEntity<JsonRpcRequest> entity = 
+                new org.springframework.http.HttpEntity<>(request, headers);
+            
             ResponseEntity<SendTaskResponse> response = restTemplate.postForEntity(
                     getServerUrl().toURI().toString(),
-                    request,
+                    entity,
                     SendTaskResponse.class
             );
 
@@ -154,6 +174,20 @@ public class A2AAgent implements Agent {
     @Override
     public URL getServerUrl() {
         return serverUrl;
+    }
+    
+    /**
+     * Enable A2UI v0.8 extension support (adds X-A2A-Extensions header to requests)
+     */
+    public void enableA2UIExtension(boolean enable) {
+        this.enableA2UIExtension = enable;
+    }
+    
+    /**
+     * Check if A2UI extension is enabled
+     */
+    public boolean isA2UIExtensionEnabled() {
+        return this.enableA2UIExtension;
     }
 
 

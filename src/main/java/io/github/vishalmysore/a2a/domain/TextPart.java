@@ -1,19 +1,21 @@
 package io.github.vishalmysore.a2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * A2A v1.0: TextPart serializes as {"text": "..."}
+ * No "kind" or "type" field in JSON.
+ */
 @ToString
 public class TextPart extends Part {
 
-
     @JsonIgnore
     private String id;
+    @JsonIgnore
     private String type = "text";
     private String text;
 

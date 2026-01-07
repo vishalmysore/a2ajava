@@ -1,18 +1,20 @@
 package io.github.vishalmysore.a2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.ToString;
-
 
 import java.util.Map;
 
-
+/**
+ * A2A v1.0: FilePart serializes as {"file": {...}}
+ * No "kind" or "type" field in JSON.
+ */
 @ToString
 public class FilePart extends Part {
 
     @JsonIgnore
     private String id;
+    @JsonIgnore
     private String type = "file";
 
     private FileContent file;

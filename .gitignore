@@ -36,3 +36,8 @@ build/
 
 ### Mac OS ###
 .DS_Store
+A2A_V1_MIGRATION_SUMMARY.md
+.idea/copilot.data.migration.agent.xml
+.idea/copilot.data.migration.ask.xml
+.idea/copilot.data.migration.ask2agent.xml
+.idea/copilot.data.migration.edit.xml

@@ -6,10 +6,10 @@
 
     <groupId>io.github.vishalmysore</groupId>
     <artifactId>a2ajava</artifactId>
-    <version>0.1.9.7</version>
+    <version>1.0.0</version>
     <name>A2A Protocol Implementation for Java</name>
     <description>
-        Java implementation of the A2A protocol, which allows for the exchange of data between different AI systems.
+        Java implementation of the A2A protocol v1.0, which allows for the exchange of data between different AI systems.
         This project is designed to facilitate the integration of various AI models and tools, enabling seamless communication and collaboration.
         The A2A protocol is a standardized way for AI systems to share information, making it easier to build complex applications that leverage multiple AI technologies.
         This implementation is built using Java and Spring Boot, providing a robust and scalable solution for developers looking to integrate AI capabilities into their applications.

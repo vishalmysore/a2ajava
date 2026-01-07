@@ -55,7 +55,13 @@ public class DynamicAgentCardController implements A2AAgentCardController {
         agentCard.setProvider(new Provider("Ticket Corp", "https://github.com/vishalmysore/choturobo"));
         agentCard.setVersion("1.0.0");
         agentCard.setDocumentationUrl("https://github.com/vishalmysore/Tools4AI");  // Replace
-        agentCard.setCapabilities(new Capabilities(false, false, false));
+        
+        Capabilities capabilities = new Capabilities();
+        capabilities.setStreaming(false);
+        capabilities.setPushNotifications(false);
+        capabilities.setStateTransitionHistory(false);
+        agentCard.setCapabilities(capabilities);
+        
         agentCard.setAuthentication(new Authentication(new String[]{"Bearer"}));
         agentCard.setDefaultInputModes(new String[]{"text/plain"});
         agentCard.setDefaultOutputModes(new String[]{CONTENT_TYPE});
