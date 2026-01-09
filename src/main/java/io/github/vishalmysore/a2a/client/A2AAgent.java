@@ -71,7 +71,7 @@ public class A2AAgent implements Agent {
             JsonRpcRequest request = createRequest("tasks/send", params);
             
             // A2A v1.0: Add protocol version header and optional extension headers
-            RestTemplate restTemplate = new RestTemplate();
+            RestTemplate restTemplate = createRestTemplateWithTimeout();
             org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
             headers.set("A2A-Version", "1.0");
             
@@ -103,6 +103,17 @@ public class A2AAgent implements Agent {
 
     private JsonRpcRequest createRequest(String method, Object params) {
         return new JsonRpcRequest("2.0", method, params, UUID.randomUUID().toString());
+    }
+    
+    private RestTemplate createRestTemplateWithTimeout() {
+        RestTemplate template = new RestTemplate();
+        // Set timeout to 5 minutes for OpenAI API calls which can take time
+        org.springframework.http.client.SimpleClientHttpRequestFactory factory = 
+            new org.springframework.http.client.SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(60000); // 60 seconds connect timeout
+        factory.setReadTimeout(300000);   // 5 minutes read timeout
+        template.setRequestFactory(factory);
+        return template;
     }
 
     @Override

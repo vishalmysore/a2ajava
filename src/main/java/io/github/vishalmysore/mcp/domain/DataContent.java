@@ -1,44 +1,37 @@
-package io.github.vishalmysore.a2a.domain;
+package io.github.vishalmysore.mcp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A2A v1.0: DataPart serializes as {"data": {...}}
- * No "kind" or "type" field in JSON.
- * However, accepts "kind" during deserialization for compatibility with a2a-js SDK.
- * For A2UI support, set metadata mimeType to "application/json+a2ui"
+ * DataContent represents structured data in MCP responses.
+ * Can be used for A2UI data by setting appropriate metadata.
  */
+@Data
 @ToString
-public class DataPart extends Part {
-
-    @JsonIgnore
-    private String id;
-    @JsonIgnore
+public class DataContent implements Content {
+    
     private String type = "data";
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String kind; // Accept during deserialization, ignore during serialization
-
-
     private Map<String, Object> data;
-
     private Map<String, String> metadata;
 
+    @Override
     public String getType() {
         return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Map<String, Object> getData() {
         return data;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
     public void setData(Map<String, Object> data) {
         this.data = data;
     }
@@ -52,7 +45,7 @@ public class DataPart extends Part {
     }
     
     /**
-     * Check if this DataPart contains A2UI data
+     * Check if this DataContent contains A2UI data
      */
     @JsonIgnore
     public boolean isA2UIData() {
@@ -60,14 +53,16 @@ public class DataPart extends Part {
     }
     
     /**
-     * Create a DataPart for A2UI messages
+     * Create a DataContent for A2UI messages
+     * @param a2uiMessage The A2UI message structure (surfaceUpdate, beginRendering, etc.)
+     * @return DataContent with A2UI metadata
      */
-    public static DataPart createA2UIPart(Map<String, Object> a2uiMessage) {
-        DataPart part = new DataPart();
-        part.setData(a2uiMessage);
+    public static DataContent createA2UIContent(Map<String, Object> a2uiMessage) {
+        DataContent content = new DataContent();
+        content.setData(a2uiMessage);
         Map<String, String> metadata = new HashMap<>();
         metadata.put("mimeType", "application/json+a2ui");
-        part.setMetadata(metadata);
-        return part;
+        content.setMetadata(metadata);
+        return content;
     }
 }

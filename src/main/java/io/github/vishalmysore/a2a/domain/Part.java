@@ -12,16 +12,16 @@ import java.util.Map;
  * - TextPart: {"text": "..."}
  * - FilePart: {"file": {...}}
  * - DataPart: {"data": {...}}
+ * 
+ * Jackson uses DEDUCTION to determine which Part type based on presence of specific fields.
  */
 @JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.WRAPPER_OBJECT,
-        property = "type"
+        use = JsonTypeInfo.Id.DEDUCTION
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = TextPart.class, name = "text"),
-        @JsonSubTypes.Type(value = FilePart.class, name = "file"),
-        @JsonSubTypes.Type(value = DataPart.class, name = "data")
+        @JsonSubTypes.Type(value = TextPart.class),
+        @JsonSubTypes.Type(value = FilePart.class),
+        @JsonSubTypes.Type(value = DataPart.class)
 })
 public abstract class Part {
 

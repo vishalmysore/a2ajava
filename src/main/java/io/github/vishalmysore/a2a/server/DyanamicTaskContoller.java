@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.t4a.JsonUtils;
 import com.t4a.detect.ActionCallback;
 import com.t4a.predict.PredictionLoader;
-import com.t4a.processor.AIProcessingException;
-import com.t4a.processor.AIProcessor;
-import com.t4a.processor.GeminiV2ActionProcessor;
-import com.t4a.processor.OpenAiActionProcessor;
+import com.t4a.processor.*;
 import com.t4a.processor.scripts.BaseScriptProcessor;
 import com.t4a.processor.scripts.ScriptProcessor;
 import com.t4a.processor.scripts.ScriptResult;
@@ -16,6 +13,7 @@ import com.t4a.transform.GeminiV2PromptTransformer;
 import com.t4a.transform.PromptTransformer;
 import io.github.vishalmysore.a2a.domain.*;
 
+import io.github.vishalmysore.common.CallBackType;
 import lombok.Getter;
 import lombok.extern.java.Log;
 
@@ -157,6 +155,12 @@ public class DyanamicTaskContoller implements A2ATaskController {
         }
     }
 
+    public  DataPart createA2uiDataPart(Map<String, Object> a2uiData) {
+        // Create metadata map with the A2UI MIME type
+
+        // Return new DataPart with the data and metadata
+        return  DataPart.createA2UIPart(a2uiData);
+    }
     private void processTextPart(TextPart textPart, Task task, ActionCallback actionCallback) throws AIProcessingException {
         if (!"text".equals(textPart.getType())) {
             return;
@@ -172,7 +176,14 @@ public class DyanamicTaskContoller implements A2ATaskController {
 
     private void processWithCallback(String text, Task task, ActionCallback actionCallback) throws AIProcessingException {
         actionCallback.setContext(task);
-        getBaseProcessor().processSingleAction(text, actionCallback);
+        if(actionCallback.getType().equals(CallBackType.A2UI.name())) {
+            Object obj = getBaseProcessor().processSingleAction(text,null, new LoggingHumanDecision(),new LogginggExplainDecision(),actionCallback);
+            TaskStatus status = task.getStatus();
+            status.setState(TaskState.COMPLETED);
+            status.getMessage().getParts().add(createA2uiDataPart((Map<String, Object>) obj));
+        } else {
+            getBaseProcessor().processSingleAction(text, actionCallback);
+        }
     }
 
     private void processWithoutCallback(String text, Task task) throws AIProcessingException {

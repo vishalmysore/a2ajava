@@ -8,8 +8,11 @@ import io.github.vishalmysore.a2a.domain.*;
 import io.github.vishalmysore.a2a.server.A2ARPCController;
 import io.github.vishalmysore.a2a.server.A2ATaskController;
 import io.github.vishalmysore.a2a.server.DyanamicTaskContoller;
+import io.github.vishalmysore.common.A2AActionCallBack;
+import io.github.vishalmysore.common.A2AUICallback;
 import io.github.vishalmysore.mcp.domain.*;
 import io.github.vishalmysore.mcp.server.MCPToolsController;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.java.Log;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -66,20 +69,34 @@ public class JsonRpcController implements A2ARPCController {
         this.mcpToolsController = mcpToolsController;
     }
 
+    @Override
+    public Object handleRpc(JsonRpcRequest request) {
+        return handleRpc(request,null);
+    }
+
     /**
      * This method handles JSON-RPC requests. It is the main entry point for the JSON-RPC API.
      * Will optimize this method later     *
      */
-    public Object handleRpc(@RequestBody JsonRpcRequest request) {
+    public Object handleRpc(@RequestBody JsonRpcRequest request, HttpServletRequest httpRequest) {
         String method = request.getMethod();
         Object params = request.getParams();
         log.info(request.toString());
         preProcessing(method,params);
         Object result ;
+        A2AActionCallBack a2AActionCallBack = null;
+        if(httpRequest !=null){
+            log.info("Headers : "+httpRequest.getHeaderNames().toString());
+            if (httpRequest.getHeader("X-A2A-Extensions") != null) {
+                log.info("Custom header exists");
+                a2AActionCallBack = new A2AUICallback();
+            }
+        }
+
         switch (method) {
             case "tasks/send":
                 TaskSendParams sendParams = new ObjectMapper().convertValue(params, TaskSendParams.class);
-                result = getTaskController().sendTask(sendParams,null,false);
+                result = getTaskController().sendTask(sendParams,a2AActionCallBack,false);
                 postProcessing(method,result);
                 return result;
             case "tasks/get":

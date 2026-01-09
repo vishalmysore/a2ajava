@@ -37,10 +37,21 @@ public class A2ATaskClient {
 
     public A2ATaskClient(String baseUrl) {
         this.baseUrl = baseUrl;
-        this.restTemplate = new RestTemplate();
+        this.restTemplate = createRestTemplateWithTimeout();
         this.objectMapper = new ObjectMapper();
         this.pendingTasks = Collections.synchronizedList(new ArrayList<>());
         this.completedTasks = Collections.synchronizedList(new ArrayList<>());
+    }
+    
+    private RestTemplate createRestTemplateWithTimeout() {
+        RestTemplate template = new RestTemplate();
+        // Set timeout to 5 minutes for OpenAI API calls which can take time
+        org.springframework.http.client.SimpleClientHttpRequestFactory factory = 
+            new org.springframework.http.client.SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(60000); // 60 seconds connect timeout
+        factory.setReadTimeout(300000);   // 5 minutes read timeout
+        template.setRequestFactory(factory);
+        return template;
     }
 
     private JsonRpcRequest createRequest(String method, Object params) {
