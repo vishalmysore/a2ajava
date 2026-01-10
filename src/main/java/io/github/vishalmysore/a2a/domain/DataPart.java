@@ -70,4 +70,27 @@ public class DataPart extends Part {
         part.setMetadata(metadata);
         return part;
     }
+
+    @JsonIgnore
+    public String dataToText() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Type: ").append(type).append("\n");
+
+        if (metadata != null && !metadata.isEmpty()) {
+            sb.append("Metadata:\n");
+            metadata.forEach((key, value) ->
+                    sb.append("  ").append(key).append(": ").append(value).append("\n")
+            );
+        }
+
+        if (data != null && !data.isEmpty()) {
+            sb.append("Data:\n");
+            data.forEach((key, value) ->
+                    sb.append("  ").append(key).append(": ").append(value).append("\n")
+            );
+        }
+
+        return sb.toString().trim();
+    }
 }

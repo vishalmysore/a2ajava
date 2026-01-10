@@ -152,6 +152,16 @@ public class DyanamicTaskContoller implements A2ATaskController {
             processTextPart(textPart, task, actionCallback);
         } else if (part instanceof FilePart) {
             processFileTaskLogic(taskSendParams, task, taskId, actionCallback);
+        } else if (part instanceof DataPart) {
+            // Handle DataPart if needed
+
+            String text = ((DataPart)part).dataToText();
+            if (actionCallback != null) {
+                processWithCallback(text, task, actionCallback);
+            } else {
+                processWithoutCallback(text, task);
+            }
+            log.info("Received DataPart, processing as text.");
         }
     }
 
