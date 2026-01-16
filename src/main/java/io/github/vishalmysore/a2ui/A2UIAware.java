@@ -1,6 +1,7 @@
 package io.github.vishalmysore.a2ui;
 
 import com.t4a.detect.ActionCallback;
+import com.t4a.processor.ActionCallbackAware;
 import io.github.vishalmysore.common.CallBackType;
 
 import java.util.*;
@@ -9,7 +10,7 @@ import java.util.*;
  * Utility interface for creating A2UI display components
  * Provides reusable methods for building A2UI surface updates, components, and rendering messages
  */
-public interface A2UIDisplay {
+public interface A2UIAware extends ActionCallbackAware {
 
     /**
      * Creates a surface update map with the given surface ID
