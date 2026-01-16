@@ -315,7 +315,7 @@ public interface A2UIAware extends ActionCallbackAware {
 
         return messages;
     }
-    default boolean isUICallback(ThreadLocal<ActionCallback> callback) {
-        return callback != null && callback.get()!=null && callback.get().getType().equals(CallBackType.A2UI.name());
+    default boolean isUICallback(ActionCallback callback) {
+        return callback != null && callback.getType().equals(CallBackType.A2UI.name());
     }
 }
