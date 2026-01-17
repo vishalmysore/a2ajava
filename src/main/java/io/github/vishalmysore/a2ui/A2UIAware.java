@@ -318,4 +318,288 @@ public interface A2UIAware extends ActionCallbackAware {
     default boolean isUICallback(ActionCallback callback) {
         return callback != null && callback.getType().equals(CallBackType.A2UI.name());
     }
+
+
+    /**
+     * Creates an Image component
+     */
+    default Map<String, Object> createImageComponent(String id, String url, String fit, String usageHint) {
+        Map<String, Object> component = new HashMap<>();
+        component.put("id", id);
+
+        Map<String, Object> imageComponent = new HashMap<>();
+        Map<String, Object> imageProps = new HashMap<>();
+
+        imageProps.put("url", new HashMap<String, Object>() {{
+            put("literalString", url);
+        }});
+
+        if (fit != null) {
+            imageProps.put("fit", fit);
+        }
+        if (usageHint != null) {
+            imageProps.put("usageHint", usageHint);
+        }
+
+        imageComponent.put("Image", imageProps);
+        component.put("component", imageComponent);
+
+        return component;
+    }
+
+    /**
+     * Creates a CheckBox component with data binding
+     */
+    default Map<String, Object> createCheckBoxComponent(String id, String label, String dataPath) {
+        Map<String, Object> component = new HashMap<>();
+        component.put("id", id);
+
+        Map<String, Object> checkBoxComponent = new HashMap<>();
+        Map<String, Object> checkBoxProps = new HashMap<>();
+
+        checkBoxProps.put("label", new HashMap<String, Object>() {{
+            put("literalString", label);
+        }});
+
+        checkBoxProps.put("value", new HashMap<String, Object>() {{
+            put("path", dataPath);
+        }});
+
+        checkBoxComponent.put("CheckBox", checkBoxProps);
+        component.put("component", checkBoxComponent);
+
+        return component;
+    }
+
+    /**
+     * Creates a Slider component for numeric input
+     */
+    default Map<String, Object> createSliderComponent(String id, String label, String dataPath,
+                                                      Double minValue, Double maxValue) {
+        Map<String, Object> component = new HashMap<>();
+        component.put("id", id);
+
+        Map<String, Object> sliderComponent = new HashMap<>();
+        Map<String, Object> sliderProps = new HashMap<>();
+
+        sliderProps.put("label", new HashMap<String, Object>() {{
+            put("literalString", label);
+        }});
+
+        sliderProps.put("value", new HashMap<String, Object>() {{
+            put("path", dataPath);
+        }});
+
+        if (minValue != null) {
+            sliderProps.put("minValue", minValue);
+        }
+        if (maxValue != null) {
+            sliderProps.put("maxValue", maxValue);
+        }
+
+        sliderComponent.put("Slider", sliderProps);
+        component.put("component", sliderComponent);
+
+        return component;
+    }
+
+    /**
+     * Creates a Card container component
+     */
+    default Map<String, Object> createCardComponent(String id, String childId) {
+        Map<String, Object> component = new HashMap<>();
+        component.put("id", id);
+
+        Map<String, Object> cardComponent = new HashMap<>();
+        Map<String, Object> cardProps = new HashMap<>();
+
+        cardProps.put("child", childId);
+
+        cardComponent.put("Card", cardProps);
+        component.put("component", cardComponent);
+
+        return component;
+    }
+
+    /**
+     * Creates a Row layout component
+     */
+    default Map<String, Object> createRowComponent(String id, List<String> childIds,
+                                                   String alignment, String distribution) {
+        Map<String, Object> component = new HashMap<>();
+        component.put("id", id);
+
+        Map<String, Object> rowComponent = new HashMap<>();
+        Map<String, Object> rowProps = new HashMap<>();
+
+        rowProps.put("children", new HashMap<String, Object>() {{
+            put("explicitList", childIds);
+        }});
+
+        if (alignment != null) {
+            rowProps.put("alignment", alignment);
+        }
+        if (distribution != null) {
+            rowProps.put("distribution", distribution);
+        }
+
+        rowComponent.put("Row", rowProps);
+        component.put("component", rowComponent);
+
+        return component;
+    }
+
+    /**
+     * Creates a form with multiple input fields
+     */
+    default Map<String, Object> createForm(String surfaceId, String title,
+                                           List<Map<String, Object>> fields,
+                                           String submitActionName) {
+        List<String> childIds = new ArrayList<>();
+        List<Map<String, Object>> components = new ArrayList<>();
+
+        // Add title
+        String titleId = "form_title";
+        childIds.add(titleId);
+        components.add(createTextComponent(titleId, title, "h2"));
+
+        // Add fields
+        for (Map<String, Object> field : fields) {
+            childIds.add((String) field.get("id"));
+            components.add(field);
+        }
+
+        // Add submit button
+        String buttonId = "submit_button";
+        String buttonTextId = "submit_button_text";
+        childIds.add(buttonId);
+        childIds.add(buttonTextId);
+
+        components.add(createButtonTextChild(buttonTextId, "Submit"));
+        components.add(createButtonComponent(buttonId, "Submit", submitActionName));
+
+        // Add root column
+        components.add(createRootColumn("root", childIds));
+
+        return buildA2UIMessage(surfaceId, "root", components);
+    }
+
+    /**
+     * Creates a data-bound List component with template
+     */
+    default Map<String, Object> createListComponent(String id, String dataPath, String templateComponentId) {
+        Map<String, Object> component = new HashMap<>();
+        component.put("id", id);
+
+        Map<String, Object> listComponent = new HashMap<>();
+        Map<String, Object> listProps = new HashMap<>();
+
+        listProps.put("children", new HashMap<String, Object>() {{
+            put("path", dataPath);
+            put("componentId", templateComponentId);
+        }});
+
+        listComponent.put("List", listProps);
+        component.put("component", listComponent);
+
+        return component;
+    }
+
+
+    /**
+     * Creates a loading indicator component
+     */
+    default Map<String, Object> createLoadingComponent(String id, String message) {
+        Map<String, Object> component = new HashMap<>();
+        component.put("id", id);
+
+        Map<String, Object> columnComponent = new HashMap<>();
+        Map<String, Object> columnProps = new HashMap<>();
+
+        List<String> childIds = Arrays.asList("loading_icon", "loading_text");
+        columnProps.put("children", new HashMap<String, Object>() {{
+            put("explicitList", childIds);
+        }});
+        columnProps.put("alignment", "center");
+        columnProps.put("distribution", "center");
+
+        columnComponent.put("Column", columnProps);
+        component.put("component", columnComponent);
+
+        // This would be part of the components list, not the component itself
+        // You would need to add the icon and text components separately
+
+        return component;
+    }
+
+    /**
+     * Creates an error message component
+     */
+    default Map<String, Object> createErrorComponent(String id, String errorMessage) {
+        Map<String, Object> component = new HashMap<>();
+        component.put("id", id);
+
+        Map<String, Object> cardComponent = new HashMap<>();
+        Map<String, Object> cardProps = new HashMap<>();
+
+        // Create a card with error styling
+        String errorContentId = id + "_content";
+        cardProps.put("child", errorContentId);
+
+        cardComponent.put("Card", cardProps);
+        component.put("component", cardComponent);
+
+        return component;
+    }
+
+    /**
+     * Creates a divider component
+     */
+    default Map<String, Object> createDividerComponent(String id) {
+        Map<String, Object> component = new HashMap<>();
+        component.put("id", id);
+
+        Map<String, Object> dividerComponent = new HashMap<>();
+        dividerComponent.put("Divider", new HashMap<>());
+        component.put("component", dividerComponent);
+
+        return component;
+    }
+
+    /**
+     * Creates a choice picker for single or multiple selections
+     */
+    default Map<String, Object> createChoicePickerComponent(String id, String label,
+                                                            List<Map<String, String>> options,
+                                                            String usageHint) {
+        Map<String, Object> component = new HashMap<>();
+        component.put("id", id);
+
+        Map<String, Object> choiceComponent = new HashMap<>();
+        Map<String, Object> choiceProps = new HashMap<>();
+
+        choiceProps.put("label", new HashMap<String, Object>() {{
+            put("literalString", label);
+        }});
+
+        List<Map<String, Object>> optionList = new ArrayList<>();
+        for (Map<String, String> option : options) {
+            optionList.add(new HashMap<String, Object>() {{
+                put("value", option.get("value"));
+                put("label", new HashMap<String, Object>() {{
+                    put("literalString", option.get("label"));
+                }});
+            }});
+        }
+        choiceProps.put("options", optionList);
+
+        if (usageHint != null) {
+            choiceProps.put("usageHint", usageHint);
+        }
+
+        choiceComponent.put("ChoicePicker", choiceProps);
+        component.put("component", choiceComponent);
+
+        return component;
+    }
 }
