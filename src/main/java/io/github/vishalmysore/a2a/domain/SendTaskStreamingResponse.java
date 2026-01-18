@@ -2,10 +2,12 @@ package io.github.vishalmysore.a2a.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ToString
+@EqualsAndHashCode
 public class SendTaskStreamingResponse {
 
     @JsonProperty("jsonrpc")
