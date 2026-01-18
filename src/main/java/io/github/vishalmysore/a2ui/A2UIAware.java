@@ -319,7 +319,9 @@ public interface A2UIAware extends ActionCallbackAware {
         return callback != null && callback.getType().equals(CallBackType.A2UI.name());
     }
 
-
+    default boolean isUICallback() {
+        return isUICallback(getCallback());
+    }
     /**
      * Creates an Image component
      */
@@ -599,6 +601,137 @@ public interface A2UIAware extends ActionCallbackAware {
 
         choiceComponent.put("ChoicePicker", choiceProps);
         component.put("component", choiceComponent);
+
+        return component;
+    }
+
+    /**
+     * Creates a Video component
+     */
+    default Map<String, Object> createVideoComponent(String id, String url, String usageHint) {
+        Map<String, Object> component = new HashMap<>();
+        component.put("id", id);
+
+        Map<String, Object> videoComponent = new HashMap<>();
+        Map<String, Object> videoProps = new HashMap<>();
+
+        videoProps.put("url", new HashMap<String, Object>() {{
+            put("literalString", url);
+        }});
+
+        if (usageHint != null) {
+            videoProps.put("usageHint", usageHint);
+        }
+
+        videoComponent.put("Video", videoProps);
+        component.put("component", videoComponent);
+
+        return component;
+    }
+
+    /**
+     * Creates an AudioPlayer component
+     */
+    default Map<String, Object> createAudioPlayerComponent(String id, String url, String description) {
+        Map<String, Object> component = new HashMap<>();
+        component.put("id", id);
+
+        Map<String, Object> audioComponent = new HashMap<>();
+        Map<String, Object> audioProps = new HashMap<>();
+
+        audioProps.put("url", new HashMap<String, Object>() {{
+            put("literalString", url);
+        }});
+
+        if (description != null) {
+            audioProps.put("description", new HashMap<String, Object>() {{
+                put("literalString", description);
+            }});
+        }
+
+        audioComponent.put("AudioPlayer", audioProps);
+        component.put("component", audioComponent);
+
+        return component;
+    }
+
+    /**
+     * Creates a Tabs component
+     */
+    default Map<String, Object> createTabsComponent(String id, List<Map<String, Object>> tabItems) {
+        Map<String, Object> component = new HashMap<>();
+        component.put("id", id);
+
+        Map<String, Object> tabsComponent = new HashMap<>();
+        Map<String, Object> tabsProps = new HashMap<>();
+
+        List<Map<String, Object>> items = new ArrayList<>();
+        for (Map<String, Object> tab : tabItems) {
+            items.add(new HashMap<String, Object>() {{
+                put("title", new HashMap<String, Object>() {{
+                    put("literalString", tab.get("title"));
+                }});
+                put("child", tab.get("child"));
+            }});
+        }
+        tabsProps.put("tabItems", items);
+
+        tabsComponent.put("Tabs", tabsProps);
+        component.put("component", tabsComponent);
+
+        return component;
+    }
+
+    /**
+     * Creates a Modal component
+     */
+    default Map<String, Object> createModalComponent(String id, String entryPointChild, String contentChild) {
+        Map<String, Object> component = new HashMap<>();
+        component.put("id", id);
+
+        Map<String, Object> modalComponent = new HashMap<>();
+        Map<String, Object> modalProps = new HashMap<>();
+
+        modalProps.put("entryPointChild", entryPointChild);
+        modalProps.put("contentChild", contentChild);
+
+        modalComponent.put("Modal", modalProps);
+        component.put("component", modalComponent);
+
+        return component;
+    }
+
+    /**
+     * Creates a DateTimeInput component
+     */
+    default Map<String, Object> createDateTimeInputComponent(String id, String label, String dataPath,
+                                                             Boolean enableDate, Boolean enableTime) {
+        Map<String, Object> component = new HashMap<>();
+        component.put("id", id);
+
+        Map<String, Object> dateTimeComponent = new HashMap<>();
+        Map<String, Object> dateTimeProps = new HashMap<>();
+
+        dateTimeProps.put("label", new HashMap<String, Object>() {{
+            put("literalString", label);
+        }});
+
+        if (dataPath != null) {
+            dateTimeProps.put("value", new HashMap<String, Object>() {{
+                put("path", dataPath);
+            }});
+        }
+
+        if (enableDate != null) {
+            dateTimeProps.put("enableDate", enableDate);
+        }
+
+        if (enableTime != null) {
+            dateTimeProps.put("enableTime", enableTime);
+        }
+
+        dateTimeComponent.put("DateTimeInput", dateTimeProps);
+        component.put("component", dateTimeComponent);
 
         return component;
     }
