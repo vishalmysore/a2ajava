@@ -35,9 +35,9 @@ public interface A2UIAware extends ActionCallbackAware {
 
         Map<String, Object> rootComponent = new HashMap<>();
         Map<String, Object> columnProps = new HashMap<>();
-        columnProps.put("children", new HashMap<String, Object>() {{
-            put("explicitList", childIds);
-        }});
+        Map<String, Object> childrenMap = new HashMap<>();
+        childrenMap.put("explicitList", childIds);
+        columnProps.put("children", childrenMap);
         rootComponent.put("Column", columnProps);
         root.put("component", rootComponent);
 
@@ -67,9 +67,9 @@ public interface A2UIAware extends ActionCallbackAware {
 
         Map<String, Object> textComponent = new HashMap<>();
         Map<String, Object> textProps = new HashMap<>();
-        textProps.put("text", new HashMap<String, Object>() {{
-            put("literalString", text);
-        }});
+        Map<String, Object> textMap = new HashMap<>();
+        textMap.put("literalString", text);
+        textProps.put("text", textMap);
 
         if (usageHint != null && !usageHint.isEmpty()) {
             textProps.put("usageHint", usageHint);
@@ -184,14 +184,14 @@ public interface A2UIAware extends ActionCallbackAware {
         Map<String, Object> textFieldProps = new HashMap<>();
 
         // Label is required for TextField
-        textFieldProps.put("label", new HashMap<String, Object>() {{
-            put("literalString", label);
-        }});
+        Map<String, Object> labelMap = new HashMap<>();
+        labelMap.put("literalString", label);
+        textFieldProps.put("label", labelMap);
 
         // Bind text to data model path (A2UI v0.8 uses 'text' property for TextField)
-        textFieldProps.put("text", new HashMap<String, Object>() {{
-            put("path", dataPath);
-        }});
+        Map<String, Object> textMap = new HashMap<>();
+        textMap.put("path", dataPath);
+        textFieldProps.put("text", textMap);
 
         textFieldComponent.put("TextField", textFieldProps);
         component.put("component", textFieldComponent);
@@ -228,9 +228,9 @@ public interface A2UIAware extends ActionCallbackAware {
             for (Map.Entry<String, String> binding : contextBindings.entrySet()) {
                 Map<String, Object> contextItem = new HashMap<>();
                 contextItem.put("key", binding.getKey());
-                contextItem.put("value", new HashMap<String, Object>() {{
-                    put("path", binding.getValue());
-                }});
+                Map<String, Object> valueMap = new HashMap<>();
+                valueMap.put("path", binding.getValue());
+                contextItem.put("value", valueMap);
                 context.add(contextItem);
             }
             action.put("context", context);
@@ -332,9 +332,9 @@ public interface A2UIAware extends ActionCallbackAware {
         Map<String, Object> imageComponent = new HashMap<>();
         Map<String, Object> imageProps = new HashMap<>();
 
-        imageProps.put("url", new HashMap<String, Object>() {{
-            put("literalString", url);
-        }});
+        Map<String, Object> urlMap = new HashMap<>();
+        urlMap.put("literalString", url);
+        imageProps.put("url", urlMap);
 
         if (fit != null) {
             imageProps.put("fit", fit);
@@ -359,13 +359,13 @@ public interface A2UIAware extends ActionCallbackAware {
         Map<String, Object> checkBoxComponent = new HashMap<>();
         Map<String, Object> checkBoxProps = new HashMap<>();
 
-        checkBoxProps.put("label", new HashMap<String, Object>() {{
-            put("literalString", label);
-        }});
+        Map<String, Object> labelMap = new HashMap<>();
+        labelMap.put("literalString", label);
+        checkBoxProps.put("label", labelMap);
 
-        checkBoxProps.put("value", new HashMap<String, Object>() {{
-            put("path", dataPath);
-        }});
+        Map<String, Object> valueMap = new HashMap<>();
+        valueMap.put("path", dataPath);
+        checkBoxProps.put("value", valueMap);
 
         checkBoxComponent.put("CheckBox", checkBoxProps);
         component.put("component", checkBoxComponent);
@@ -384,13 +384,13 @@ public interface A2UIAware extends ActionCallbackAware {
         Map<String, Object> sliderComponent = new HashMap<>();
         Map<String, Object> sliderProps = new HashMap<>();
 
-        sliderProps.put("label", new HashMap<String, Object>() {{
-            put("literalString", label);
-        }});
+        Map<String, Object> labelMap = new HashMap<>();
+        labelMap.put("literalString", label);
+        sliderProps.put("label", labelMap);
 
-        sliderProps.put("value", new HashMap<String, Object>() {{
-            put("path", dataPath);
-        }});
+        Map<String, Object> valueMap = new HashMap<>();
+        valueMap.put("path", dataPath);
+        sliderProps.put("value", valueMap);
 
         if (minValue != null) {
             sliderProps.put("minValue", minValue);
@@ -434,9 +434,9 @@ public interface A2UIAware extends ActionCallbackAware {
         Map<String, Object> rowComponent = new HashMap<>();
         Map<String, Object> rowProps = new HashMap<>();
 
-        rowProps.put("children", new HashMap<String, Object>() {{
-            put("explicitList", childIds);
-        }});
+        Map<String, Object> childrenMap = new HashMap<>();
+        childrenMap.put("explicitList", childIds);
+        rowProps.put("children", childrenMap);
 
         if (alignment != null) {
             rowProps.put("alignment", alignment);
@@ -496,10 +496,10 @@ public interface A2UIAware extends ActionCallbackAware {
         Map<String, Object> listComponent = new HashMap<>();
         Map<String, Object> listProps = new HashMap<>();
 
-        listProps.put("children", new HashMap<String, Object>() {{
-            put("path", dataPath);
-            put("componentId", templateComponentId);
-        }});
+        Map<String, Object> childrenMap = new HashMap<>();
+        childrenMap.put("path", dataPath);
+        childrenMap.put("componentId", templateComponentId);
+        listProps.put("children", childrenMap);
 
         listComponent.put("List", listProps);
         component.put("component", listComponent);
@@ -519,9 +519,9 @@ public interface A2UIAware extends ActionCallbackAware {
         Map<String, Object> columnProps = new HashMap<>();
 
         List<String> childIds = Arrays.asList("loading_icon", "loading_text");
-        columnProps.put("children", new HashMap<String, Object>() {{
-            put("explicitList", childIds);
-        }});
+        Map<String, Object> childrenMap = new HashMap<>();
+        childrenMap.put("explicitList", childIds);
+        columnProps.put("children", childrenMap);
         columnProps.put("alignment", "center");
         columnProps.put("distribution", "center");
 
@@ -580,18 +580,18 @@ public interface A2UIAware extends ActionCallbackAware {
         Map<String, Object> choiceComponent = new HashMap<>();
         Map<String, Object> choiceProps = new HashMap<>();
 
-        choiceProps.put("label", new HashMap<String, Object>() {{
-            put("literalString", label);
-        }});
+        Map<String, Object> labelMap = new HashMap<>();
+        labelMap.put("literalString", label);
+        choiceProps.put("label", labelMap);
 
         List<Map<String, Object>> optionList = new ArrayList<>();
         for (Map<String, String> option : options) {
-            optionList.add(new HashMap<String, Object>() {{
-                put("value", option.get("value"));
-                put("label", new HashMap<String, Object>() {{
-                    put("literalString", option.get("label"));
-                }});
-            }});
+            Map<String, Object> optionMap = new HashMap<>();
+            optionMap.put("value", option.get("value"));
+            Map<String, Object> optionLabelMap = new HashMap<>();
+            optionLabelMap.put("literalString", option.get("label"));
+            optionMap.put("label", optionLabelMap);
+            optionList.add(optionMap);
         }
         choiceProps.put("options", optionList);
 
@@ -615,9 +615,9 @@ public interface A2UIAware extends ActionCallbackAware {
         Map<String, Object> videoComponent = new HashMap<>();
         Map<String, Object> videoProps = new HashMap<>();
 
-        videoProps.put("url", new HashMap<String, Object>() {{
-            put("literalString", url);
-        }});
+        Map<String, Object> urlMap = new HashMap<>();
+        urlMap.put("literalString", url);
+        videoProps.put("url", urlMap);
 
         if (usageHint != null) {
             videoProps.put("usageHint", usageHint);
@@ -639,14 +639,14 @@ public interface A2UIAware extends ActionCallbackAware {
         Map<String, Object> audioComponent = new HashMap<>();
         Map<String, Object> audioProps = new HashMap<>();
 
-        audioProps.put("url", new HashMap<String, Object>() {{
-            put("literalString", url);
-        }});
+        Map<String, Object> urlMap = new HashMap<>();
+        urlMap.put("literalString", url);
+        audioProps.put("url", urlMap);
 
         if (description != null) {
-            audioProps.put("description", new HashMap<String, Object>() {{
-                put("literalString", description);
-            }});
+            Map<String, Object> descriptionMap = new HashMap<>();
+            descriptionMap.put("literalString", description);
+            audioProps.put("description", descriptionMap);
         }
 
         audioComponent.put("AudioPlayer", audioProps);
@@ -667,12 +667,12 @@ public interface A2UIAware extends ActionCallbackAware {
 
         List<Map<String, Object>> items = new ArrayList<>();
         for (Map<String, Object> tab : tabItems) {
-            items.add(new HashMap<String, Object>() {{
-                put("title", new HashMap<String, Object>() {{
-                    put("literalString", tab.get("title"));
-                }});
-                put("child", tab.get("child"));
-            }});
+            Map<String, Object> itemMap = new HashMap<>();
+            Map<String, Object> titleMap = new HashMap<>();
+            titleMap.put("literalString", tab.get("title"));
+            itemMap.put("title", titleMap);
+            itemMap.put("child", tab.get("child"));
+            items.add(itemMap);
         }
         tabsProps.put("tabItems", items);
 
@@ -712,14 +712,14 @@ public interface A2UIAware extends ActionCallbackAware {
         Map<String, Object> dateTimeComponent = new HashMap<>();
         Map<String, Object> dateTimeProps = new HashMap<>();
 
-        dateTimeProps.put("label", new HashMap<String, Object>() {{
-            put("literalString", label);
-        }});
+        Map<String, Object> labelMap = new HashMap<>();
+        labelMap.put("literalString", label);
+        dateTimeProps.put("label", labelMap);
 
         if (dataPath != null) {
-            dateTimeProps.put("value", new HashMap<String, Object>() {{
-                put("path", dataPath);
-            }});
+            Map<String, Object> valueMap = new HashMap<>();
+            valueMap.put("path", dataPath);
+            dateTimeProps.put("value", valueMap);
         }
 
         if (enableDate != null) {
