@@ -8,7 +8,7 @@ public class CallBackTypeTest {
     @Test
     public void testEnumValues() {
         // Test that the enum has exactly two values
-        assertEquals(3, CallBackType.values().length);
+        assertEquals(4, CallBackType.values().length);
         
         // Test the enum values are as expected
         assertEquals(CallBackType.MCP, CallBackType.valueOf("MCP"));

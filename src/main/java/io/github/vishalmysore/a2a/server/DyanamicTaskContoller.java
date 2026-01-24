@@ -13,6 +13,7 @@ import com.t4a.transform.GeminiV2PromptTransformer;
 import com.t4a.transform.PromptTransformer;
 import io.github.vishalmysore.a2a.domain.*;
 
+import io.github.vishalmysore.a2ui.A2UIResponse;
 import io.github.vishalmysore.common.CallBackType;
 import lombok.Getter;
 import lombok.extern.java.Log;
@@ -190,7 +191,13 @@ public class DyanamicTaskContoller implements A2ATaskController {
             Object obj = getBaseProcessor().processSingleAction(text,null, new LoggingHumanDecision(),new LogginggExplainDecision(),actionCallback);
             TaskStatus status = task.getStatus();
             status.setState(TaskState.COMPLETED);
-            status.getMessage().getParts().add(createA2uiDataPart((Map<String, Object>) obj));
+            if(obj instanceof A2UIResponse a2uiResponse) {
+                status.getMessage().getParts().add(createA2uiDataPart(a2uiResponse.getResponseData()));
+            } else {
+                TextPart resultPart = createResultPart(obj);
+                status.getMessage().getParts().add(resultPart);
+            }
+
         } else {
             getBaseProcessor().processSingleAction(text, actionCallback);
         }

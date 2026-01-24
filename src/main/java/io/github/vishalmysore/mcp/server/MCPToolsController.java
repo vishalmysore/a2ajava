@@ -88,7 +88,7 @@ public class MCPToolsController  {
     }
 
     public void setProperties() {
-        Map<Object, Object> tools4AIProperties = PredictionLoader.getInstance().getTools4AIProperties();
+        Map<Object, Object> tools4AIProperties = PredictionLoader.getInstance().fetchTools4AIPropDetails();
 
         // Set serverName if the property is not null or empty
         String serverName = (String) tools4AIProperties.get("mcp.tools.servername");

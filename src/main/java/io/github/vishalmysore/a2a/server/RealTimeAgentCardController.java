@@ -133,7 +133,7 @@ public class RealTimeAgentCardController implements A2AAgentCardController {
     }
 
     public void poplateCardFromProperties(AgentCard card) {
-        Map<Object, Object> tools4AI = PredictionLoader.getInstance().getTools4AIProperties();
+        Map<Object, Object> tools4AI = PredictionLoader.getInstance().fetchTools4AIPropDetails();
 
         // Check and set description
         String cardDescription = (String) tools4AI.get("a2a.card.description");
