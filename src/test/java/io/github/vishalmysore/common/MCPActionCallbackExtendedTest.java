@@ -31,7 +31,7 @@ public class MCPActionCallbackExtendedTest {
         MCPActionCallback callback = new MCPActionCallback();
         Object testContext = new Object();
         callback.setContext(new AtomicReference<>(testContext));
-        assertEquals(testContext, callback.getContext());
+        assertEquals(testContext, callback.getContext().get());
     }
     
     @Test

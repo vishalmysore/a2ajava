@@ -39,7 +39,7 @@ public class SSEEmitterCallbackExtendedTest {
         // Set context and verify
         Object testContext = new Object();
         callbackWithTaskId.setContext(new AtomicReference<>(testContext));
-        assertEquals(testContext, callbackWithTaskId.getContext());
+        assertEquals(testContext, callbackWithTaskId.getContext().get());
     }
 
     @Test
@@ -47,7 +47,7 @@ public class SSEEmitterCallbackExtendedTest {
         // Test context handling
         Object testContext = new Object();
         callback.setContext(new AtomicReference<>(testContext));
-        assertEquals(testContext, callback.getContext());
+        assertEquals(testContext, callback.getContext().get());
         
         // Test with null context
         callback.setContext(null);

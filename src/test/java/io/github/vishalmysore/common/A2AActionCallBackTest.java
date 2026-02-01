@@ -25,7 +25,7 @@ public class A2AActionCallBackTest {
     @Test
     public void testContextHandling() {
         callback.setContext(new AtomicReference<>(testContext));
-        assertEquals(testContext, callback.getContext(), "Context should be stored and retrieved correctly");
+        assertEquals(testContext, callback.getContext().get(), "Context should be stored and retrieved correctly");
         
         callback.setContext(null);
         assertNull(callback.getContext(), "Context should handle null values");
