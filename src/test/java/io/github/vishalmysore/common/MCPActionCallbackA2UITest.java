@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +23,7 @@ public class MCPActionCallbackA2UITest {
     void testAddA2UIContentWithNullContent() {
         MCPActionCallback callback = new MCPActionCallback();
         CallToolResult result = new CallToolResult();
-        callback.setContext(result);
+        callback.setContext(new AtomicReference<>(result));
         
         Map<String, Object> a2uiMessage = new HashMap<>();
         Map<String, Object> beginRendering = new HashMap<>();
@@ -55,7 +56,7 @@ public class MCPActionCallbackA2UITest {
         existingContent.add(textContent);
         result.setContent(existingContent);
         
-        callback.setContext(result);
+        callback.setContext(new AtomicReference<>(result));
         
         // Add A2UI content
         Map<String, Object> a2uiMessage = new HashMap<>();
@@ -92,7 +93,7 @@ public class MCPActionCallbackA2UITest {
     void testMixedContentWithStatusAndA2UI() {
         MCPActionCallback callback = new MCPActionCallback();
         CallToolResult result = new CallToolResult();
-        callback.setContext(result);
+        callback.setContext(new AtomicReference<>(result));
         
         // Add status
         callback.sendtStatus("Task started ", com.t4a.detect.ActionState.WORKING);
@@ -126,7 +127,7 @@ public class MCPActionCallbackA2UITest {
     void testMultipleA2UIContents() {
         MCPActionCallback callback = new MCPActionCallback();
         CallToolResult result = new CallToolResult();
-        callback.setContext(result);
+        callback.setContext(new AtomicReference<>(result));
         
         // Add first A2UI content - beginRendering
         Map<String, Object> beginMessage = new HashMap<>();
@@ -167,7 +168,7 @@ public class MCPActionCallbackA2UITest {
     void testA2UIContentStructure() {
         MCPActionCallback callback = new MCPActionCallback();
         CallToolResult result = new CallToolResult();
-        callback.setContext(result);
+        callback.setContext(new AtomicReference<>(result));
         
         // Create complex A2UI structure
         Map<String, Object> a2uiMessage = new HashMap<>();

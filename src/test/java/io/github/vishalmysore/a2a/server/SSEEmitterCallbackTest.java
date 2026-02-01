@@ -12,6 +12,7 @@ import com.t4a.detect.ActionCallback;
 import com.t4a.detect.ActionState;
 import io.github.vishalmysore.a2a.domain.*;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SSEEmitterCallbackTest {
 
@@ -53,13 +54,13 @@ public class SSEEmitterCallbackTest {
 
     public void testContextHandling() {
         Object context = new Object();
-        callback.setContext(context);
+        callback.setContext(new AtomicReference<>(context));
         assertEquals(context, callback.getContext());
     }
 
     public void testTypeHandling() {
         String type = "test-type";
-        String result = callback.setType(type);
+        String result = callback.getType();
         assertEquals(type, result);
         assertEquals(type, callback.getType());
     }

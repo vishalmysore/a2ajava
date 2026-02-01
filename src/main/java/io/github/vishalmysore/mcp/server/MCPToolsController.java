@@ -28,6 +28,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 //@//RestController
 //@RequestMapping("/mcp")
@@ -303,7 +304,9 @@ public class MCPToolsController  {
         List<Content> content = new ArrayList<>();
 
         try {
-            callback.setContext(callToolResult);
+            AtomicReference<Object> actionResult = new AtomicReference<>();
+            actionResult.set(callToolResult);
+            callback.setContext(actionResult);
             Object result = processAction(request, callback, processor, action);
 
             if (result != null) {

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +20,7 @@ public class A2AActionCallBackA2UITest {
     void testAddA2UIContentWithNullStatus() {
         A2AActionCallBack callback = new A2AActionCallBack();
         Task task = new Task();
-        callback.setContext(task);
+        callback.setContext(new AtomicReference<>(task));
         
         Map<String, Object> a2uiMessage = new HashMap<>();
         Map<String, Object> beginRendering = new HashMap<>();
@@ -59,7 +60,7 @@ public class A2AActionCallBackA2UITest {
         status.setMessage(message);
         task.setStatus(status);
         
-        callback.setContext(task);
+        callback.setContext(new AtomicReference<>(task));
         
         // Add A2UI content
         Map<String, Object> a2uiMessage = new HashMap<>();
@@ -96,7 +97,7 @@ public class A2AActionCallBackA2UITest {
     void testMixedContentWithStatusAndA2UI() {
         A2AActionCallBack callback = new A2AActionCallBack();
         Task task = new Task();
-        callback.setContext(task);
+        callback.setContext(new AtomicReference<>(task));
         
         // Send status (this sets task status and message)
         callback.sendtStatus("Task started", com.t4a.detect.ActionState.WORKING);
@@ -136,7 +137,7 @@ public class A2AActionCallBackA2UITest {
     void testMultipleA2UIContents() {
         A2AActionCallBack callback = new A2AActionCallBack();
         Task task = new Task();
-        callback.setContext(task);
+        callback.setContext(new AtomicReference<>(task));
         
         // Add first A2UI content - beginRendering
         Map<String, Object> beginMessage = new HashMap<>();
@@ -177,7 +178,7 @@ public class A2AActionCallBackA2UITest {
     void testA2UIContentStructure() {
         A2AActionCallBack callback = new A2AActionCallBack();
         Task task = new Task();
-        callback.setContext(task);
+        callback.setContext(new AtomicReference<>(task));
         
         // Create complex A2UI structure
         Map<String, Object> a2uiMessage = new HashMap<>();

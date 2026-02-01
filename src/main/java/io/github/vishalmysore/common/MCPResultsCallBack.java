@@ -2,17 +2,19 @@ package io.github.vishalmysore.common;
 
 import com.t4a.detect.ActionState;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class MCPResultsCallBack extends MCPActionCallback{
     private String status;
-    private Object context;
+    private AtomicReference<Object> context;
 
     @Override
-    public void setContext(Object obj) {
-        this.context = obj;
+    public void setContext(AtomicReference<Object>  context) {
+        this.context = context;
     }
 
     @Override
-    public Object getContext() {
+    public AtomicReference<Object> getContext() {
         return context;
     }
 

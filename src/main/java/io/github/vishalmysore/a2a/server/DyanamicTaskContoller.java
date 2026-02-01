@@ -39,6 +39,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This will be used to process dynamic tasks , the tasks are not hard coded but decided by AI
@@ -186,7 +187,9 @@ public class DyanamicTaskContoller implements A2ATaskController {
     }
 
     private void processWithCallback(String text, Task task, ActionCallback actionCallback) throws AIProcessingException {
-        actionCallback.setContext(task);
+        AtomicReference<Object> taskThreadSafe = new AtomicReference<Object>();
+        taskThreadSafe.set(task);
+        actionCallback.setContext(taskThreadSafe);
         if(actionCallback.getType().equals(CallBackType.A2UI.name())) {
             Object obj = getBaseProcessor().processSingleAction(text,null, new LoggingHumanDecision(),new LogginggExplainDecision(),actionCallback);
             TaskStatus status = task.getStatus();
@@ -267,7 +270,9 @@ public class DyanamicTaskContoller implements A2ATaskController {
             tasks.put(taskId, task);
 
                 if(actionCallback!= null) {
-                    actionCallback.setContext(task);
+                    AtomicReference<Object> taskThreadSafe = new AtomicReference<Object>();
+                    taskThreadSafe.set(task);
+                    actionCallback.setContext(taskThreadSafe);
                 }
                 FileProcessingInfo info = (FileProcessingInfo) getPromptTransformer().transformIntoPojo(originalString,FileProcessingInfo.class);
                 log.info("taskId " + taskId + " file info " + info);
@@ -499,7 +504,9 @@ public class DyanamicTaskContoller implements A2ATaskController {
                     if (part instanceof TextPart textPart && "text".equals(textPart.getType())) {
                         String text = textPart.getText();
                         SSEEmitterCallback callback = new SSEEmitterCallback(id, emitter);
-                        callback.setContext(task);
+                        AtomicReference<Object> taskRef = new AtomicReference<>();
+                        taskRef.set(task);
+                        callback.setContext(taskRef);
                         getBaseProcessor().processSingleAction(text, callback);
                     }
                 }

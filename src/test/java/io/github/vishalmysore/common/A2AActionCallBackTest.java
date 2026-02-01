@@ -9,6 +9,8 @@ import org.mockito.MockitoAnnotations;
 import com.t4a.detect.ActionCallback;
 import com.t4a.detect.ActionState;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class A2AActionCallBackTest {
     
     private A2AActionCallBack callback;
@@ -22,7 +24,7 @@ public class A2AActionCallBackTest {
     
     @Test
     public void testContextHandling() {
-        callback.setContext(testContext);
+        callback.setContext(new AtomicReference<>(testContext));
         assertEquals(testContext, callback.getContext(), "Context should be stored and retrieved correctly");
         
         callback.setContext(null);
@@ -34,7 +36,7 @@ public class A2AActionCallBackTest {
         String testType = "test-type";
         assertEquals("", callback.getType(), "Initial type should be empty");
         
-        String result = callback.setType(testType);
+        String result = callback.getType();
         assertEquals(testType, result, "setType should return the type");
         assertEquals(testType, callback.getType(), "Type should be stored correctly");
     }

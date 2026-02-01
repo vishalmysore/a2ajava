@@ -7,12 +7,13 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 public class SSEEmitterCallback extends A2AActionCallBack {
 
     private SseEmitter sseEmitter;
-    private Object context ;
+    private AtomicReference<Object>  context;
     private String status;
     private String taskId;
 
@@ -26,12 +27,12 @@ public class SSEEmitterCallback extends A2AActionCallBack {
 
 
     @Override
-    public void setContext(Object context) {
+    public void setContext(AtomicReference<Object> context) {
         this.context = context;
     }
 
     @Override
-    public Object getContext() {
+    public AtomicReference<Object> getContext() {
         return context;
     }
 

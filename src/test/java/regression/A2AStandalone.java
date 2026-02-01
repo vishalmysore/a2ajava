@@ -10,6 +10,8 @@ import lombok.extern.java.Log;
 import regression.pojo.Customer;
 import regression.pojo.Organization;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 @Log
 public class A2AStandalone {
     public static void main(String[] args) throws AIProcessingException {
@@ -17,12 +19,12 @@ public class A2AStandalone {
         ActionCallback callback = new ActionCallback() {
 
             @Override
-            public void setContext(Object obj) {
+            public void setContext(AtomicReference<Object> objj) {
 
             }
 
             @Override
-            public Object getContext() {
+            public AtomicReference<Object> getContext() {
                 return null;
             }
 
@@ -31,10 +33,7 @@ public class A2AStandalone {
                 return "";
             }
 
-            @Override
-            public String setType(String type) {
-                return "";
-            }
+
 
             @Override
             public void sendtStatus(String status, ActionState state) {

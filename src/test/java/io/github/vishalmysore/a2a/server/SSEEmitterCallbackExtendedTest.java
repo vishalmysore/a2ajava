@@ -13,6 +13,7 @@ import com.t4a.detect.ActionState;
 import io.github.vishalmysore.a2a.domain.*;
 import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SSEEmitterCallbackExtendedTest {
 
@@ -37,7 +38,7 @@ public class SSEEmitterCallbackExtendedTest {
         
         // Set context and verify
         Object testContext = new Object();
-        callbackWithTaskId.setContext(testContext);
+        callbackWithTaskId.setContext(new AtomicReference<>(testContext));
         assertEquals(testContext, callbackWithTaskId.getContext());
     }
 
@@ -45,7 +46,7 @@ public class SSEEmitterCallbackExtendedTest {
     public void testContextHandling() {
         // Test context handling
         Object testContext = new Object();
-        callback.setContext(testContext);
+        callback.setContext(new AtomicReference<>(testContext));
         assertEquals(testContext, callback.getContext());
         
         // Test with null context

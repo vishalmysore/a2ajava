@@ -11,6 +11,7 @@ import io.github.vishalmysore.a2a.domain.TaskStatus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A2AActionCallBack is an interface that extends ActionCallback.
@@ -21,23 +22,20 @@ import java.util.Map;
 public class A2AActionCallBack implements ActionCallback {
 
     private String status;
-    private Object context;
+    private AtomicReference<Object> context;
 
     @Override
-    public void setContext(Object obj) {
-        this.context = obj;
+    public void setContext(AtomicReference<Object> context) {
+        this.context = context;
     }
 
     @Override
-    public Object getContext() {
+    public AtomicReference<Object>  getContext() {
         return context;
     }
 
 
-    @Override
-    public String setType(String type) {
-        return CallBackType.A2A.name();
-    }
+
 
 
 
@@ -48,7 +46,7 @@ public class A2AActionCallBack implements ActionCallback {
 
     @Override
     public void sendtStatus(String status, ActionState state) {
-        ((Task) getContext()).setDetailedAndMessage(TaskState.forValue(state.getValue()), status );
+        ((Task) getContext().get()).setDetailedAndMessage(TaskState.forValue(state.getValue()), status );
     }
     
     /**
@@ -60,7 +58,7 @@ public class A2AActionCallBack implements ActionCallback {
      * @see <a href="https://a2ui.org/specification/v0.8-a2ui/">A2UI Specification</a>
      */
     public void addA2UIContent(Map<String, Object> a2uiMessage) {
-        Task task = (Task) getContext();
+        Task task = (Task) getContext().get();
         TaskStatus taskStatus = task.getStatus();
         
         // Get or create the status message

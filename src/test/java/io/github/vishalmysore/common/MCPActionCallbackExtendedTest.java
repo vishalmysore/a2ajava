@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,7 +17,7 @@ public class MCPActionCallbackExtendedTest {
     @Test
     void testSetType() {
         MCPActionCallback callback = new MCPActionCallback();
-        assertEquals(CallBackType.MCP.name(), callback.setType("ignored"));
+        assertEquals(CallBackType.MCP.name(), callback.getType());
     }
     
     @Test
@@ -29,7 +30,7 @@ public class MCPActionCallbackExtendedTest {
     void testContextHandling() {
         MCPActionCallback callback = new MCPActionCallback();
         Object testContext = new Object();
-        callback.setContext(testContext);
+        callback.setContext(new AtomicReference<>(testContext));
         assertEquals(testContext, callback.getContext());
     }
     
@@ -37,7 +38,7 @@ public class MCPActionCallbackExtendedTest {
     void testSendStatusWithNullContent() {
         MCPActionCallback callback = new MCPActionCallback();
         CallToolResult result = new CallToolResult();
-        callback.setContext(result);
+        callback.setContext(new AtomicReference<>(result));
         
         callback.sendtStatus("Test status ", ActionState.WORKING);
         
@@ -59,7 +60,7 @@ public class MCPActionCallbackExtendedTest {
         existingTextContent.setText("Existing content");
         existingContent.add(existingTextContent);
         result.setContent(existingContent);
-        callback.setContext(result);
+        callback.setContext(new AtomicReference<>(result));
         
         callback.sendtStatus("Test status ", ActionState.COMPLETED);
         

@@ -11,6 +11,7 @@ import io.github.vishalmysore.mcp.domain.TextContent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This interface is used to define the callback type for the Model Context Protocol (MCP). This will be passed
@@ -20,19 +21,17 @@ import java.util.Map;
 public class MCPActionCallback implements ActionCallback  {
 
     private String status;
-    private Object context;
-    @Override
-    public String setType(String type) {
-        return CallBackType.MCP.name();
-    }
+    private AtomicReference<Object> context;
+
+
 
     @Override
-    public void setContext(Object context) {
+    public void setContext(AtomicReference<Object> context) {
      this.context= context;
     }
 
     @Override
-    public Object getContext() {
+    public AtomicReference<Object>  getContext() {
         return context;
     }
 
@@ -44,10 +43,10 @@ public class MCPActionCallback implements ActionCallback  {
     @Override
     public void sendtStatus(String status, ActionState state) {
 
-        List list =  ((CallToolResult) getContext()).getContent();
+        List list =  ((CallToolResult) getContext().get()).getContent();
         if (list == null) {
             list = new ArrayList<>();
-            ((CallToolResult) getContext()).setContent(list);
+            ((CallToolResult) getContext().get()).setContent(list);
         }
         TextContent textContent = new TextContent();
         textContent.setType("text");
@@ -63,10 +62,10 @@ public class MCPActionCallback implements ActionCallback  {
      * @see <a href="https://a2ui.org/specification/v0.8-a2ui/">A2UI Specification</a>
      */
     public void addA2UIContent(Map<String, Object> a2uiMessage) {
-        List list = ((CallToolResult) getContext()).getContent();
+        List list = ((CallToolResult) getContext().get()).getContent();
         if (list == null) {
             list = new ArrayList<>();
-            ((CallToolResult) getContext()).setContent(list);
+            ((CallToolResult) getContext().get()).setContent(list);
         }
         DataContent dataContent = DataContent.createA2UIContent(a2uiMessage);
         list.add(dataContent);
