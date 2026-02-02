@@ -29,6 +29,63 @@ public class AgenticMesh {
 
     }
 
+    /**
+     * Extracts the first valid JSON object from a response that may contain multiple JSONs or extra text.
+     * Handles markdown code blocks and commentary from LLM.
+     * @param response The response string that may contain multiple JSON objects
+     * @return First valid JSON object as string, or original response if no JSON found
+     */
+    private String extractFirstJsonObject(String response) {
+        if (response == null || response.trim().isEmpty()) {
+            return response;
+        }
+        
+        String cleaned = response.trim();
+        
+        // Remove markdown code blocks first
+        if (cleaned.contains("```json")) {
+            int startIdx = cleaned.indexOf("```json") + 7;
+            int endIdx = cleaned.indexOf("```", startIdx);
+            if (endIdx > startIdx) {
+                cleaned = cleaned.substring(startIdx, endIdx).trim();
+            }
+        } else if (cleaned.startsWith("```")) {
+            int startIdx = cleaned.indexOf("```") + 3;
+            int endIdx = cleaned.indexOf("```", startIdx);
+            if (endIdx > startIdx) {
+                cleaned = cleaned.substring(startIdx, endIdx).trim();
+            }
+        }
+        
+        // Find first { and matching }
+        int firstBrace = cleaned.indexOf('{');
+        if (firstBrace == -1) {
+            return response;
+        }
+        
+        int braceCount = 0;
+        int endIdx = -1;
+        
+        for (int i = firstBrace; i < cleaned.length(); i++) {
+            char c = cleaned.charAt(i);
+            if (c == '{') {
+                braceCount++;
+            } else if (c == '}') {
+                braceCount--;
+                if (braceCount == 0) {
+                    endIdx = i;
+                    break;
+                }
+            }
+        }
+        
+        if (endIdx > firstBrace) {
+            return cleaned.substring(firstBrace, endIdx + 1);
+        }
+        
+        return response;
+    }
+
     public CommonClientResponse pipeLineMesh(String query){
         return pipeLineMesh(query, null);
     }
@@ -50,18 +107,37 @@ public class AgenticMesh {
              return previousResponse;
         } else {
             try {
-                jsonYesOrNo= promptTransformer.transformIntoJson(jsonUtils.createJson(yesOrNoField,pendingQuery).toString(),"Original query "+query+ " response "+response +" ");
+                String prompt = "Original query: " + query + " response: " + response + ". IMPORTANT: Return ONLY a single JSON object, no explanations, no multiple JSONs, no markdown formatting.";
+                jsonYesOrNo = promptTransformer.transformIntoJson(
+                    jsonUtils.createJson(yesOrNoField, pendingQuery).toString(), 
+                    prompt
+                );
+                
+                // Extract first valid JSON object
+                jsonYesOrNo = extractFirstJsonObject(jsonYesOrNo);
+                log.debug("Extracted JSON: {}", jsonYesOrNo);
 
                 String yesOrNo = jsonUtils.getFieldValueFromMultipleFields(jsonYesOrNo, yesOrNoField);
-                if(yesOrNo.contains("Yes")) {
+                if(yesOrNo != null && yesOrNo.contains("Yes")) {
                     return response;
-                } else {
+                } else if(yesOrNo != null) {
                     String pendingQueryValue = jsonUtils.getFieldValueFromMultipleFields(jsonYesOrNo, pendingQuery);
-                    response = pipeLineMesh("Pending query "+pendingQueryValue+ " response "+response.getTextResult() ,response);
+                    if(pendingQueryValue != null && !pendingQueryValue.trim().isEmpty()) {
+                        response = pipeLineMesh("Pending query: " + pendingQueryValue + " previous response: " + response.getTextResult(), response);
+                    } else {
+                        return response;
+                    }
+                } else {
+                    log.warn("Could not extract yes/no answer, returning current response");
+                    return response;
                 }
 
             } catch (AIProcessingException e) {
-               log.warn(e.getMessage());
+               log.warn("AIProcessingException in pipeLineMesh: {}", e.getMessage());
+               return response;
+            } catch (Exception e) {
+               log.error("Unexpected error in pipeLineMesh: {}", e.getMessage(), e);
+               return response;
             }
 
         }
@@ -86,10 +162,13 @@ public class AgenticMesh {
 
         try {
             // Get list of sub-queries needed
+            String prompt = "Original query: " + query + " Initial response: " + mainResponse.getTextResult() + ". IMPORTANT: Return ONLY a single JSON object, no explanations.";
             jsonQueries = promptTransformer.transformIntoJson(
                     jsonUtils.createJson(subQueriesField).toString(),
-                    "Original query: " + query + " Initial response: " + mainResponse.getTextResult()
+                    prompt
             );
+            
+            jsonQueries = extractFirstJsonObject(jsonQueries);
 
             String subQueriesString = jsonUtils.getFieldValueFromMultipleFields(jsonQueries, subQueriesField);
             if (subQueriesString == null || subQueriesString.isEmpty()) {
@@ -136,10 +215,13 @@ public class AgenticMesh {
 
         try {
             // Identify knowledge gaps and required expert agents
+            String prompt = "Analyze knowledge gaps and required experts for: " + initialKnowledge.getTextResult() + ". IMPORTANT: Return ONLY a single JSON object, no explanations.";
             jsonAnalysis = promptTransformer.transformIntoJson(
                     jsonUtils.createJson(knowledgeGapsField, expertAgentsField).toString(),
-                    "Analyze knowledge gaps and required experts for: " + initialKnowledge.getTextResult()
+                    prompt
             );
+            
+            jsonAnalysis = extractFirstJsonObject(jsonAnalysis);
 
             String gaps = jsonUtils.getFieldValueFromMultipleFields(jsonAnalysis, knowledgeGapsField);
             String experts = jsonUtils.getFieldValueFromMultipleFields(jsonAnalysis, expertAgentsField);
