@@ -7,8 +7,13 @@ import com.t4a.processor.AIProcessingException;
 import com.t4a.processor.AIProcessor;
 import com.t4a.transform.PromptTransformer;
 
+import io.github.vishalmysore.common.Agent;
 import io.github.vishalmysore.common.CommonClientResponse;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * AgenticMesh is a class that implements various AI processing patterns such as Pipeline Mesh, Hub and Spoke, and Blackboard.
@@ -29,65 +34,8 @@ public class AgenticMesh {
 
     }
 
-    /**
-     * Extracts the first valid JSON object from a response that may contain multiple JSONs or extra text.
-     * Handles markdown code blocks and commentary from LLM.
-     * @param response The response string that may contain multiple JSON objects
-     * @return First valid JSON object as string, or original response if no JSON found
-     */
-    private String extractFirstJsonObject(String response) {
-        if (response == null || response.trim().isEmpty()) {
-            return response;
-        }
-        
-        String cleaned = response.trim();
-        
-        // Remove markdown code blocks first
-        if (cleaned.contains("```json")) {
-            int startIdx = cleaned.indexOf("```json") + 7;
-            int endIdx = cleaned.indexOf("```", startIdx);
-            if (endIdx > startIdx) {
-                cleaned = cleaned.substring(startIdx, endIdx).trim();
-            }
-        } else if (cleaned.startsWith("```")) {
-            int startIdx = cleaned.indexOf("```") + 3;
-            int endIdx = cleaned.indexOf("```", startIdx);
-            if (endIdx > startIdx) {
-                cleaned = cleaned.substring(startIdx, endIdx).trim();
-            }
-        }
-        
-        // Find first { and matching }
-        int firstBrace = cleaned.indexOf('{');
-        if (firstBrace == -1) {
-            return response;
-        }
-        
-        int braceCount = 0;
-        int endIdx = -1;
-        
-        for (int i = firstBrace; i < cleaned.length(); i++) {
-            char c = cleaned.charAt(i);
-            if (c == '{') {
-                braceCount++;
-            } else if (c == '}') {
-                braceCount--;
-                if (braceCount == 0) {
-                    endIdx = i;
-                    break;
-                }
-            }
-        }
-        
-        if (endIdx > firstBrace) {
-            return cleaned.substring(firstBrace, endIdx + 1);
-        }
-        
-        return response;
-    }
-
     public CommonClientResponse pipeLineMesh(String query){
-        return pipeLineMesh(query, null);
+        return pipeLineMesh(query, null, 0);
     }
 
     /**
@@ -96,54 +44,42 @@ public class AgenticMesh {
      * The method recursively processes the query until a complete response is obtained or no further processing is needed.
      * @param query The initial query to be processed.
      * @param previousResponse
+     * @param depth Current recursion depth
      * @return
      */
-     public CommonClientResponse pipeLineMesh(String query, CommonClientResponse previousResponse) {
+    public CommonClientResponse pipeLineMesh(String query, CommonClientResponse previousResponse, int depth) {
+        if (depth > 10) {
+            log.warn("Max recursion depth of 10 reached, returning current response");
+            return previousResponse != null ? previousResponse : agentCatalog.processQuery(query);
+        }
+        
         CommonClientResponse response = agentCatalog.processQuery(query);
         String jsonYesOrNo = null;
         String yesOrNoField = "is_User_Query_Answered_Fully_Yes_Or_No_Only";
-         String pendingQuery = "if_No_Then_What_Is_Pending_Query";
+        String pendingQuery = "if_No_Then_What_Is_Pending_Query";
+        String explain = "explain_why_the_query_is_fully_answered_by_looking_at_each_part_of_the_response_and_query";
         if(response ==null) {
-             return previousResponse;
+            return previousResponse;
         } else {
             try {
-                String prompt = "Original query: " + query + " response: " + response + ". IMPORTANT: Return ONLY a single JSON object, no explanations, no multiple JSONs, no markdown formatting.";
-                jsonYesOrNo = promptTransformer.transformIntoJson(
-                    jsonUtils.createJson(yesOrNoField, pendingQuery).toString(), 
-                    prompt
-                );
-                
-                // Extract first valid JSON object
-                jsonYesOrNo = extractFirstJsonObject(jsonYesOrNo);
-                log.debug("Extracted JSON: {}", jsonYesOrNo);
-
+                jsonYesOrNo= promptTransformer.transformIntoJson(jsonUtils.createJson(yesOrNoField,pendingQuery,explain).toString(),"This is the Original query "+query+ " This is the response so far "+response +" ");
+                log.info(jsonYesOrNo);
                 String yesOrNo = jsonUtils.getFieldValueFromMultipleFields(jsonYesOrNo, yesOrNoField);
-                if(yesOrNo != null && yesOrNo.contains("Yes")) {
+                if(yesOrNo.contains("Yes")) {
                     return response;
-                } else if(yesOrNo != null) {
-                    String pendingQueryValue = jsonUtils.getFieldValueFromMultipleFields(jsonYesOrNo, pendingQuery);
-                    if(pendingQueryValue != null && !pendingQueryValue.trim().isEmpty()) {
-                        response = pipeLineMesh("Pending query: " + pendingQueryValue + " previous response: " + response.getTextResult(), response);
-                    } else {
-                        return response;
-                    }
                 } else {
-                    log.warn("Could not extract yes/no answer, returning current response");
-                    return response;
+                    String pendingQueryValue = jsonUtils.getFieldValueFromMultipleFields(jsonYesOrNo, pendingQuery);
+                    response = pipeLineMesh("Pending query "+pendingQueryValue+ " response so far "+response.getTextResult() ,response, depth + 1);
                 }
 
             } catch (AIProcessingException e) {
-               log.warn("AIProcessingException in pipeLineMesh: {}", e.getMessage());
-               return response;
-            } catch (Exception e) {
-               log.error("Unexpected error in pipeLineMesh: {}", e.getMessage(), e);
-               return response;
+                log.warn(e.getMessage());
             }
 
         }
 
         return response;
-     }
+    }
 
     /**
      * Processes a query using the Hub and Spoke pattern.
@@ -162,13 +98,10 @@ public class AgenticMesh {
 
         try {
             // Get list of sub-queries needed
-            String prompt = "Original query: " + query + " Initial response: " + mainResponse.getTextResult() + ". IMPORTANT: Return ONLY a single JSON object, no explanations.";
             jsonQueries = promptTransformer.transformIntoJson(
                     jsonUtils.createJson(subQueriesField).toString(),
-                    prompt
+                    "Original query: " + query + " Initial response: " + mainResponse.getTextResult()
             );
-            
-            jsonQueries = extractFirstJsonObject(jsonQueries);
 
             String subQueriesString = jsonUtils.getFieldValueFromMultipleFields(jsonQueries, subQueriesField);
             if (subQueriesString == null || subQueriesString.isEmpty()) {
@@ -215,13 +148,10 @@ public class AgenticMesh {
 
         try {
             // Identify knowledge gaps and required expert agents
-            String prompt = "Analyze knowledge gaps and required experts for: " + initialKnowledge.getTextResult() + ". IMPORTANT: Return ONLY a single JSON object, no explanations.";
             jsonAnalysis = promptTransformer.transformIntoJson(
                     jsonUtils.createJson(knowledgeGapsField, expertAgentsField).toString(),
-                    prompt
+                    "Analyze knowledge gaps and required experts for: " + initialKnowledge.getTextResult()
             );
-            
-            jsonAnalysis = extractFirstJsonObject(jsonAnalysis);
 
             String gaps = jsonUtils.getFieldValueFromMultipleFields(jsonAnalysis, knowledgeGapsField);
             String experts = jsonUtils.getFieldValueFromMultipleFields(jsonAnalysis, expertAgentsField);
@@ -257,6 +187,143 @@ public class AgenticMesh {
         } catch (AIProcessingException e) {
 
             return initialKnowledge;
+        }
+    }
+
+    /**
+     * Processes a query using the Parallel Mesh pattern.
+     * In this method, all agents are queried simultaneously and the best response is selected.
+     * This pattern provides the fastest response time and allows comparison of different agent capabilities.
+     * @param query The query to be processed by all agents
+     * @return The best response selected by AI from all agent responses
+     */
+    public CommonClientResponse parallelMesh(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            log.warn("Empty or null query provided to parallelMesh");
+            return null;
+        }
+
+        // Get all agents from catalog
+        List<Agent> allAgents = new ArrayList<>(agentCatalog.getAgents().values());
+        
+        if (allAgents.isEmpty()) {
+            log.warn("No agents available in catalog");
+            return null;
+        }
+
+        // Create fixed thread pool sized to number of agents
+        ExecutorService executorService = Executors.newFixedThreadPool(allAgents.size());
+        List<Future<CommonClientResponse>> futures = new ArrayList<>();
+
+        try {
+            // Submit query to all agents in parallel
+            log.info("Submitting query to {} agents in parallel", allAgents.size());
+            for (Agent agent : allAgents) {
+                Future<CommonClientResponse> future = executorService.submit(() -> {
+                    try {
+                        log.debug("Querying agent: {}", agent.getType());
+                        return agent.remoteMethodCall(query);
+                    } catch (Exception e) {
+                        log.warn("Error querying agent {}: {}", agent.getType(), e.getMessage());
+                        return null;
+                    }
+                });
+                futures.add(future);
+            }
+
+            // Collect results with timeout
+            List<CommonClientResponse> responses = new ArrayList<>();
+            for (int i = 0; i < futures.size(); i++) {
+                try {
+                    CommonClientResponse response = futures.get(i).get(30, TimeUnit.SECONDS);
+                    if (response != null && response.getTextResult() != null && !response.getTextResult().trim().isEmpty()) {
+                        responses.add(response);
+                        log.debug("Received response from agent {}", i);
+                    }
+                } catch (TimeoutException e) {
+                    log.warn("Agent {} timed out after 30 seconds", i);
+                } catch (InterruptedException e) {
+                    log.warn("Agent {} was interrupted", i);
+                    Thread.currentThread().interrupt();
+                } catch (ExecutionException e) {
+                    log.warn("Agent {} threw exception: {}", i, e.getMessage());
+                }
+            }
+
+            log.info("Received {} valid responses out of {} agents", responses.size(), allAgents.size());
+
+            // Handle cases with no valid responses
+            if (responses.isEmpty()) {
+                log.warn("No valid responses received from any agent");
+                return null;
+            }
+
+            // If only one response, return it directly
+            if (responses.size() == 1) {
+                return responses.get(0);
+            }
+
+            // Use AI to select the best response
+            return selectBestResponse(query, responses);
+
+        } finally {
+            // Clean up thread pool
+            executorService.shutdown();
+            try {
+                if (!executorService.awaitTermination(5, TimeUnit.SECONDS)) {
+                    executorService.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executorService.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    /**
+     * Uses AI to select the best response from multiple agent responses.
+     * @param query The original query
+     * @param responses List of responses from different agents
+     * @return The response deemed most appropriate by the AI
+     */
+    private CommonClientResponse selectBestResponse(String query, List<CommonClientResponse> responses) {
+        try {
+            // Build context with all responses
+            StringBuilder allResponses = new StringBuilder();
+            for (int i = 0; i < responses.size(); i++) {
+                allResponses.append("Response ").append(i + 1).append(": ")
+                           .append(responses.get(i).getTextResult())
+                           .append("\n\n");
+            }
+
+            // Ask AI to select the best response
+            String bestIndexField = "best_response_index_1_based";
+            String reasonField = "reason_for_selection";
+            String jsonSelection = promptTransformer.transformIntoJson(
+                jsonUtils.createJson(bestIndexField, reasonField).toString(),
+                "Original query: " + query + "\n\nAll responses:\n" + allResponses + 
+                "\nSelect the response that best answers the query. Return the 1-based index."
+            );
+
+            String bestIndexStr = jsonUtils.getFieldValueFromMultipleFields(jsonSelection, bestIndexField);
+            String reason = jsonUtils.getFieldValueFromMultipleFields(jsonSelection, reasonField);
+            
+            int bestIndex = Integer.parseInt(bestIndexStr.trim()) - 1; // Convert to 0-based
+            
+            if (bestIndex >= 0 && bestIndex < responses.size()) {
+                log.info("Selected response {} out of {}. Reason: {}", bestIndex + 1, responses.size(), reason);
+                return responses.get(bestIndex);
+            } else {
+                log.warn("Invalid index {} returned by AI, returning first response", bestIndex);
+                return responses.get(0);
+            }
+
+        } catch (AIProcessingException e) {
+            log.warn("Error selecting best response: {}, returning first response", e.getMessage());
+            return responses.get(0);
+        } catch (Exception e) {
+            log.warn("Unexpected error selecting best response: {}, returning first response", e.getMessage());
+            return responses.get(0);
         }
     }
 
