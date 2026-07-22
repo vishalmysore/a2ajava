@@ -86,6 +86,49 @@ public class A2ATaskClient {
         }
     }
 
+    /**
+     * Sends a message using the A2A message/send method (the successor of tasks/send).
+     * A messageId is generated automatically and the resulting task is tracked in
+     * the pending task list, exactly like sendTask.
+     */
+    public SendTaskResponse sendMessage(String prompt) {
+        return sendMessage(prompt, null);
+    }
+
+    /**
+     * Sends a message using the A2A message/send method, continuing the conversation
+     * identified by contextId (may be null to start a new one).
+     */
+    public SendTaskResponse sendMessage(String prompt, String contextId) {
+        try {
+            Message message = new Message();
+            TextPart textPart = new TextPart();
+            textPart.setText(prompt);
+            message.setParts(Collections.singletonList(textPart));
+            message.setRole("user");
+            message.setMessageId(UUID.randomUUID().toString());
+            message.setContextId(contextId);
+
+            MessageSendParams params = new MessageSendParams();
+            params.setMessage(message);
+            JsonRpcRequest request = createRequest("message/send", params);
+            ResponseEntity<SendTaskResponse> response = restTemplate.postForEntity(
+                    baseUrl,
+                    request,
+                    SendTaskResponse.class
+            );
+
+            SendTaskResponse task = response.getBody();
+            if (task != null) {
+                pendingTasks.add(task.getResult());
+            }
+            return task;
+        } catch (HttpClientErrorException e) {
+            log.severe("Error sending message: " + e.getMessage());
+            throw e;
+        }
+    }
+
     public Task getTask(String taskId, Integer historyLength) {
         try {
             TaskQueryParams params = new TaskQueryParams();

@@ -44,6 +44,13 @@ public class JsonRpcController implements A2ARPCController {
 
     private MCPToolsController  mcpToolsController;
 
+    /**
+     * Optional extended agent card returned to authenticated clients via the
+     * agent/getAuthenticatedExtendedCard method. When null, that method returns
+     * an AuthenticatedExtendedCardNotConfiguredError.
+     */
+    private AgentCard extendedAgentCard;
+
     public JsonRpcController() {
         dynamicTaskController = new DyanamicTaskContoller();
         mcpToolsController = new MCPToolsController();
@@ -67,6 +74,14 @@ public class JsonRpcController implements A2ARPCController {
 
     public void setMcpToolsController(MCPToolsController mcpToolsController) {
         this.mcpToolsController = mcpToolsController;
+    }
+
+    public AgentCard getExtendedAgentCard() {
+        return extendedAgentCard;
+    }
+
+    public void setExtendedAgentCard(AgentCard extendedAgentCard) {
+        this.extendedAgentCard = extendedAgentCard;
     }
 
     @Override
@@ -94,6 +109,49 @@ public class JsonRpcController implements A2ARPCController {
         }
 
         switch (method) {
+            case "message/send": {
+                MessageSendParams messageSendParams = new ObjectMapper().convertValue(params, MessageSendParams.class);
+                result = getTaskController().sendTask(messageSendParams.toTaskSendParams(), a2AActionCallBack, false);
+                postProcessing(method, result);
+                return result;
+            }
+            case "message/stream": {
+                MessageSendParams messageStreamParams = new ObjectMapper().convertValue(params, MessageSendParams.class);
+                result = getTaskController().sendSubscribeTask(messageStreamParams.toTaskSendSubscribeParams());
+                postProcessing(method, result);
+                return result;
+            }
+            case "tasks/pushNotificationConfig/set":
+            case "tasks/setPushNotification": {
+                TaskSetPushNotificationParams setPushParams = new ObjectMapper().convertValue(params, TaskSetPushNotificationParams.class);
+                result = getTaskController().setTaskPushNotification(setPushParams);
+                postProcessing(method, result);
+                return result;
+            }
+            case "tasks/pushNotificationConfig/get":
+            case "tasks/getPushNotification": {
+                TaskGetPushNotificationParams getPushParams = new ObjectMapper().convertValue(params, TaskGetPushNotificationParams.class);
+                result = getTaskController().getTaskPushNotification(getPushParams);
+                postProcessing(method, result);
+                return result;
+            }
+            case "tasks/pushNotificationConfig/list": {
+                ListTaskPushNotificationConfigParams listPushParams = new ObjectMapper().convertValue(params, ListTaskPushNotificationConfigParams.class);
+                result = getTaskController().listTaskPushNotificationConfig(listPushParams);
+                postProcessing(method, result);
+                return result;
+            }
+            case "tasks/pushNotificationConfig/delete": {
+                DeleteTaskPushNotificationConfigParams deletePushParams = new ObjectMapper().convertValue(params, DeleteTaskPushNotificationConfigParams.class);
+                result = getTaskController().deleteTaskPushNotificationConfig(deletePushParams);
+                postProcessing(method, result);
+                return result;
+            }
+            case "agent/getAuthenticatedExtendedCard": {
+                result = extendedAgentCard != null ? extendedAgentCard : new AuthenticatedExtendedCardNotConfiguredError();
+                postProcessing(method, result);
+                return result;
+            }
             case "tasks/send":
                 TaskSendParams sendParams = new ObjectMapper().convertValue(params, TaskSendParams.class);
                 result = getTaskController().sendTask(sendParams,a2AActionCallBack,false);
@@ -113,18 +171,6 @@ public class JsonRpcController implements A2ARPCController {
             case "tasks/cancel":
                 TaskCancelParams cancelParams = new ObjectMapper().convertValue(params, TaskCancelParams.class);
                 result = getTaskController().cancelTask(cancelParams.getId());
-                postProcessing(method,result);
-                return result;
-            case "tasks/setPushNotification":
-                TaskSetPushNotificationParams setPushParams = new ObjectMapper().convertValue(params, TaskSetPushNotificationParams.class);
-
-                result = getTaskController().setTaskPushNotification(setPushParams);
-                postProcessing(method,result);
-                return result;
-            case "tasks/getPushNotification":
-                TaskGetPushNotificationParams getPushParams = new ObjectMapper().convertValue(params, TaskGetPushNotificationParams.class);
-
-                result = getTaskController().getTaskPushNotification(getPushParams);
                 postProcessing(method,result);
                 return result;
             case "tasks/resubscribe":

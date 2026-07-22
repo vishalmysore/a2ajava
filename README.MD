@@ -61,6 +61,7 @@ Use these example to quickly build agents using this library , forking and cloni
 * [Human In Loop](tutorial/8_HumanInLoop.md)
 * [Kubernetes Example](tutorial/9_Kubernetes.md)
 * [Multi Agents](tutorial/10_ComplexAgents.md)
+* [Latest A2A Protocol Features](tutorial/12_A2A_Latest_Protocol_Features.md)
 
 ## Live Demo 
 Live demos have been deployed on hugginface you are welcome to try them out. Or clone the space and create your own space
@@ -183,6 +184,32 @@ This Java implementation provides the foundation for building A2A and MCP compli
     * Exposes MCP endpoints using the Spring MVC framework.
     * Supports MCP tools and tasks, allowing agents to interact with MCP clients.
     * Provides a unified interface for both A2A and MCP clients, enabling seamless communication across protocols.
+
+## Latest A2A Protocol Support
+
+a2ajava tracks the evolution of the A2A specification. In addition to the original `tasks/*` methods, the JSON-RPC endpoint now speaks the newer protocol surface, so clients written against either generation of the spec work unchanged:
+
+| Capability | Methods / Types |
+|---|---|
+| Message-centric messaging (successor of `tasks/send` / `tasks/sendSubscribe`) | `message/send`, `message/stream` |
+| Push notification config CRUD | `tasks/pushNotificationConfig/set` / `get` / `list` / `delete` (legacy `tasks/setPushNotification` / `tasks/getPushNotification` still supported) |
+| Authenticated extended agent card | `agent/getAuthenticatedExtendedCard`, `AgentCard.supportsAuthenticatedExtendedCard` |
+| Additional task states | `rejected`, `auth-required` |
+| Conversation context | `Message.messageId` / `taskId` / `contextId` / `referenceTaskIds` / `extensions`, `Task.contextId` |
+| Agent card security metadata | `securitySchemes` (OpenAPI-style `SecurityScheme`), `security` requirements, `iconUrl` |
+| Signed agent cards | `AgentCard.signatures` (`AgentCardSignature`, JWS detached signatures per RFC 7515) |
+| Standard error codes | `-32005 ContentTypeNotSupportedError`, `-32006 InvalidAgentResponseError`, `-32007 AuthenticatedExtendedCardNotConfiguredError` |
+
+Sending a message with the new API from Java:
+
+```java
+A2ATaskClient client = new A2ATaskClient("http://localhost:8080/rpc");
+SendTaskResponse response = client.sendMessage("vishal is coming home what should i cook");
+// continue the same conversation by passing the contextId
+client.sendMessage("make it spicy", "ctx-1234");
+```
+
+See the [Latest A2A Protocol Features tutorial](tutorial/12_A2A_Latest_Protocol_Features.md) for details, including how to publish an authenticated extended card and declare security schemes.
 
 
 ## Usage

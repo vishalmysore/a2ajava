@@ -38,6 +38,11 @@ public class Task implements A2ATask, CommonClientRequest, CommonClientResponse 
     private String id;
     private String sessionId;
 
+    /**
+     * Context identifier used to group related tasks and messages into one conversation.
+     */
+    private String contextId;
+
     private TaskStatus status;
 
     private List<Message> history;

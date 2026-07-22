@@ -23,6 +23,33 @@ public interface A2ATaskController {
 
     Object getTaskPushNotification(TaskGetPushNotificationParams getPushParams);
 
+    /**
+     * Lists the push notification configurations for a task
+     * (A2A tasks/pushNotificationConfig/list). The default implementation wraps the
+     * single configuration returned by getTaskPushNotification in a list.
+     */
+    default Object listTaskPushNotificationConfig(ListTaskPushNotificationConfigParams listParams) {
+        TaskGetPushNotificationParams getParams = new TaskGetPushNotificationParams();
+        getParams.setTaskId(listParams.getId());
+        Object config = getTaskPushNotification(getParams);
+        List<Object> configs = new java.util.ArrayList<>();
+        if (config != null) {
+            configs.add(config);
+        }
+        return configs;
+    }
+
+    /**
+     * Deletes a push notification configuration for a task
+     * (A2A tasks/pushNotificationConfig/delete). The default implementation clears the
+     * configuration by setting it to null; controllers with real storage should override.
+     */
+    default Object deleteTaskPushNotificationConfig(DeleteTaskPushNotificationConfigParams deleteParams) {
+        TaskSetPushNotificationParams setParams = new TaskSetPushNotificationParams();
+        setParams.setTaskId(deleteParams.getId());
+        return setTaskPushNotification(setParams);
+    }
+
     Object resubscribeToTask(TaskResubscriptionParams resubParams);
 
     default SendTaskResponse sendTask(TaskSendParams taskSendParams, ActionCallback callback) {

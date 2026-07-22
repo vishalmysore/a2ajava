@@ -12,6 +12,8 @@ public enum TaskState {
     COMPLETED("completed"),
     CANCELED("canceled"),
     FAILED("failed"),
+    REJECTED("rejected"),
+    AUTH_REQUIRED("auth-required"),
     UNKNOWN("unknown");
 
     private final String value;

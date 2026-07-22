@@ -21,6 +21,7 @@ public class LocalA2ATaskClient {
 
     public static final String TASKS_SEND = "tasks/send";
     public static final String TASKS_GET = "tasks/get";
+    public static final String MESSAGE_SEND = "message/send";
     public static final String ERROR_SENDING_FILE_TASK = "Error sending file task: ";
 
     private JsonRpcController jrc = null;
@@ -60,6 +61,29 @@ public class LocalA2ATaskClient {
 
         } catch (HttpClientErrorException e) {
             log.severe("Error sending task: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * Sends a message using the A2A message/send method (the successor of tasks/send).
+     */
+    public Task sendMessage(String prompt) {
+        try {
+            Message message = new Message();
+            TextPart textPart = new TextPart();
+            textPart.setText(prompt);
+            message.setParts(Collections.singletonList(textPart));
+            message.setRole("user");
+            message.setMessageId(String.valueOf(UUID.randomUUID()));
+
+            MessageSendParams params = new MessageSendParams();
+            params.setMessage(message);
+
+            JsonRpcRequest request = createRequest(MESSAGE_SEND, params);
+            return ((SendTaskResponse) jrc.handleRpc(request)).getResult();
+        } catch (HttpClientErrorException e) {
+            log.severe("Error sending message: " + e.getMessage());
             throw e;
         }
     }

@@ -34,6 +34,35 @@ public class AgentCard implements AgentInfo {
     @ListType(AgentInterface.class)
     private List<AgentInterface> supportedInterfaces;
 
+    /**
+     * URL of an icon that clients can display for this agent.
+     */
+    private String iconUrl;
+
+    /**
+     * True if the agent exposes an extended card with additional details to
+     * authenticated clients via the agent/getAuthenticatedExtendedCard method.
+     */
+    private boolean supportsAuthenticatedExtendedCard;
+
+    /**
+     * Declarations of the security schemes this agent supports, keyed by scheme name
+     * (referenced from the security requirements below).
+     */
+    private Map<String, SecurityScheme> securitySchemes;
+
+    /**
+     * Security requirements for contacting the agent. Each list entry is an alternative
+     * requirement object mapping a scheme name to the scopes it needs (OpenAPI style).
+     */
+    private List<Map<String, List<String>>> security;
+
+    /**
+     * JWS signatures over this card, allowing clients to verify its integrity.
+     */
+    @ListType(AgentCardSignature.class)
+    private List<AgentCardSignature> signatures;
+
     // Getters and setters
     public void addSkill(String name, String description) {
         if (skills == null) {
