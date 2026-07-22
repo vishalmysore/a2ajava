@@ -38,6 +38,35 @@ public class AgenticMesh {
         return pipeLineMesh(query, null, 0);
     }
 
+    private boolean isConverging(String previousQuery, String newPendingQuery) {
+        if (previousQuery == null || newPendingQuery == null) return false;
+
+        String prev = previousQuery.toLowerCase().replaceAll("[^a-z0-9 ]", "");
+        String next = newPendingQuery.toLowerCase().replaceAll("[^a-z0-9 ]", "");
+
+        // simple heuristic: high overlap → likely loop
+        int overlap = 0;
+        for (String token : next.split(" ")) {
+            if (prev.contains(token)) overlap++;
+        }
+
+        return overlap > (next.split(" ").length * 0.7);
+    }
+
+    public String explainAgentSelection(String query, Agent selectedAgent) {
+        try {
+            String field = "why_this_agent_is_best_for_the_next_step";
+            return promptTransformer.transformIntoJson(
+                    jsonUtils.createJson(field).toString(),
+                    "User query: " + query +
+                            "\nSelected agent: " + selectedAgent.getType() +
+                            "\nExplain why this agent is appropriate for the next step only."
+            );
+        } catch (AIProcessingException e) {
+            return "Explanation unavailable: " + e.getMessage();
+        }
+    }
+
     /**
      * Processes a query using the Pipeline Mesh pattern.
      * in this method the agents process data in sequence, each handling a specific part of the workflow.
@@ -52,8 +81,12 @@ public class AgenticMesh {
             log.warn("Max recursion depth of 10 reached, returning current response");
             return previousResponse != null ? previousResponse : agentCatalog.processQuery(query);
         }
-        
-        CommonClientResponse response = agentCatalog.processQuery(query);
+        String prmpt = "this is the user prompt {"+query+"}. " +
+                "Select the single best agent that can answer the NEXT PART of this request, " +
+                "even if the full request requires multiple agents. " +
+                "Use the following agent information {"+agentCatalog.getAgentsInfo()+"}. " +
+                "Do NOT assume one agent must answer everything.";
+        CommonClientResponse response = agentCatalog.processQuery(query,prmpt);
         String jsonYesOrNo = null;
         String yesOrNoField = "is_User_Query_Answered_Fully_Yes_Or_No_Only";
         String pendingQuery = "if_No_Then_What_Is_Pending_Query";
@@ -62,7 +95,7 @@ public class AgenticMesh {
             return previousResponse;
         } else {
             try {
-                jsonYesOrNo= promptTransformer.transformIntoJson(jsonUtils.createJson(yesOrNoField,pendingQuery,explain).toString(),"This is the Original query "+query+ " This is the response so far "+response +" ");
+                jsonYesOrNo= promptTransformer.transformIntoJson(jsonUtils.createJson(yesOrNoField,pendingQuery,explain).toString(),"This is the Original query "+query+ " This is the response so far "+response.getTextResult() +" ");
                 log.info(jsonYesOrNo);
                 String yesOrNo = jsonUtils.getFieldValueFromMultipleFields(jsonYesOrNo, yesOrNoField);
                 if(yesOrNo.contains("Yes")) {

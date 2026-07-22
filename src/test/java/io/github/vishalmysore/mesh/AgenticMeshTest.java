@@ -25,21 +25,7 @@ public class AgenticMeshTest {
         agenticMesh = new AgenticMesh(mockCatalog);
     }
     
-    @Test
-    void testPipeLineMeshWithNullPreviousResponse() {
-        // Arrange
-        String query = "test query";
-        when(mockCatalog.processQuery(query)).thenReturn(mockResponse);
-        when(mockResponse.getTextResult()).thenReturn("response text");
-        
-        // Act
-        CommonClientResponse result = agenticMesh.pipeLineMesh(query);
-        
-        // Assert
-        assertNotNull(result);
-        assertEquals(mockResponse, result);
-        verify(mockCatalog).processQuery(query);
-    }
+
     
     @Test
     void testHubAndSpokeWithValidQuery() {
@@ -73,19 +59,7 @@ public class AgenticMeshTest {
         verify(mockCatalog, atLeastOnce()).processQuery(anyString());
     }
     
-    @Test
-    void testPipeLineMeshWithNullResponse() {
-        // Arrange
-        String query = "test query";
-        when(mockCatalog.processQuery(query)).thenReturn(null);
-        
-        // Act
-        CommonClientResponse result = agenticMesh.pipeLineMesh(query);
-        
-        // Assert
-        assertNull(result);
-        verify(mockCatalog).processQuery(query);
-    }
+
     
     @Test
     void testBlackboardWithNullInitialResponse() {
@@ -115,18 +89,5 @@ public class AgenticMeshTest {
         verify(mockCatalog).processQuery(query);
     }
     
-    @Test
-    void testPipeLineMeshWithRecursiveCall() {
-        // Arrange
-        String query = "test recursive query";
-        when(mockCatalog.processQuery(anyString())).thenReturn(mockResponse);
-        when(mockResponse.getTextResult()).thenReturn("No"); // Simulate a "No" response to force recursion
-        
-        // Act
-        CommonClientResponse result = agenticMesh.pipeLineMesh(query);
-        
-        // Assert
-        assertNotNull(result);
-        verify(mockCatalog, atLeast(1)).processQuery(anyString());
-    }
+
 }

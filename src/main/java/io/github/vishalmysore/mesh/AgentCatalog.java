@@ -128,6 +128,9 @@ public class AgentCatalog {
     }
 
     public CommonClientResponse processQuery(String query) {
+        return processQuery(query, " this is user prompt { "+query+"}  I am trying to find which agent can handle it from this info {"+getAgentsInfo()+"}");
+    }
+    public CommonClientResponse processQuery(String query, String prmt) {
         if (query == null || query.trim().isEmpty()) {
             log.warning("Empty or null query provided");
             return null;
@@ -137,7 +140,7 @@ public class AgentCatalog {
         String identiy = null;
         String uniqueIdStr = "agentUniqueIDTobeUsedToIdentifyTheAgent";
         try {
-            identiy = promptTransformer.transformIntoJson(jsonUtils.createJson(uniqueIdStr).toString()," this is user prompt { "+query+"}  I am trying to find which agent can handle it from this info {"+getAgentsInfo()+"}");
+            identiy = promptTransformer.transformIntoJson(jsonUtils.createJson(uniqueIdStr).toString(),prmt);
         } catch (AIProcessingException e) {
             log.severe("Error transforming query into JSON: " + e.getMessage());
         }
