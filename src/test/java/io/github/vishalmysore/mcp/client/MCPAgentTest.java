@@ -1,5 +1,6 @@
 package io.github.vishalmysore.mcp.client;
 
+import org.junit.jupiter.api.condition.EnabledIf;
 import io.github.vishalmysore.common.AgentInfo;
 import io.github.vishalmysore.common.CommonClientResponse;
 import io.github.vishalmysore.mcp.domain.*;
@@ -66,6 +67,7 @@ public class MCPAgentTest {
     }
     
     @Test
+    @EnabledIf("io.github.vishalmysore.LiveLlm#available")
     void testRemoteMethodCall() throws Exception {
         // We need to mock the internal JsonNode processing
         MCPAgent spyAgent = spy(mcpAgent);

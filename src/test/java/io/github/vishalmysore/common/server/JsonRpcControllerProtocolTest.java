@@ -1,5 +1,6 @@
 package io.github.vishalmysore.common.server;
 
+import org.junit.jupiter.api.condition.EnabledIf;
 import io.github.vishalmysore.a2a.domain.*;
 import io.github.vishalmysore.a2a.server.A2ATaskController;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.*;
  * (message/send, message/stream, tasks/pushNotificationConfig/*,
  * agent/getAuthenticatedExtendedCard) to the task controller correctly.
  */
+@EnabledIf("io.github.vishalmysore.LiveLlm#available")
 public class JsonRpcControllerProtocolTest {
 
     private A2ATaskController mockTaskController;

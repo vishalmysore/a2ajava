@@ -1,11 +1,13 @@
 package io.github.vishalmysore.debug;
 
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;
 import com.t4a.processor.AIProcessingException;
 
+@EnabledIf("io.github.vishalmysore.LiveLlm#available")
 public class DebugCurlCommandsTest {
 
     @Test

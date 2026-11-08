@@ -1,5 +1,6 @@
 package io.github.vishalmysore.mesh;
 
+import org.junit.jupiter.api.condition.EnabledIf;
 import io.github.vishalmysore.common.CommonClientResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ public class AgenticMeshTest {
 
     
     @Test
+    @EnabledIf("io.github.vishalmysore.LiveLlm#available")
     void testHubAndSpokeWithValidQuery() {
         // Arrange
         String query = "test hub query";
@@ -44,6 +46,7 @@ public class AgenticMeshTest {
     }
     
     @Test
+    @EnabledIf("io.github.vishalmysore.LiveLlm#available")
     void testBlackboardWithValidQuery() {
         // Arrange
         String query = "test blackboard query";

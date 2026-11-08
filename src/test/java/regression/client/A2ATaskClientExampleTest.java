@@ -1,5 +1,6 @@
 package regression.client;
 
+import org.junit.jupiter.api.condition.EnabledIf;
 import com.t4a.predict.PredictionLoader;
 import io.github.vishalmysore.a2a.client.LocalA2ATaskClient;
 import io.github.vishalmysore.a2a.domain.JsonRpcRequest;
@@ -23,6 +24,7 @@ public class A2ATaskClientExampleTest {
         PredictionLoader.getInstance();  // trigger once per test class
     }
     @Test
+    @EnabledIf("io.github.vishalmysore.LiveLlm#available")
     public void testSendTask() {
         // Mock or simulate the behavior of sendTask
         // Example: Assert that the task is sent successfully
@@ -47,6 +49,7 @@ public class A2ATaskClientExampleTest {
     }
 
 @Test
+    @EnabledIf("io.github.vishalmysore.LiveLlm#available")
     public void testMCPClientLifeCycle() {
         String[] jsonRequests = {
                 "{\"method\":\"initialize\",\"params\":{\"protocolVersion\":\"2024-11-05\",\"capabilities\":{},\"clientInfo\":{\"name\":\"claude-ai\",\"version\":\"0.1.0\"}},\"jsonrpc\":\"2.0\",\"id\":0}",

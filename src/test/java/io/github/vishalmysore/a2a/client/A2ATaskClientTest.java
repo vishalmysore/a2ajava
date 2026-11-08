@@ -1,5 +1,6 @@
 package io.github.vishalmysore.a2a.client;
 
+import org.junit.jupiter.api.condition.EnabledIf;
 import io.github.vishalmysore.a2a.domain.Task;
 import io.github.vishalmysore.a2a.domain.TaskState;
 import io.github.vishalmysore.a2a.domain.TaskStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@EnabledIf("io.github.vishalmysore.LiveLlm#available")
 public class A2ATaskClientTest {
 
     private LocalA2ATaskClient client;
